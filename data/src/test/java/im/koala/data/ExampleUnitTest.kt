@@ -1,4 +1,4 @@
-package im.koala.bcsd
+package im.koala.data
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

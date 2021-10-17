@@ -1,0 +1,13 @@
+root = true
+
+[*]
+charset = utf-8
+insert_final_newline = false
+trim_trailing_whitespace = true
+end_of_line = lf
+
+[*.{kt,kts}]
+indent_size = 4
+
+[*.{yml,yaml}]
+indent_size = 2
