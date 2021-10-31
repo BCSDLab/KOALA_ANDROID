@@ -6,5 +6,8 @@ dependencyResolutionManagement {
         jcenter() // Warning: this repository is going to shut down soon
     }
 }
+
 rootProject.name = "KOALA_ANDROID"
 include ':app'
+include ':data'
+include ':domain'
