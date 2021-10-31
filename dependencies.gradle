@@ -107,4 +107,9 @@ ext {
     def espresso_version = "3.4.0"
     espresso = "androidx.test.espresso:espresso-core:$espresso_version"
 
+    /* Dependency - hilt */
+    def hilt_version = "2.38.1"
+    hiltAndroid = "com.google.dagger:hilt-android:$hilt_version"
+    hiltCompiler = "com.google.dagger:hilt-compiler:$hilt_version"
+
 }
