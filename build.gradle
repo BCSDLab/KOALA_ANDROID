@@ -1,7 +1,6 @@
 buildscript {
-    ext {
-        compose_version = '1.0.1'
-    }
+    apply from: "dependencies.gradle"
+
     repositories {
         google()
         maven {
@@ -9,13 +8,12 @@ buildscript {
         }
         mavenCentral()
     }
+
     dependencies {
         classpath "com.android.tools.build:gradle:7.0.2"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
         classpath 'org.jlleitschuh.gradle:ktlint-gradle:10.2.0'
     }
-
-
 }
 
 subprojects {
