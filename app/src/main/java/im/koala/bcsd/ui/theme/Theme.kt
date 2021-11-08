@@ -1,21 +1,24 @@
 package im.koala.bcsd.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color.Companion.White
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = Black,
+    primaryVariant = Gray,
+    secondary = Yellow
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = White,
+    primaryVariant = White,
+    secondary = Black,
+    onPrimary = Black,
+    onSecondary = White,
+    onError = Yellow
 
     /* Other default colors to override
     background = Color.White,
@@ -29,8 +32,8 @@ private val LightColorPalette = lightColors(
 
 @Composable
 fun KoalaTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+    darkTheme: Boolean = false,
+    content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) {
         DarkColorPalette
