@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import im.koala.bcsd.ui.theme.GrayDisabled
 import im.koala.bcsd.ui.theme.KoalaTheme
 
-
 @Composable
 fun KoalaButton(
     onClick: () -> Unit,
