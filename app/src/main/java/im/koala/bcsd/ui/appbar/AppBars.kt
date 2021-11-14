@@ -154,7 +154,7 @@ private fun KoalaAppBarPreview() {
 
 @Composable
 @Preview
-private fun KoalaTextAppBarPreview() {
+private fun KoalaTextAppBarWithBackButtonPreview() {
     KoalaTheme(darkTheme = false) {
         Column(
             modifier = Modifier.background(color = MaterialTheme.colors.surface)
@@ -162,6 +162,32 @@ private fun KoalaTextAppBarPreview() {
             KoalaTextAppBar(
                 title = "키워드 수정하기",
                 onBackClick = {}
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(8.dp),
+                    text = "완료"
+                )
+            }
+
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(32.dp)
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+private fun KoalaTextAppBarPreview() {
+    KoalaTheme(darkTheme = false) {
+        Column(
+            modifier = Modifier.background(color = MaterialTheme.colors.surface)
+        ) {
+            KoalaTextAppBar(
+                title = "키워드 수정하기"
             ) {
                 Text(
                     modifier = Modifier
