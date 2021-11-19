@@ -17,13 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideTextStyle
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -42,7 +40,8 @@ import im.koala.bcsd.ui.theme.KoalaTheme
 fun KoalaTextAppBar(
     title: String,
     modifier: Modifier = Modifier,
-    onBackClick: (() -> Unit)? = null,
+    showBackButton: Boolean = true,
+    onBackClick: () -> Unit = { },
     actions: @Composable (RowScope.() -> Unit)
 ) {
     Column {
@@ -58,55 +57,51 @@ fun KoalaTextAppBar(
             )
         ) {
             Box {
-                CompositionLocalProvider(
-                    LocalContentColor provides MaterialTheme.colors.onPrimary
-                ) {
-                    if (onBackClick != null) {
-                        Row(
-                            modifier = Modifier.fillMaxHeight(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            KoalaBackButton(onClick = onBackClick)
-                        }
-                    }
-
+                if (showBackButton) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxSize(),
+                        modifier = Modifier.fillMaxHeight(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        ProvideTextStyle(
-                            value = TextStyle(
-                                color = MaterialTheme.colors.onPrimary,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Normal
-                            )
-                        ) {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                maxLines = 1,
-                                text = title
-                            )
-                        }
+                        KoalaBackButton(onClick = onBackClick)
                     }
+                }
 
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     ProvideTextStyle(
                         value = TextStyle(
                             color = MaterialTheme.colors.onPrimary,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Normal,
-                            textAlign = TextAlign.Center,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Normal
                         )
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            horizontalArrangement = Arrangement.End,
-                            verticalAlignment = Alignment.CenterVertically,
-                            content = actions
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            text = title
                         )
                     }
+                }
+
+                ProvideTextStyle(
+                    value = TextStyle(
+                        color = MaterialTheme.colors.onPrimary,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        textAlign = TextAlign.Center,
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically,
+                        content = actions
+                    )
                 }
             }
         }
@@ -161,6 +156,7 @@ private fun KoalaTextAppBarWithBackButtonPreview() {
         ) {
             KoalaTextAppBar(
                 title = "키워드 수정하기",
+                showBackButton = true,
                 onBackClick = {}
             ) {
                 Text(
@@ -187,7 +183,8 @@ private fun KoalaTextAppBarPreview() {
             modifier = Modifier.background(color = MaterialTheme.colors.surface)
         ) {
             KoalaTextAppBar(
-                title = "키워드 수정하기"
+                title = "키워드 수정하기",
+                showBackButton = true
             ) {
                 Text(
                     modifier = Modifier
