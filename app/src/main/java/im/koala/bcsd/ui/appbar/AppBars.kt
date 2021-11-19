@@ -184,7 +184,7 @@ private fun KoalaTextAppBarPreview() {
         ) {
             KoalaTextAppBar(
                 title = "키워드 수정하기",
-                showBackButton = true
+                showBackButton = false
             ) {
                 Text(
                     modifier = Modifier
