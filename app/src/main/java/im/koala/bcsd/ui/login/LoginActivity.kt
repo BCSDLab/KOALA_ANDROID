@@ -7,10 +7,24 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,17 +38,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.findid.FindIdActivity
 import im.koala.bcsd.ui.findpassword.FindPasswordActivity
 import im.koala.bcsd.ui.join.JoinActivity
-import im.koala.bcsd.ui.theme.*
-import kotlinx.coroutines.NonDisposableHandle.parent
+import im.koala.bcsd.ui.theme.Black
+import im.koala.bcsd.ui.theme.Gray
+import im.koala.bcsd.ui.theme.GrayBorder
+import im.koala.bcsd.ui.theme.GrayDisabled
+import im.koala.bcsd.ui.theme.GrayNormal
+import im.koala.bcsd.ui.theme.Green
+import im.koala.bcsd.ui.theme.KoalaTheme
+import im.koala.bcsd.ui.theme.White
+import im.koala.bcsd.ui.theme.Yellow
+import im.koala.bcsd.ui.theme.Yellow2
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,23 +73,26 @@ class LoginActivity : ComponentActivity() {
 @Composable
 fun constraintLayoutContent() {
     val context = LocalContext.current
-    var loginTabState = remember { mutableStateOf(true) } //true - 일반로그인, false, SNS로그인
+    var loginTabState = remember { mutableStateOf(true) }
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (logoImageView, loginRowLayout, normalLoginConstraintLyaout, snsLoginConstraintLyaout) = createRefs()
 
-        drawImageView(modifier = Modifier.constrainAs(logoImageView) {
-            top.linkTo(parent.top, margin = 48.dp)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-        }, drawableId = R.drawable.ic_koala_logo)
-        Row(modifier = Modifier
-            .constrainAs(loginRowLayout) {
+        drawImageView(
+            modifier = Modifier.constrainAs(logoImageView) {
+                top.linkTo(parent.top, margin = 48.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            },
+            drawableId = R.drawable.ic_koala_logo
+        )
+        Row(
+            modifier = Modifier.constrainAs(loginRowLayout) {
                 top.linkTo(logoImageView.bottom, margin = 40.dp)
                 start.linkTo(parent.start, margin = 16.dp)
                 end.linkTo(parent.end, margin = 16.dp)
                 width = Dimension.fillToConstraints
-            }
-            .size(0.dp, 71.dp)) {
+            }.size(0.dp, 71.dp)
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -105,7 +128,6 @@ fun constraintLayoutContent() {
                         color = Gray
                     )
                 }
-
             }
             Column(
                 modifier = Modifier
@@ -145,19 +167,19 @@ fun constraintLayoutContent() {
             }
         }
         if (loginTabState.value) {
-            ConstraintLayout(modifier = Modifier.constrainAs(normalLoginConstraintLyaout) {
-                top.linkTo(loginRowLayout.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
-                height = Dimension.fillToConstraints
-                width = Dimension.fillToConstraints
-            }) {
+            ConstraintLayout(
+                modifier = Modifier.constrainAs(normalLoginConstraintLyaout) {
+                    top.linkTo(loginRowLayout.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                    height = Dimension.fillToConstraints
+                    width = Dimension.fillToConstraints
+                }
+            ) {
                 val (idEditText, pwEditText, autoLoginSwitch, autoLoginText, loginButton, rowLayout, snsLoginText, kakaoLoginButton, naverLoginButton, googleLoginButton, nonMemberLoginButton) = createRefs()
                 val idTextState = remember { mutableStateOf(TextFieldValue()) }
                 val isAutoLoginState = remember { mutableStateOf(false) }
-
-
                 OutlinedTextField(
                     value = idTextState.value,
                     onValueChange = { idTextState.value = it },
@@ -338,17 +360,18 @@ fun constraintLayoutContent() {
                         style = MaterialTheme.typography.button
                     )
                 }
-
             }
         } else {
-            ConstraintLayout(modifier = Modifier.constrainAs(normalLoginConstraintLyaout) {
-                top.linkTo(loginRowLayout.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
-                height = Dimension.fillToConstraints
-                width = Dimension.fillToConstraints
-            }) {
+            ConstraintLayout(
+                modifier = Modifier.constrainAs(normalLoginConstraintLyaout) {
+                    top.linkTo(loginRowLayout.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                    height = Dimension.fillToConstraints
+                    width = Dimension.fillToConstraints
+                }
+            ) {
                 val (googleButton, googleIcon, naverButton, naverIcon, kakaoButton, kakaoIcon) = createRefs()
                 /*구글버튼*/
                 snsLoginButton(
@@ -361,12 +384,16 @@ fun constraintLayoutContent() {
                             end.linkTo(parent.end, margin = 16.dp)
                             width = Dimension.fillToConstraints
                         }
-                        .border(width = 1.dp, color = Gray, shape = RectangleShape),
+                        .border(
+                            width = 1.dp,
+                            color = Gray,
+                            shape = RectangleShape
+                        ),
                     backgroundColor = White,
                     textColor = Black,
-                    text = stringResource(id = R.string.google_login)) {
-
-                }
+                    text = stringResource(id = R.string.google_login),
+                    onClick = {}
+                )
 
                 drawImageView(
                     modifier = Modifier
@@ -391,11 +418,9 @@ fun constraintLayoutContent() {
                         },
                     backgroundColor = Green,
                     textColor = White,
-                    text = stringResource(id = R.string.naver_login)
-                ) {
-
-                }
-
+                    text = stringResource(id = R.string.naver_login),
+                    onClick = {}
+                )
                 drawImageView(
                     modifier = Modifier
                         .size(18.dp, 18.dp)
@@ -420,11 +445,9 @@ fun constraintLayoutContent() {
                         },
                     backgroundColor = Yellow2,
                     textColor = Black,
-                    text = stringResource(id = R.string.kakao_login)
-                ) {
-
-                }
-
+                    text = stringResource(id = R.string.kakao_login),
+                    onClick = {}
+                )
                 drawImageView(
                     modifier = Modifier
                         .size(18.dp, 18.dp)
@@ -437,8 +460,6 @@ fun constraintLayoutContent() {
                 )
             }
         }
-
-
     }
 }
 
@@ -463,7 +484,6 @@ fun snsLoginButton(
             style = MaterialTheme.typography.body1,
         )
     }
-
 }
 
 @Composable
@@ -472,6 +492,5 @@ fun drawImageView(modifier: Modifier, drawableId: Int) {
         painter = painterResource(id = drawableId),
         contentDescription = null,
         modifier = modifier
-
     )
 }
