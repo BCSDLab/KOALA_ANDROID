@@ -69,10 +69,12 @@ fun constraintLayoutContent() {
                 end.linkTo(parent.end, margin = 16.dp)
                 width = Dimension.fillToConstraints
             }
-            .size(0.dp, 71.dp)){
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)) {
+            .size(0.dp, 71.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
                 TextButton(
                     onClick = { loginTabState.value = true },
                     colors = ButtonDefaults.buttonColors(
@@ -88,7 +90,7 @@ fun constraintLayoutContent() {
                         style = MaterialTheme.typography.h2,
                     )
                 }
-                if(loginTabState.value) {
+                if (loginTabState.value) {
                     Divider(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -105,9 +107,11 @@ fun constraintLayoutContent() {
                 }
 
             }
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+            ) {
                 TextButton(
                     onClick = { loginTabState.value = false },
                     colors = ButtonDefaults.buttonColors(
@@ -123,7 +127,7 @@ fun constraintLayoutContent() {
                         style = MaterialTheme.typography.h2,
                     )
                 }
-                if(!loginTabState.value) {
+                if (!loginTabState.value) {
                     Divider(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -140,7 +144,7 @@ fun constraintLayoutContent() {
                 }
             }
         }
-        if(loginTabState.value) {
+        if (loginTabState.value) {
             ConstraintLayout(modifier = Modifier.constrainAs(normalLoginConstraintLyaout) {
                 top.linkTo(loginRowLayout.bottom)
                 start.linkTo(parent.start)
@@ -260,9 +264,9 @@ fun constraintLayoutContent() {
                 ) {
                     TextButton(
                         onClick = {
-                                  Intent(context, FindIdActivity::class.java).run {
-                                      context.startActivity(this)
-                                  }
+                            Intent(context, FindIdActivity::class.java).run {
+                                context.startActivity(this)
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Color.Transparent,
@@ -327,7 +331,7 @@ fun constraintLayoutContent() {
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     },
-                ){
+                ) {
                     Text(
                         text = stringResource(id = R.string.use_non_member),
                         color = GrayNormal,
@@ -344,8 +348,8 @@ fun constraintLayoutContent() {
                 bottom.linkTo(parent.bottom)
                 height = Dimension.fillToConstraints
                 width = Dimension.fillToConstraints
-            }){
-                val (googleButton,googleIcon, naverButton, naverIcon, kakaoButton, kakaoIcon) = createRefs()
+            }) {
+                val (googleButton, googleIcon, naverButton, naverIcon, kakaoButton, kakaoIcon) = createRefs()
                 /*구글버튼*/
                 snsLoginButton(
                     modifier = Modifier
@@ -365,11 +369,13 @@ fun constraintLayoutContent() {
                 }
 
                 drawImageView(
-                    modifier = Modifier.size(18.dp, 18.dp).constrainAs(googleIcon) {
-                        top.linkTo(googleButton.top)
-                        bottom.linkTo(googleButton.bottom)
-                        start.linkTo(googleButton.start, margin = 13.dp)
-                    },
+                    modifier = Modifier
+                        .size(18.dp, 18.dp)
+                        .constrainAs(googleIcon) {
+                            top.linkTo(googleButton.top)
+                            bottom.linkTo(googleButton.bottom)
+                            start.linkTo(googleButton.start, margin = 13.dp)
+                        },
                     drawableId = R.drawable.ic_google_logo
                 )
                 /*네이버 버튼*/
@@ -385,16 +391,19 @@ fun constraintLayoutContent() {
                         },
                     backgroundColor = Green,
                     textColor = White,
-                    text = stringResource(id = R.string.naver_login)) {
+                    text = stringResource(id = R.string.naver_login)
+                ) {
 
                 }
 
                 drawImageView(
-                    modifier = Modifier.size(18.dp, 18.dp).constrainAs(naverIcon) {
-                        top.linkTo(naverButton.top)
-                        bottom.linkTo(naverButton.bottom)
-                        start.linkTo(naverButton.start, margin = 13.dp)
-                    },
+                    modifier = Modifier
+                        .size(18.dp, 18.dp)
+                        .constrainAs(naverIcon) {
+                            top.linkTo(naverButton.top)
+                            bottom.linkTo(naverButton.bottom)
+                            start.linkTo(naverButton.start, margin = 13.dp)
+                        },
                     drawableId = R.drawable.ic_naver_logo
                 )
 
@@ -411,16 +420,19 @@ fun constraintLayoutContent() {
                         },
                     backgroundColor = Yellow2,
                     textColor = Black,
-                    text = stringResource(id = R.string.kakao_login)) {
+                    text = stringResource(id = R.string.kakao_login)
+                ) {
 
                 }
 
                 drawImageView(
-                    modifier = Modifier.size(18.dp, 18.dp).constrainAs(kakaoIcon) {
-                        top.linkTo(kakaoButton.top)
-                        bottom.linkTo(kakaoButton.bottom)
-                        start.linkTo(kakaoButton.start, margin = 13.dp)
-                    },
+                    modifier = Modifier
+                        .size(18.dp, 18.dp)
+                        .constrainAs(kakaoIcon) {
+                            top.linkTo(kakaoButton.top)
+                            bottom.linkTo(kakaoButton.bottom)
+                            start.linkTo(kakaoButton.start, margin = 13.dp)
+                        },
                     drawableId = R.drawable.ic_kakao_logo
                 )
             }
@@ -429,8 +441,15 @@ fun constraintLayoutContent() {
 
     }
 }
+
 @Composable
-fun snsLoginButton(modifier: Modifier, backgroundColor: Color, textColor: Color, text: String, onClick: () -> Unit) {
+fun snsLoginButton(
+    modifier: Modifier,
+    backgroundColor: Color,
+    textColor: Color,
+    text: String,
+    onClick: () -> Unit
+) {
     TextButton(
         modifier = modifier,
         onClick = onClick,
@@ -446,6 +465,7 @@ fun snsLoginButton(modifier: Modifier, backgroundColor: Color, textColor: Color,
     }
 
 }
+
 @Composable
 fun drawImageView(modifier: Modifier, drawableId: Int) {
     Image(
