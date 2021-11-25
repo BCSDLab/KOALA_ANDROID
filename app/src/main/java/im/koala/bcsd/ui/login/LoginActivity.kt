@@ -46,14 +46,12 @@ import im.koala.bcsd.ui.findid.FindIdActivity
 import im.koala.bcsd.ui.findpassword.FindPasswordActivity
 import im.koala.bcsd.ui.join.JoinActivity
 import im.koala.bcsd.ui.theme.Black
-import im.koala.bcsd.ui.theme.Gray
 import im.koala.bcsd.ui.theme.GrayBorder
 import im.koala.bcsd.ui.theme.GrayDisabled
 import im.koala.bcsd.ui.theme.GrayNormal
 import im.koala.bcsd.ui.theme.Green
 import im.koala.bcsd.ui.theme.KoalaTheme
 import im.koala.bcsd.ui.theme.White
-import im.koala.bcsd.ui.theme.Yellow
 import im.koala.bcsd.ui.theme.Yellow2
 
 class LoginActivity : ComponentActivity() {
@@ -63,7 +61,7 @@ class LoginActivity : ComponentActivity() {
             KoalaTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    constraintLayoutContent()
+                    LoginScreen()
                 }
             }
         }
@@ -71,9 +69,9 @@ class LoginActivity : ComponentActivity() {
 }
 
 @Composable
-fun constraintLayoutContent() {
+fun LoginScreen() {
     val context = LocalContext.current
-    var loginTabState = remember { mutableStateOf(true) }
+    var isNormalLoginState = remember { mutableStateOf(true) }
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (logoImageView, loginRowLayout, normalLoginConstraintLyaout, snsLoginConstraintLyaout) = createRefs()
 
@@ -99,7 +97,7 @@ fun constraintLayoutContent() {
                     .weight(1f)
             ) {
                 TextButton(
-                    onClick = { loginTabState.value = true },
+                    onClick = { isNormalLoginState.value = true },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.Transparent,
                     ),
@@ -109,23 +107,23 @@ fun constraintLayoutContent() {
                 ) {
                     Text(
                         text = stringResource(id = R.string.normal_login),
-                        color = Black,
+                        color = MaterialTheme.colors.secondary,
                         style = MaterialTheme.typography.h2,
                     )
                 }
-                if (loginTabState.value) {
+                if (isNormalLoginState.value) {
                     Divider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(1.dp),
-                        color = Black
+                            .height(2.dp),
+                        color = MaterialTheme.colors.secondary
                     )
                 } else {
                     Divider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(1.dp),
-                        color = Gray
+                            .height(2.dp),
+                        color = MaterialTheme.colors.onBackground
                     )
                 }
             }
@@ -135,7 +133,7 @@ fun constraintLayoutContent() {
                     .weight(1f)
             ) {
                 TextButton(
-                    onClick = { loginTabState.value = false },
+                    onClick = { isNormalLoginState.value = false },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.Transparent,
                     ),
@@ -145,28 +143,28 @@ fun constraintLayoutContent() {
                 ) {
                     Text(
                         text = stringResource(id = R.string.sns_login),
-                        color = Black,
+                        color = MaterialTheme.colors.secondary,
                         style = MaterialTheme.typography.h2,
                     )
                 }
-                if (!loginTabState.value) {
+                if (!isNormalLoginState.value) {
                     Divider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(1.dp),
-                        color = Black
+                            .height(2.dp),
+                        color = MaterialTheme.colors.secondary
                     )
                 } else {
                     Divider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(1.dp),
-                        color = Gray
+                            .height(2.dp),
+                        color = MaterialTheme.colors.onBackground
                     )
                 }
             }
         }
-        if (loginTabState.value) {
+        if (isNormalLoginState.value) {
             ConstraintLayout(
                 modifier = Modifier.constrainAs(normalLoginConstraintLyaout) {
                     top.linkTo(loginRowLayout.bottom)
@@ -197,7 +195,7 @@ fun constraintLayoutContent() {
                     placeholder = {
                         Text(
                             text = stringResource(id = R.string.login_id),
-                            color = Gray,
+                            color = MaterialTheme.colors.onBackground,
                             style = MaterialTheme.typography.body1,
                         )
                     },
@@ -222,7 +220,7 @@ fun constraintLayoutContent() {
                     placeholder = {
                         Text(
                             text = stringResource(id = R.string.login_pw),
-                            color = Gray,
+                            color = MaterialTheme.colors.onBackground,
                             style = MaterialTheme.typography.body1,
                         )
                     },
@@ -237,8 +235,8 @@ fun constraintLayoutContent() {
                             start.linkTo(parent.start, margin = 16.dp)
                         },
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = Yellow,
-                        uncheckedThumbColor = Yellow,
+                        checkedThumbColor = MaterialTheme.colors.onError,
+                        uncheckedThumbColor = MaterialTheme.colors.onError,
                         uncheckedTrackColor = GrayDisabled
                     )
                 )
@@ -248,7 +246,7 @@ fun constraintLayoutContent() {
                         top.linkTo(pwEditText.bottom, margin = 10.dp)
                         start.linkTo(autoLoginSwitch.end, margin = 14.dp)
                     },
-                    color = Gray,
+                    color = MaterialTheme.colors.onBackground,
                     style = MaterialTheme.typography.body2
                 )
                 Button(
@@ -263,13 +261,13 @@ fun constraintLayoutContent() {
                         }
                         .background(color = Black, shape = RectangleShape),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Black,
+                        backgroundColor = MaterialTheme.colors.secondary,
                     )
 
                 ) {
                     Text(
                         text = stringResource(id = R.string.login),
-                        color = White,
+                        color = MaterialTheme.colors.primary,
                         style = MaterialTheme.typography.button
                     )
                 }
@@ -386,7 +384,7 @@ fun constraintLayoutContent() {
                         }
                         .border(
                             width = 1.dp,
-                            color = Gray,
+                            color = MaterialTheme.colors.onBackground,
                             shape = RectangleShape
                         ),
                     backgroundColor = White,

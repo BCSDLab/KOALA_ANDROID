@@ -62,7 +62,6 @@ dependencies {
     implementation project.composeMaterial
     implementation project.composePreview
     implementation project.constraintLayoutCompose
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     debugImplementation project.composeTooling
     androidTestImplementation project.composeUiTest
 
