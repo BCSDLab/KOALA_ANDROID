@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">KOALA_ANDROID</string>
+    <string name="login_id">아이디</string>
+    <string name="login_pw">비밀번호 입력</string>
+    <string name="login">로그인</string>
+    <string name="login_state_persistance">로그인 상태 유지</string>
+    <string name="find_id">아이디 찾기</string>
+    <string name="join_koala">회원가입</string>
+    <string name="find_pw">비밀번호 찾기</string>
+    <string name="normal_login">일반로그인</string>
+    <string name="sns_login">SNS로 로그인</string>
+    <string name="login_sns">SNS로 로그인하기</string>
+    <string name="use_non_member">비회원으로 이용하기</string>
+    <string name="google_login">구글 로그인</string>
+    <string name="naver_login">네이버 로그인</string>
+    <string name="kakao_login">카카오 로그인</string>
 </resources>
