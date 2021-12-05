@@ -2,6 +2,7 @@ package im.koala.bcsd.ui.textfield
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import im.koala.bcsd.R
@@ -42,8 +45,10 @@ fun KoalaTextField(
     trailingIcon: @Composable (RowScope.() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions(),
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     isError: Boolean = false,
     maxLines: Int = Int.MAX_VALUE,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     OutlinedTextField(
         value = value,
@@ -97,7 +102,9 @@ fun KoalaTextField(
             trailingIconColor = MaterialTheme.colors.onBackground,
         ),
         keyboardActions = keyboardActions,
-        keyboardOptions = keyboardOptions
+        keyboardOptions = keyboardOptions,
+        visualTransformation = visualTransformation,
+        interactionSource = interactionSource
     )
 }
 
@@ -112,16 +119,13 @@ fun KoalaPasswordTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
-    showPassword: Boolean = false
+    showPassword: Boolean = false,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     val showPassword = rememberSaveable { mutableStateOf(showPassword) }
 
     KoalaTextField(
-        value = if (showPassword.value) {
-            value
-        } else {
-            Array(value.length) { "⬤" }.joinToString("")
-        },
+        value = value,
         onValueChange = onValueChange,
         modifier = modifier,
         enabled = enabled,
@@ -145,10 +149,18 @@ fun KoalaPasswordTextField(
         isError = isError,
         keyboardOptions = KeyboardOptions(
             autoCorrect = false,
-            keyboardType = if (showPassword.value) KeyboardType.Ascii else KeyboardType.Password
+            keyboardType = KeyboardType.Password
         ),
         singleLine = true,
-        maxLines = 1
+        maxLines = 1,
+        interactionSource = interactionSource,
+        visualTransformation = if (showPassword.value) {
+            VisualTransformation.None
+        } else {
+            PasswordVisualTransformation(
+                mask = '⬤'
+            )
+        }
     )
 }
 
