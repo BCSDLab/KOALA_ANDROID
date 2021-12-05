@@ -3,6 +3,7 @@ package im.koala.bcsd
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,14 +26,16 @@ class MainActivity : ComponentActivity() {
             KoalaTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    KoalaButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .height(48.dp),
-                        onClick = { /*TODO*/ }
-                    ) {
-                        Greeting("Android")
+                    Column {
+                        KoalaButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                                .height(48.dp),
+                            onClick = { /*TODO*/ }
+                        ) {
+                            Greeting("Android")
+                        }
                     }
                 }
             }
