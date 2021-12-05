@@ -16,4 +16,5 @@
     <string name="google_login">구글 로그인</string>
     <string name="naver_login">네이버 로그인</string>
     <string name="kakao_login">카카오 로그인</string>
+    <string name="app_bar_title_signup">회원가입</string>
 </resources>
