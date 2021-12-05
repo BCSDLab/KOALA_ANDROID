@@ -2,6 +2,7 @@ package im.koala.bcsd.ui.signup.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,12 +14,16 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import im.koala.bcsd.R
+import im.koala.bcsd.ui.button.KoalaCircularCheckBox
 import im.koala.bcsd.ui.theme.GrayBorder
 import im.koala.bcsd.ui.theme.KoalaTheme
 
@@ -34,13 +39,13 @@ fun SignupSubtitle(
     ) {
         Text(
             text = text1,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier,
             style = MaterialTheme.typography.subtitle1,
             color = MaterialTheme.colors.secondary
         )
         Text(
             text = text2,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
+            modifier = Modifier.padding(top = 8.dp),
             style = MaterialTheme.typography.caption,
             color = MaterialTheme.colors.onBackground
         )
@@ -62,6 +67,35 @@ fun SignupTermBox(
             modifier = Modifier.padding(16.dp),
             text = termsText,
             style = MaterialTheme.typography.body2,
+            color = MaterialTheme.colors.secondary
+        )
+    }
+}
+
+@Composable
+fun SignupCheckBox(
+    modifier: Modifier = Modifier,
+    text: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = modifier.clickable(
+            role = Role.Checkbox
+        ) {
+            onCheckedChange(!checked)
+        },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        KoalaCircularCheckBox(
+            checked = checked,
+            onCheckedChange = onCheckedChange
+        )
+
+        Text(
+            modifier = Modifier.padding(start = 16.dp),
+            text = text,
+            style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.secondary
         )
     }
@@ -137,6 +171,28 @@ fun SignupTermBoxPreview() {
                 termsText = "제1조(목적)\n" +
                     "한강 서비스 이용약관은 bcsd lab에서 서비스를 제공함에 있어, 이용자간의 관리, 의무 및 책임 사항 등을 목적으로 합니다"
             )
+        }
+    }
+}
+
+@Preview("Signup Checkbox")
+@Composable
+fun SignupCheckBoxPreview() {
+    val checked = rememberSaveable { mutableStateOf(false) }
+
+    KoalaTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.background)
+                .padding(16.dp)
+        ) {
+            SignupCheckBox(
+                text = "약관 전체동의",
+                checked = checked.value,
+                onCheckedChange = {
+                    checked.value = it
+                })
         }
     }
 }
