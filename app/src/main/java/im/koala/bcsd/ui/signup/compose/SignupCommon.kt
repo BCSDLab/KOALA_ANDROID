@@ -1,6 +1,7 @@
 package im.koala.bcsd.ui.signup.compose
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,15 +19,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import im.koala.bcsd.R
+import im.koala.bcsd.ui.theme.GrayBorder
 import im.koala.bcsd.ui.theme.KoalaTheme
 
 @Composable
 fun SignupSubtitle(
+    modifier: Modifier = Modifier,
     text1: String,
     text2: String
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalAlignment = Alignment.Start
     ) {
         Text(
@@ -45,12 +48,34 @@ fun SignupSubtitle(
 }
 
 @Composable
+fun SignupTermBox(
+    modifier: Modifier = Modifier,
+    termsText: String
+) {
+    Box(
+        modifier = modifier.border(
+            width = 1.dp,
+            color = GrayBorder
+        )
+    ) {
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = termsText,
+            style = MaterialTheme.typography.body2,
+            color = MaterialTheme.colors.secondary
+        )
+    }
+}
+
+@Composable
 fun SignupPermissionItem(
+    modifier: Modifier = Modifier,
     icon: @Composable (() -> Unit),
     permissionName: String,
     permissionDescription: String
 ) {
     Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -80,8 +105,7 @@ fun SignupPermissionItem(
     }
 }
 
-
-@Preview
+@Preview("Signup Subtitle")
 @Composable
 fun SignupSubtitlePreview() {
     KoalaTheme {
@@ -89,6 +113,7 @@ fun SignupSubtitlePreview() {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colors.background)
+                .padding(16.dp)
         ) {
             SignupSubtitle(
                 text1 = "약관 동의",
@@ -98,7 +123,25 @@ fun SignupSubtitlePreview() {
     }
 }
 
-@Preview
+@Preview("Signup Terms Box")
+@Composable
+fun SignupTermBoxPreview() {
+    KoalaTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.background)
+                .padding(16.dp)
+        ) {
+            SignupTermBox(
+                termsText = "제1조(목적)\n" +
+                    "한강 서비스 이용약관은 bcsd lab에서 서비스를 제공함에 있어, 이용자간의 관리, 의무 및 책임 사항 등을 목적으로 합니다"
+            )
+        }
+    }
+}
+
+@Preview("Signup Permission Item")
 @Composable
 fun SignupPermissionItemPreview() {
     KoalaTheme {
@@ -106,6 +149,7 @@ fun SignupPermissionItemPreview() {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colors.background)
+                .padding(16.dp)
         ) {
             SignupPermissionItem(
                 icon = {
