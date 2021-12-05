@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -74,31 +75,49 @@ fun SignupTermBox(
 
 @Composable
 fun SignupCheckBox(
-    modifier: Modifier = Modifier,
     text: String,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+    content: @Composable (BoxScope.() -> Unit)? = null
 ) {
-    Row(
-        modifier = modifier.clickable(
-            role = Role.Checkbox
-        ) {
-            onCheckedChange(!checked)
-        },
-        verticalAlignment = Alignment.CenterVertically
+    Box(
+        modifier = Modifier
+            .clickable(
+                role = Role.Checkbox
+            ) {
+                onCheckedChange(!checked)
+            }
+            .padding(
+                start = 16.dp,
+                end = if (content == null) 16.dp else 4.dp,
+                top = if (content == null) 12.dp else 0.dp,
+                bottom = if (content == null) 12.dp else 0.dp
+            ),
+        contentAlignment = Alignment.CenterEnd
     ) {
-        KoalaCircularCheckBox(
-            checked = checked,
-            onCheckedChange = onCheckedChange
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            KoalaCircularCheckBox(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+            )
 
-        Text(
-            modifier = Modifier.padding(start = 16.dp),
-            text = text,
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.secondary
-        )
+            Text(
+                modifier = Modifier
+                    .padding(start = 16.dp)
+                    .fillMaxWidth(),
+                text = text,
+                style = MaterialTheme.typography.body1,
+                color = MaterialTheme.colors.secondary
+            )
+        }
+
+        if (content != null) {
+            content()
+        }
     }
+
 }
 
 @Composable

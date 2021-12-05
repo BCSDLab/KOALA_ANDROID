@@ -17,4 +17,11 @@
     <string name="naver_login">네이버 로그인</string>
     <string name="kakao_login">카카오 로그인</string>
     <string name="app_bar_title_signup">회원가입</string>
+    <string name="signup_subtitle_terms">약관 동의</string>
+    <string name="signup_subtitle_terms_description">원활한 사용을 위하여 필수 약관 동의가 필요합니다.</string>
+    <string name="signup_terms_agree_all">약관 전체동의</string>
+    <string name="signup_terms_privacy">개인정보 이용약관 (필수)</string>
+    <string name="signup_terms_koala">Koala 이용약관 (필수)</string>
+    <string name="signup_terms_privacy_detail">.</string>
+    <string name="signup_terms_koala_detail">\"제1조(목적)\n한강 서비스 이용약관은 bcsd lab에서 서비스를 제공함에 있어, 이용자간의 관리, 의무 및 책임 사항 등을 목적으로 합니다\n\n커뮤니티 이용규칙\n한강 서비스 이용약관은 bcsd lab에서 서비스를 제공함에 있어, 이용자간의 관리, 의무 및 책임 사항 등을 목적으로 합니다\"</string>
 </resources>
