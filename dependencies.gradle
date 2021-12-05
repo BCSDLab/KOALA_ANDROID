@@ -32,6 +32,13 @@ ext {
     composeUiTest = "androidx.compose.ui:ui-test-junit4:$compose_version"
     composeTooling = "androidx.compose.ui:ui-tooling:$compose_version"
 
+    /* Dependency - ConstraintLayout Compose */
+    def constraint_layout = "1.0.0-beta02"
+    constraintLayoutCompose = "androidx.constraintlayout:constraintlayout-compose:$constraint_layout"
+
+    /* Dependency - Icon Compose */
+   // iconCompose = "androidx.constraintlayout:constraintlayout-compose:$compose_version"
+
 
     /* Dependency - Activity Compose */
     def compose_activity = "1.4.0-rc01"

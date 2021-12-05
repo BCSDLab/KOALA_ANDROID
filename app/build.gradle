@@ -61,6 +61,7 @@ dependencies {
     implementation project.activityCompose
     implementation project.composeMaterial
     implementation project.composePreview
+    implementation project.constraintLayoutCompose
     debugImplementation project.composeTooling
     androidTestImplementation project.composeUiTest
 
