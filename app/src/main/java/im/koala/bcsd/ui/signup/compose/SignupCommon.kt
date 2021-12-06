@@ -160,7 +160,7 @@ fun SignupPermissionItem(
 
 @Preview("Signup Subtitle")
 @Composable
-fun SignupSubtitlePreview() {
+private fun SignupSubtitlePreview() {
     KoalaTheme {
         Box(
             modifier = Modifier
@@ -178,7 +178,7 @@ fun SignupSubtitlePreview() {
 
 @Preview("Signup Terms Box")
 @Composable
-fun SignupTermBoxPreview() {
+private fun SignupTermBoxPreview() {
     KoalaTheme {
         Box(
             modifier = Modifier
@@ -196,7 +196,7 @@ fun SignupTermBoxPreview() {
 
 @Preview("Signup Checkbox")
 @Composable
-fun SignupCheckBoxPreview() {
+private fun SignupCheckBoxPreview() {
     val checked = rememberSaveable { mutableStateOf(false) }
 
     KoalaTheme {
@@ -218,7 +218,7 @@ fun SignupCheckBoxPreview() {
 
 @Preview("Signup Permission Item")
 @Composable
-fun SignupPermissionItemPreview() {
+private fun SignupPermissionItemPreview() {
     KoalaTheme {
         Box(
             modifier = Modifier
