@@ -151,7 +151,9 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
                                 if (step.value == STEP_INPUT_USER_INFO) {
                                     coroutineScope.launch {
                                         signupViewModel.signUp {
-                                            if(it) {}//TODO signup gogo
+                                            if(it) { //Signup Completed
+
+                                            }
                                         }
                                     }
                                 } else {

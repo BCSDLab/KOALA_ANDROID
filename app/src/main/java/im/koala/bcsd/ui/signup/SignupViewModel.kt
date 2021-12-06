@@ -63,6 +63,7 @@ class SignupViewModel : ViewModel() {
 
     fun setEmail(email: String) {
         _email.value = email
+        checkEmailFormat()
     }
 
     fun setNickname(nickname: String) {
@@ -90,6 +91,11 @@ class SignupViewModel : ViewModel() {
         _passwordMatch.value = password.value == password2.value
     }
 
+    fun checkEmailFormat() {
+        _emailErrorCode.value =
+            if (email.value?.isEmail() == false) EMAIL_IS_NOT_EMAIL_FORMAT else EMAIL_OK
+    }
+
     fun checkEmail() {
         emailJob?.let {
             if (it.isActive) it.cancel()
@@ -115,7 +121,7 @@ class SignupViewModel : ViewModel() {
         }
     }
 
-    suspend fun signUp(action: (canSignUp: Boolean) -> Unit) {
+    suspend fun signUp(action: (signupCompleted: Boolean) -> Unit) {
         checkEmail()
         checkId()
         checkNickname()
@@ -123,6 +129,8 @@ class SignupViewModel : ViewModel() {
         idJob?.let { it.join() }
         emailJob?.let { it.join() }
         nicknameJob?.let { it.join() }
+
+        // TODO: Signup gogo
 
         action(
             idErrorCode.value == ID_OK &&
