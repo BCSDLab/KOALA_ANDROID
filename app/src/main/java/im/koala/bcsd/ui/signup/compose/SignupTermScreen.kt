@@ -14,6 +14,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -30,15 +31,15 @@ import im.koala.bcsd.ui.theme.KoalaTheme
 
 @ExperimentalAnimationApi
 @Composable
-fun SignupTermScreen() {
-    val checkedTermsPrivacy = rememberSaveable { mutableStateOf(false) }
-    val checkedTermsKoala = rememberSaveable { mutableStateOf(false) }
-
+fun SignupTermScreen(
+    isCheckedTermsPrivacy : MutableState<Boolean>,
+    isCheckedTermsKoala : MutableState<Boolean>
+) {
     val isOpenedTermsPrivacyPanel = rememberSaveable { mutableStateOf(false) }
     val isOpenedTermsKoalaPanel = rememberSaveable { mutableStateOf(false) }
 
     val openTermsPrivacyPanelIconAngle: Float by animateFloatAsState(if (isOpenedTermsPrivacyPanel.value) 90f else 0f)
-    val openTermsKoalaPanelIconAngle: Float by animateFloatAsState(if (isOpenedTermsPrivacyPanel.value) 90f else 0f)
+    val openTermsKoalaPanelIconAngle: Float by animateFloatAsState(if (isOpenedTermsKoalaPanel.value) 90f else 0f)
 
     Column(
         modifier = Modifier.verticalScroll(state = ScrollState(0))
@@ -51,10 +52,10 @@ fun SignupTermScreen() {
 
         SignupCheckBox(
             text = stringResource(R.string.signup_terms_agree_all),
-            checked = checkedTermsPrivacy.value && checkedTermsKoala.value,
+            checked = isCheckedTermsPrivacy.value && isCheckedTermsKoala.value,
             onCheckedChange = {
-                checkedTermsPrivacy.value = it
-                checkedTermsKoala.value = it
+                isCheckedTermsPrivacy.value = it
+                isCheckedTermsKoala.value = it
             }
         )
 
@@ -65,9 +66,9 @@ fun SignupTermScreen() {
 
         SignupCheckBox(
             text = stringResource(R.string.signup_terms_privacy),
-            checked = checkedTermsPrivacy.value,
+            checked = isCheckedTermsPrivacy.value,
             onCheckedChange = {
-                checkedTermsPrivacy.value = it
+                isCheckedTermsPrivacy.value = it
             }
         ) {
             Icon(
@@ -95,9 +96,9 @@ fun SignupTermScreen() {
 
         SignupCheckBox(
             text = stringResource(R.string.signup_terms_koala),
-            checked = checkedTermsKoala.value,
+            checked = isCheckedTermsKoala.value,
             onCheckedChange = {
-                checkedTermsKoala.value = it
+                isCheckedTermsKoala.value = it
             }
         ) {
             Icon(
@@ -137,7 +138,10 @@ private fun SignupTermScreenPreview() {
                 ) {}
             }
         ) {
-            SignupTermScreen()
+            SignupTermScreen(
+                rememberSaveable { mutableStateOf(false) },
+                rememberSaveable { mutableStateOf(false) },
+            )
         }
     }
 }

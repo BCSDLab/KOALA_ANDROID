@@ -33,4 +33,6 @@
     <string name="signup_permission_item_storage">저장공간 (선택)</string>
     <string name="signup_permission_item_notification_storage">채팅방 이미지 저장/업로드</string>
     <string name="signup_permission_info"><![CDATA[필수 권한을 허용하지 않는 경우,  정상적인 서비스 사용이 어려울 수 있습니다.\n선택 권한을 허용하지 않아도 해당 기능 외 서비스는 정상적으로 사용가능합니다.\n‘설정 > 애플리케이션 > koala > 권한’에서 재설정이 가능합니다.]]></string>
+    <string name="signup_next">다음</string>
+    <string name="signup_finish">완료</string>
 </resources>

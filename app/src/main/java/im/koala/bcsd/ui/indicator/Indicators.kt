@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,13 +39,13 @@ fun KoalaDotIndicator(
     ) {
         for (i in 0 until dotCount) {
             Dot(
-                modifier = Modifier.absoluteOffset(x = dotPadding * i),
+                modifier = Modifier.padding(start = dotPadding * i),
                 dotColor = GrayDisabled
             )
         }
 
         Dot(
-            modifier = Modifier.absoluteOffset(x = yellowDotPadding),
+            modifier = Modifier.padding(start = yellowDotPadding),
             dotColor = MaterialTheme.colors.onError
         )
     }
