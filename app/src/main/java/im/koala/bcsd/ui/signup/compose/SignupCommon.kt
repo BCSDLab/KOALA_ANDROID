@@ -1,10 +1,12 @@
 package im.koala.bcsd.ui.signup.compose
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,10 +19,12 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
@@ -79,50 +83,85 @@ fun SignupTermBox(
     }
 }
 
+@ExperimentalAnimationApi
 @Composable
-fun SignupCheckBox(
+fun SignupTermCheckBox(
+    modifier: Modifier = Modifier,
     text: String,
     checked: Boolean,
+    isOpened: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
-    content: @Composable (BoxScope.() -> Unit)? = null
+    onOpenButtonClicked: ((Boolean) -> Unit)? = null,
+    termsText: String? = null,
 ) {
-    Box(
-        modifier = Modifier
-            .clickable(
-                role = Role.Checkbox
-            ) {
-                onCheckedChange(!checked)
-            }
-            .padding(
-                start = 16.dp,
-                end = if (content == null) 16.dp else 4.dp,
-                top = if (content == null) 12.dp else 0.dp,
-                bottom = if (content == null) 12.dp else 0.dp
-            ),
-        contentAlignment = Alignment.CenterEnd
+    val iconAngle: Float by animateFloatAsState(if (isOpened) 90f else 0f)
+
+    Column(
+        modifier = modifier
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+        Box(
+            modifier = Modifier
+                .clickable(
+                    role = Role.Checkbox
+                ) {
+                    onCheckedChange(!checked)
+                }
+                .padding(
+                    start = 16.dp,
+                    end = if (termsText == null) 16.dp else 4.dp,
+                    top = if (termsText == null) 12.dp else 0.dp,
+                    bottom = if (termsText == null) 12.dp else 0.dp
+                ),
+            contentAlignment = Alignment.CenterEnd
         ) {
-            KoalaCircularCheckBox(
-                checked = checked,
-                onCheckedChange = onCheckedChange,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                KoalaCircularCheckBox(
+                    checked = checked,
+                    onCheckedChange = onCheckedChange,
+                )
 
-            Text(
-                modifier = Modifier
-                    .padding(start = 16.dp)
-                    .fillMaxWidth(),
-                text = text,
-                style = MaterialTheme.typography.body1,
-                color = MaterialTheme.colors.secondary
-            )
+                Text(
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .fillMaxWidth(),
+                    text = text,
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.secondary
+                )
+            }
+
+            if (termsText != null) {
+                Icon(
+                    modifier = Modifier
+                        .clickable {
+                            if (onOpenButtonClicked != null) {
+                                onOpenButtonClicked(!isOpened)
+                            }
+                        }
+                        .rotate(iconAngle)
+                        .padding(12.dp),
+                    painter = painterResource(id = R.drawable.ic_chevron_right),
+                    contentDescription = "",
+                    tint = MaterialTheme.colors.onBackground
+                )
+            }
         }
 
-        if (content != null) {
-            content()
+        if(termsText != null) {
+            AnimatedVisibility(visible = isOpened) {
+                SignupTermBox(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    termsText = termsText
+                )
+            }
         }
+
     }
+
 
 }
 
@@ -182,7 +221,10 @@ fun SignupTextFieldWithErrorMessage(
         contentAlignment = Alignment.BottomStart
     ) {
         KoalaTextField(
-            modifier = Modifier.padding(bottom = 24.dp).height(48.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(bottom = 24.dp)
+                .height(48.dp)
+                .fillMaxWidth(),
             value = value,
             onValueChange = onValueChange,
             isError = isError,
@@ -194,7 +236,7 @@ fun SignupTextFieldWithErrorMessage(
                 Text(text = hint)
             }
         )
-        if(isError) {
+        if (isError) {
             Text(
                 text = errorMessage,
                 modifier = Modifier
@@ -226,7 +268,10 @@ fun SignupPasswordTextFieldWithErrorMessage(
         contentAlignment = Alignment.BottomStart
     ) {
         KoalaPasswordTextField(
-            modifier = Modifier.padding(bottom = 24.dp).height(48.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(bottom = 24.dp)
+                .height(48.dp)
+                .fillMaxWidth(),
             value = value,
             onValueChange = onValueChange,
             isError = isError,
@@ -284,10 +329,13 @@ private fun SignupTermBoxPreview() {
     }
 }
 
+@ExperimentalAnimationApi
 @Preview("Signup Checkbox")
 @Composable
 private fun SignupCheckBoxPreview() {
     val checked = rememberSaveable { mutableStateOf(false) }
+    val opened = rememberSaveable { mutableStateOf(false) }
+
 
     KoalaTheme {
         Box(
@@ -296,11 +344,15 @@ private fun SignupCheckBoxPreview() {
                 .background(MaterialTheme.colors.background)
                 .padding(16.dp)
         ) {
-            SignupCheckBox(
+            SignupTermCheckBox(
                 text = "약관 전체동의",
                 checked = checked.value,
                 onCheckedChange = {
                     checked.value = it
+                },
+                termsText = "asdfasdf\nasdfasdf",
+                onOpenButtonClicked = {
+                    opened.value == it
                 })
         }
     }
