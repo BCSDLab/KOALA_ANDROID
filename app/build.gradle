@@ -61,12 +61,14 @@ dependencies {
     implementation project.activityCompose
     implementation project.composeMaterial
     implementation project.composePreview
+    implementation project.composeLiveData
     implementation project.constraintLayoutCompose
     debugImplementation project.composeTooling
     androidTestImplementation project.composeUiTest
 
     implementation project.androidxLifecycleLivedata
     implementation project.androidLifecycleViewmodel
+    implementation project.androidLifecycleViewmodelCompose
     implementation project.androidLifecycleRuntimeKtx
 
     testImplementation project.junit

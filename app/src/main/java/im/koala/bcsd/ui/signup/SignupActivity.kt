@@ -23,21 +23,26 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.appbar.KoalaTextAppBar
 import im.koala.bcsd.ui.button.KoalaButton
 import im.koala.bcsd.ui.indicator.KoalaDotIndicator
+import im.koala.bcsd.ui.signup.compose.SignupInputUserInfo
 import im.koala.bcsd.ui.signup.compose.SignupPermissionScreen
 import im.koala.bcsd.ui.signup.compose.SignupTermScreen
 import im.koala.bcsd.ui.theme.KoalaTheme
+import im.koala.bcsd.util.PasswordChecker
+import kotlinx.coroutines.launch
 
 const val STEP_TERMS = 0
 const val STEP_PERMISSION = 1
@@ -58,18 +63,43 @@ class SignupActivity : ComponentActivity() {
 }
 
 @ExperimentalAnimationApi
-@Preview
 @Composable
-fun SignupContent() {
+fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
+    val coroutineScope = rememberCoroutineScope()
     val activity = LocalContext.current as SignupActivity
+
     val step = rememberSaveable { mutableStateOf(STEP_TERMS) }
 
     val isCheckedTermsPrivacy = rememberSaveable { mutableStateOf(false) }
     val isCheckedTermsKoala = rememberSaveable { mutableStateOf(false) }
 
+    val id = signupViewModel.id.observeAsState("")
+    val password = signupViewModel.password.observeAsState("")
+    val password2 = signupViewModel.password2.observeAsState("")
+    val email = signupViewModel.email.observeAsState("")
+    val nickname = signupViewModel.nickname.observeAsState("")
+    val idErrorCode = signupViewModel.idErrorCode.observeAsState(ID_OK)
+    val passwordErrorCode =
+        signupViewModel.passwordErrorCode.observeAsState(PasswordChecker.PASSWORD_OK)
+    val passwordMatch = signupViewModel.passwordMatch.observeAsState(true)
+    val emailErrorCode = signupViewModel.emailErrorCode.observeAsState(EMAIL_OK)
+    val nicknameErrorCode = signupViewModel.nicknameErrorCode.observeAsState(NICKNAME_OK)
+
+    val canSignUp = idErrorCode.value == ID_OK &&
+        passwordErrorCode.value == PasswordChecker.PASSWORD_OK &&
+        passwordMatch.value &&
+        emailErrorCode.value == EMAIL_OK &&
+        nicknameErrorCode.value == NICKNAME_OK &&
+        id.value.isNotEmpty() &&
+        password.value.isNotEmpty() &&
+        password2.value.isNotEmpty() &&
+        email.value.isNotEmpty() &&
+        nickname.value.isNotEmpty()
+
     val nextButtonEnabled = when (step.value) {
         STEP_TERMS -> isCheckedTermsPrivacy.value && isCheckedTermsKoala.value
         STEP_PERMISSION -> true
+        STEP_INPUT_USER_INFO -> canSignUp
         else -> false
     }
 
@@ -119,7 +149,11 @@ fun SignupContent() {
                                 .height(48.dp),
                             onClick = {
                                 if (step.value == STEP_INPUT_USER_INFO) {
-
+                                    coroutineScope.launch {
+                                        signupViewModel.signUp {
+                                            if(it) {}//TODO signup gogo
+                                        }
+                                    }
                                 } else {
                                     step.value++
                                 }
@@ -138,25 +172,72 @@ fun SignupContent() {
                 ) {
                     AnimatedContent(
                         targetState = step.value,
-                    transitionSpec = {
-                        if (targetState > initialState) {
-                            slideInHorizontally({ width -> width / 2 }) + fadeIn() with
-                                slideOutHorizontally({ width -> -width / 2 }) + fadeOut()
-                        } else {
-                            slideInHorizontally({ width -> -width / 2 }) + fadeIn() with
-                                slideOutHorizontally({ width -> width / 2 }) + fadeOut()
-                        }.using(
-                            SizeTransform(clip = false)
-                        )
-                    }) { step ->
-                        when(step) {
-                            STEP_TERMS -> SignupTermScreen(isCheckedTermsPrivacy, isCheckedTermsKoala)
+                        transitionSpec = {
+                            if (targetState > initialState) {
+                                slideInHorizontally({ width -> width / 2 }) + fadeIn() with
+                                    slideOutHorizontally({ width -> -width / 2 }) + fadeOut()
+                            } else {
+                                slideInHorizontally({ width -> -width / 2 }) + fadeIn() with
+                                    slideOutHorizontally({ width -> width / 2 }) + fadeOut()
+                            }.using(
+                                SizeTransform(clip = false)
+                            )
+                        }) { step ->
+                        when (step) {
+                            STEP_TERMS -> SignupTermScreen(
+                                isCheckedTermsPrivacy,
+                                isCheckedTermsKoala
+                            )
                             STEP_PERMISSION -> SignupPermissionScreen()
+                            STEP_INPUT_USER_INFO -> SignupInputUserInfo(
+                                id = id.value,
+                                password = password.value,
+                                password2 = password2.value,
+                                email = email.value,
+                                nickname = nickname.value,
+                                idErrorMessage = when (idErrorCode.value) {
+                                    ID_IS_DUPLICATED -> stringResource(R.string.signup_input_error_id_duplicated)
+                                    else -> null
+                                },
+                                passwordErrorMessage = PasswordChecker.PasswordErrorString(
+                                    passwordErrorCode = passwordErrorCode.value
+                                ),
+                                password2ErrorMessage = if (!passwordMatch.value) {
+                                    stringResource(id = R.string.signup_input_error_password_not_match)
+                                } else {
+                                    null
+                                },
+                                emailErrorMessage = when (emailErrorCode.value) {
+                                    EMAIL_IS_NOT_EMAIL_FORMAT -> stringResource(R.string.signup_input_error_email_format_not_match)
+                                    else -> null
+                                },
+                                nicknameErrorMessage = when (nicknameErrorCode.value) {
+                                    NICKNAME_IS_DUPLICATED -> stringResource(R.string.signup_input_error_nickname_duplicated)
+                                    else -> null
+                                },
+                                onIdChanged = {
+                                    signupViewModel.setId(it)
+                                },
+                                onPasswordChanged = {
+                                    signupViewModel.setPassword(it)
+                                },
+                                onPassword2Changed = {
+                                    signupViewModel.setPassword2(it)
+                                },
+                                onEmailChanged = {
+                                    signupViewModel.setEmail(it)
+                                },
+                                onNicknameChanged = {
+                                    signupViewModel.setNickname(it)
+                                },
+                                onFocusChanged = {
+
+                                }
+                            )
                         }
                     }
                 }
             }
         }
-
     }
 }

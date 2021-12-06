@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -21,10 +23,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.button.KoalaCircularCheckBox
+import im.koala.bcsd.ui.textfield.KoalaPasswordTextField
+import im.koala.bcsd.ui.textfield.KoalaTextField
 import im.koala.bcsd.ui.theme.GrayBorder
 import im.koala.bcsd.ui.theme.KoalaTheme
 
@@ -158,6 +164,90 @@ fun SignupPermissionItem(
     }
 }
 
+@Composable
+fun SignupTextFieldWithErrorMessage(
+    modifier: Modifier = Modifier,
+    value: String,
+    hint: String,
+    onValueChange: (String) -> Unit,
+    isError: Boolean,
+    errorMessage: String,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions()
+) {
+    Box(
+        modifier = modifier
+            .padding(start = 16.dp, end = 16.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.BottomStart
+    ) {
+        KoalaTextField(
+            modifier = Modifier.padding(bottom = 24.dp).height(48.dp).fillMaxWidth(),
+            value = value,
+            onValueChange = onValueChange,
+            isError = isError,
+            singleLine = true,
+            maxLines = 1,
+            keyboardActions = keyboardActions,
+            keyboardOptions = keyboardOptions,
+            placeholder = {
+                Text(text = hint)
+            }
+        )
+        if(isError) {
+            Text(
+                text = errorMessage,
+                modifier = Modifier
+                    .padding(vertical = 4.dp),
+                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colors.onError,
+                fontSize = 11.sp
+            )
+        }
+
+    }
+}
+
+@Composable
+fun SignupPasswordTextFieldWithErrorMessage(
+    modifier: Modifier = Modifier,
+    value: String,
+    hint: String,
+    onValueChange: (String) -> Unit,
+    isError: Boolean,
+    errorMessage: String,
+    imeAction: ImeAction = ImeAction.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
+) {
+    Box(
+        modifier = modifier
+            .padding(start = 16.dp, end = 16.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.BottomStart
+    ) {
+        KoalaPasswordTextField(
+            modifier = Modifier.padding(bottom = 24.dp).height(48.dp).fillMaxWidth(),
+            value = value,
+            onValueChange = onValueChange,
+            isError = isError,
+            imeAction = imeAction,
+            placeholder = {
+                Text(text = hint)
+            },
+            keyboardActions = keyboardActions
+        )
+        if (isError) {
+            Text(
+                text = errorMessage,
+                modifier = Modifier.padding(vertical = 4.dp),
+                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colors.onError,
+                fontSize = 11.sp
+            )
+        }
+    }
+}
+
 @Preview("Signup Subtitle")
 @Composable
 private fun SignupSubtitlePreview() {
@@ -235,6 +325,52 @@ private fun SignupPermissionItemPreview() {
                 },
                 permissionName = "알림 (필수)",
                 permissionDescription = "키워드 알림시 필수 이용"
+            )
+        }
+    }
+}
+
+@Preview("Signup TextField with error message")
+@Composable
+private fun SignupTextFieldWithErrorMessagePreview() {
+    KoalaTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.background)
+                .padding(16.dp)
+        ) {
+            val text = rememberSaveable { mutableStateOf("") }
+
+            SignupTextFieldWithErrorMessage(
+                value = text.value,
+                onValueChange = { text.value = it },
+                isError = text.value != "asdf",
+                errorMessage = "asdf 입력하면 사라짐",
+                hint = "asdf"
+            )
+        }
+    }
+}
+
+@Preview("Signup Password TextField with error message")
+@Composable
+private fun SignupPasswordTextFieldWithErrorMessagePreview() {
+    KoalaTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.background)
+                .padding(16.dp)
+        ) {
+            val text = rememberSaveable { mutableStateOf("") }
+
+            SignupPasswordTextFieldWithErrorMessage(
+                value = text.value,
+                onValueChange = { text.value = it },
+                isError = text.value != "asdf",
+                errorMessage = "asdf 입력하면 사라짐",
+                hint = "asdf"
             )
         }
     }

@@ -31,6 +31,7 @@ ext {
     composePreview = "androidx.compose.ui:ui-tooling-preview:$compose_version"
     composeUiTest = "androidx.compose.ui:ui-test-junit4:$compose_version"
     composeTooling = "androidx.compose.ui:ui-tooling:$compose_version"
+    composeLiveData = "androidx.compose.runtime:runtime-livedata:$compose_version"
 
     /* Dependency - ConstraintLayout Compose */
     def constraint_layout = "1.0.0-beta02"
@@ -60,9 +61,10 @@ ext {
     androidxPagingCommon = "androidx.paging:paging-common:$paging_version"
 
     /* Dependency - AndroidX Lifecycle */
-    def android_lifecycle_version = "2.3.1"
+    def android_lifecycle_version = "2.4.0"
     androidxLifecycleLivedata = "androidx.lifecycle:lifecycle-livedata-ktx:$android_lifecycle_version"
     androidLifecycleViewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$android_lifecycle_version"
+    androidLifecycleViewmodelCompose = "androidx.lifecycle:lifecycle-viewmodel-compose:$android_lifecycle_version"
     androidLifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:$android_lifecycle_version"
 
     /* Dependency - Retrofit2 */
