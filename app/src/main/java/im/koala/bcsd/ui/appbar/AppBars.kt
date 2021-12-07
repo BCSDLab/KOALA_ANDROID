@@ -117,7 +117,7 @@ fun KoalaAppBar() {
     TopAppBar(
         title = {
             Image(
-                painter = painterResource(id = R.drawable.ic_koala_logo),
+                painter = painterResource(id = R.drawable.ic_koala_logo_small),
                 contentDescription = stringResource(
                     id = R.string.koala_logo_content_description
                 )

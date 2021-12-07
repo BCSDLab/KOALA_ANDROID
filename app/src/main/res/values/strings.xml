@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">KOALA_ANDROID</string>
-
     <string name="back_button_content_description">Back</string>
     <string name="koala_logo_content_description">Back</string>
 
