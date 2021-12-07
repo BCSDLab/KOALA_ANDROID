@@ -8,7 +8,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,7 +68,8 @@ fun FindPasswordScreen() {
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 width = Dimension.fillToConstraints
-            }) {
+            }
+        ) {
         }
         FindPassword(
             modifier = Modifier.constrainAs(findPasswordLayout) {
@@ -73,7 +79,8 @@ fun FindPasswordScreen() {
                 bottom.linkTo(parent.bottom)
                 height = Dimension.fillToConstraints
                 width = Dimension.fillToConstraints
-            })
+            }
+        )
     }
 }
 
