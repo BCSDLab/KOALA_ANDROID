@@ -86,8 +86,10 @@ fun SignupInputUserInfo(
 
                 1 -> SignupPasswordTextFieldWithErrorMessage(
                     modifier = Modifier.onFocusChanged {
-                        animateScrollToItem(1)
-                        onFocusChanged()
+                        if(it.isFocused) {
+                            animateScrollToItem(1)
+                            onFocusChanged()
+                        }
                     },
                     value = password,
                     onValueChange = onPasswordChanged,

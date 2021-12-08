@@ -23,11 +23,13 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -43,6 +45,8 @@ import im.koala.bcsd.ui.signup.compose.SignupPermissionScreen
 import im.koala.bcsd.ui.signup.compose.SignupTermScreen
 import im.koala.bcsd.ui.theme.KoalaTheme
 import im.koala.bcsd.util.PasswordChecker
+import im.koala.bcsd.util.compose.Keyboard
+import im.koala.bcsd.util.compose.keyboardAsState
 import kotlinx.coroutines.launch
 
 const val STEP_TERMS = 0
@@ -52,6 +56,7 @@ const val STEP_INPUT_USER_INFO = 2
 const val STEP_COUNT = 3
 
 @ExperimentalAnimationApi
+@ExperimentalComposeUiApi
 class SignupActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,11 +68,13 @@ class SignupActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @Composable
 fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
     val coroutineScope = rememberCoroutineScope()
     val activity = LocalContext.current as SignupActivity
+    val keyboardOpened by keyboardAsState()
 
     val step = rememberSaveable { mutableStateOf(STEP_TERMS) }
 
@@ -141,32 +148,34 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
                     ) {}
                 },
                 bottomBar = {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        KoalaDotIndicator(
-                            modifier = Modifier.padding(16.dp),
-                            dotCount = STEP_COUNT, dotPosition = step.value
-                        )
-
-                        KoalaButton(
-                            modifier = Modifier
-                                .padding(start = 16.dp, end = 16.dp, bottom = 40.dp)
-                                .fillMaxWidth()
-                                .height(48.dp),
-                            onClick = {
-                                if (step.value == STEP_INPUT_USER_INFO) {
-                                    coroutineScope.launch {
-                                        signupViewModel.signUp()
-                                    }
-                                } else {
-                                    step.value++
-                                }
-                            },
-                            enabled = nextButtonEnabled
+                    if (keyboardOpened == Keyboard.Closed) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = nextButtonText)
+                            KoalaDotIndicator(
+                                modifier = Modifier.padding(16.dp),
+                                dotCount = STEP_COUNT, dotPosition = step.value
+                            )
+
+                            KoalaButton(
+                                modifier = Modifier
+                                    .padding(start = 16.dp, end = 16.dp, bottom = 40.dp)
+                                    .fillMaxWidth()
+                                    .height(48.dp),
+                                onClick = {
+                                    if (step.value == STEP_INPUT_USER_INFO) {
+                                        coroutineScope.launch {
+                                            signupViewModel.signUp()
+                                        }
+                                    } else {
+                                        step.value++
+                                    }
+                                },
+                                enabled = nextButtonEnabled
+                            ) {
+                                Text(text = nextButtonText)
+                            }
                         }
                     }
                 }
