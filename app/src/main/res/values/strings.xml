@@ -52,4 +52,7 @@
     <string name="signup_input_error_email_format_not_match">이메일 형식이 알맞지 않습니다.</string>
     <string name="signup_input_error_nickname_duplicated">이미 사용중인 닉네임입니다.</string>
     <string name="special">특수문자</string>
+    <string name="signup_completed_title">회원가입이 되었습니다.</string>
+    <string name="signup_completed_message">환영합니다. 지금 바로 Koala를 이용해 볼까요?</string>
+    <string name="signup_goto_login">로그인하러 가기</string>
 </resources>

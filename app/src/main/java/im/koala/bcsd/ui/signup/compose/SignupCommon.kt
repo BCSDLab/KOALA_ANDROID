@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -26,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -149,7 +153,7 @@ fun SignupTermCheckBox(
             }
         }
 
-        if(termsText != null) {
+        if (termsText != null) {
             AnimatedVisibility(visible = isOpened) {
                 SignupTermBox(
                     modifier = Modifier
@@ -293,7 +297,47 @@ fun SignupPasswordTextFieldWithErrorMessage(
     }
 }
 
-@Preview("Signup Subtitle")
+@Composable
+fun SignupCompletedDialog(
+    onLoginButtonClick: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = {},
+        title = {
+            Text(
+                text = stringResource(R.string.signup_completed_title),
+                style = MaterialTheme.typography.body1,
+                color = MaterialTheme.colors.secondary
+            )
+        },
+        text = {
+            Text(
+                text = stringResource(R.string.signup_completed_message),
+                style = MaterialTheme.typography.body2,
+                color = MaterialTheme.colors.secondary
+            )
+        },
+        buttons = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.End) {
+                Button(
+                    modifier = Modifier.padding(8.dp),
+                    onClick = onLoginButtonClick,
+                    elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.signup_goto_login),
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.secondary
+                    )
+                }
+            }
+        }
+    )
+}
+
+@Preview("Signup subtitle")
 @Composable
 private fun SignupSubtitlePreview() {
     KoalaTheme {
@@ -311,7 +355,7 @@ private fun SignupSubtitlePreview() {
     }
 }
 
-@Preview("Signup Terms Box")
+@Preview("Signup terms box")
 @Composable
 private fun SignupTermBoxPreview() {
     KoalaTheme {
@@ -330,7 +374,7 @@ private fun SignupTermBoxPreview() {
 }
 
 @ExperimentalAnimationApi
-@Preview("Signup Checkbox")
+@Preview("Signup checkbox")
 @Composable
 private fun SignupCheckBoxPreview() {
     val checked = rememberSaveable { mutableStateOf(false) }
@@ -358,7 +402,7 @@ private fun SignupCheckBoxPreview() {
     }
 }
 
-@Preview("Signup Permission Item")
+@Preview("Signup permission item")
 @Composable
 private fun SignupPermissionItemPreview() {
     KoalaTheme {
@@ -382,7 +426,7 @@ private fun SignupPermissionItemPreview() {
     }
 }
 
-@Preview("Signup TextField with error message")
+@Preview("Signup text field with error message")
 @Composable
 private fun SignupTextFieldWithErrorMessagePreview() {
     KoalaTheme {
@@ -405,7 +449,7 @@ private fun SignupTextFieldWithErrorMessagePreview() {
     }
 }
 
-@Preview("Signup Password TextField with error message")
+@Preview("Signup password textfield with error message")
 @Composable
 private fun SignupPasswordTextFieldWithErrorMessagePreview() {
     KoalaTheme {
@@ -424,6 +468,23 @@ private fun SignupPasswordTextFieldWithErrorMessagePreview() {
                 errorMessage = "asdf 입력하면 사라짐",
                 hint = "asdf"
             )
+        }
+    }
+}
+
+@Preview("Signup completed dialog")
+@Composable
+private fun SignupCompletedDialogPreview() {
+    KoalaTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.background)
+                .padding(16.dp)
+        ) {
+            SignupCompletedDialog {
+
+            }
         }
     }
 }
