@@ -7,16 +7,19 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import im.koala.bcsd.R
 import kotlinx.coroutines.launch
 
+@ExperimentalComposeUiApi
 @Composable
 fun SignupInputUserInfo(
     id: String,
@@ -37,6 +40,7 @@ fun SignupInputUserInfo(
     onFocusChanged: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
+    val softwareKeyboardController = LocalSoftwareKeyboardController.current
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -66,8 +70,10 @@ fun SignupInputUserInfo(
             when (index) {
                 0 -> SignupTextFieldWithErrorMessage(
                     modifier = Modifier.onFocusChanged {
-                        animateScrollToItem(0)
-                        onFocusChanged()
+                        if (it.isFocused) {
+                            animateScrollToItem(0)
+                            onFocusChanged()
+                        }
                     },
                     value = id,
                     onValueChange = onIdChanged,
@@ -86,7 +92,7 @@ fun SignupInputUserInfo(
 
                 1 -> SignupPasswordTextFieldWithErrorMessage(
                     modifier = Modifier.onFocusChanged {
-                        if(it.isFocused) {
+                        if (it.isFocused) {
                             animateScrollToItem(1)
                             onFocusChanged()
                         }
@@ -106,8 +112,10 @@ fun SignupInputUserInfo(
 
                 2 -> SignupPasswordTextFieldWithErrorMessage(
                     modifier = Modifier.onFocusChanged {
-                        animateScrollToItem(2)
-                        onFocusChanged()
+                        if (it.isFocused) {
+                            animateScrollToItem(2)
+                            onFocusChanged()
+                        }
                     },
                     value = password2,
                     onValueChange = onPassword2Changed,
@@ -124,8 +132,10 @@ fun SignupInputUserInfo(
 
                 3 -> SignupTextFieldWithErrorMessage(
                     modifier = Modifier.onFocusChanged {
-                        animateScrollToItem(3)
-                        onFocusChanged()
+                        if (it.isFocused) {
+                            animateScrollToItem(3)
+                            onFocusChanged()
+                        }
                     },
                     value = email,
                     onValueChange = onEmailChanged,
@@ -144,8 +154,10 @@ fun SignupInputUserInfo(
 
                 4 -> SignupTextFieldWithErrorMessage(
                     modifier = Modifier.onFocusChanged {
-                        animateScrollToItem(4)
-                        onFocusChanged()
+                        if (it.isFocused) {
+                            animateScrollToItem(4)
+                            onFocusChanged()
+                        }
                     },
                     value = nickname,
                     onValueChange = onNicknameChanged,
@@ -153,12 +165,12 @@ fun SignupInputUserInfo(
                     errorMessage = nicknameErrorMessage ?: "",
                     hint = stringResource(R.string.signup_input_hint_nickname),
                     keyboardActions = KeyboardActions(
-                        onNext = {
-                            focusManager.moveFocus(FocusDirection.Down)
+                        onDone = {
+                            softwareKeyboardController?.hide()
                         }
                     ),
                     keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next
+                        imeAction = ImeAction.Done
                     )
                 )
             }
