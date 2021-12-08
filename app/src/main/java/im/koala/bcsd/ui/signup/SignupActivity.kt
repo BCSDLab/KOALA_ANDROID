@@ -37,6 +37,7 @@ import im.koala.bcsd.R
 import im.koala.bcsd.ui.appbar.KoalaTextAppBar
 import im.koala.bcsd.ui.button.KoalaButton
 import im.koala.bcsd.ui.indicator.KoalaDotIndicator
+import im.koala.bcsd.ui.signup.compose.SignupCompletedDialog
 import im.koala.bcsd.ui.signup.compose.SignupInputUserInfo
 import im.koala.bcsd.ui.signup.compose.SignupPermissionScreen
 import im.koala.bcsd.ui.signup.compose.SignupTermScreen
@@ -84,6 +85,7 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
     val passwordMatch = signupViewModel.passwordMatch.observeAsState(true)
     val emailErrorCode = signupViewModel.emailErrorCode.observeAsState(EMAIL_OK)
     val nicknameErrorCode = signupViewModel.nicknameErrorCode.observeAsState(NICKNAME_OK)
+    val signupCompleted = signupViewModel.signupCompleted.observeAsState(false)
 
     val canSignUp = idErrorCode.value == ID_OK &&
         passwordErrorCode.value == PasswordChecker.PASSWORD_OK &&
@@ -119,6 +121,12 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
     BackHandler(onBack = onBack)
 
     KoalaTheme {
+        if (signupCompleted.value) {
+            SignupCompletedDialog {
+                // TODO : Login screen gogo
+            }
+        }
+
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
@@ -150,11 +158,7 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
                             onClick = {
                                 if (step.value == STEP_INPUT_USER_INFO) {
                                     coroutineScope.launch {
-                                        signupViewModel.signUp {
-                                            if(it) { //Signup Completed
-
-                                            }
-                                        }
+                                        signupViewModel.signUp()
                                     }
                                 } else {
                                     step.value++

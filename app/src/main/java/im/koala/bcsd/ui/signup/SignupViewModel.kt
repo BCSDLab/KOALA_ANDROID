@@ -31,6 +31,8 @@ class SignupViewModel : ViewModel() {
     private val _emailErrorCode = MutableLiveData<Int>()
     private val _nicknameErrorCode = MutableLiveData<Int>()
 
+    private val _signupCompleted = MutableLiveData<Boolean>()
+
     val id: LiveData<String> get() = _id
     val password: LiveData<String> get() = _password
     val password2: LiveData<String> get() = _password2
@@ -42,6 +44,8 @@ class SignupViewModel : ViewModel() {
     val passwordMatch: LiveData<Boolean> get() = _passwordMatch
     val emailErrorCode: LiveData<Int> get() = _emailErrorCode
     val nicknameErrorCode: LiveData<Int> get() = _nicknameErrorCode
+
+    val signupCompleted: LiveData<Boolean> get() = _signupCompleted
 
     private var idJob: Job? = null
     private var emailJob: Job? = null
@@ -70,7 +74,7 @@ class SignupViewModel : ViewModel() {
         _nickname.value = nickname
     }
 
-    fun checkId() {
+    fun startCheckId() {
         idJob?.let {
             if (it.isActive) it.cancel()
         }
@@ -96,7 +100,7 @@ class SignupViewModel : ViewModel() {
             if (email.value?.isEmail() == false) EMAIL_IS_NOT_EMAIL_FORMAT else EMAIL_OK
     }
 
-    fun checkEmail() {
+    fun startCheckEmail() {
         emailJob?.let {
             if (it.isActive) it.cancel()
         }
@@ -109,7 +113,7 @@ class SignupViewModel : ViewModel() {
         }
     }
 
-    fun checkNickname() {
+    fun startCheckNickname() {
         nicknameJob?.let {
             if (it.isActive) it.cancel()
         }
@@ -121,10 +125,10 @@ class SignupViewModel : ViewModel() {
         }
     }
 
-    suspend fun signUp(action: (signupCompleted: Boolean) -> Unit) {
-        checkEmail()
-        checkId()
-        checkNickname()
+    suspend fun signUp() {
+        startCheckEmail()
+        startCheckId()
+        startCheckNickname()
 
         idJob?.let { it.join() }
         emailJob?.let { it.join() }
@@ -132,12 +136,11 @@ class SignupViewModel : ViewModel() {
 
         // TODO: Signup gogo
 
-        action(
-            idErrorCode.value == ID_OK &&
-                passwordErrorCode.value == PasswordChecker.PASSWORD_OK &&
-                passwordMatch.value == true &&
-                emailErrorCode.value == EMAIL_OK &&
-                nicknameErrorCode.value == NICKNAME_OK
-        )
+        if (idErrorCode.value == ID_OK &&
+            passwordErrorCode.value == PasswordChecker.PASSWORD_OK &&
+            passwordMatch.value == true &&
+            emailErrorCode.value == EMAIL_OK &&
+            nicknameErrorCode.value == NICKNAME_OK
+        ) _signupCompleted.value = true
     }
 }

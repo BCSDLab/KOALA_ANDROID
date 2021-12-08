@@ -320,7 +320,8 @@ fun SignupCompletedDialog(
         buttons = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.End) {
+                horizontalAlignment = Alignment.End
+            ) {
                 Button(
                     modifier = Modifier.padding(8.dp),
                     onClick = onLoginButtonClick,
