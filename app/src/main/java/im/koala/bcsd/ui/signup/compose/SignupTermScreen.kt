@@ -44,7 +44,7 @@ fun SignupTermScreen(
         state = listState
     ) {
         items(3) { index ->
-            when(index) {
+            when (index) {
                 0 -> Column {
                     SignupSubtitle(
                         modifier = Modifier.padding(

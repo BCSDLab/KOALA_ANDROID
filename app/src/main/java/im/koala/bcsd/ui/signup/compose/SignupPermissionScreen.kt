@@ -91,7 +91,6 @@ fun SignupPermissionScreen() {
                     fontSize = 11.sp,
                 )
             }
-
         }
     }
 }

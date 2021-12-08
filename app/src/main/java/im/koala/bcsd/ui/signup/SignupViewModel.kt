@@ -80,8 +80,8 @@ class SignupViewModel : ViewModel() {
         }
         idJob = viewModelScope.launch {
             _idErrorCode.value = when {
-                //TODO id 글자 수 체크
-                //TODO id 중복체크
+                // TODO id 글자 수 체크
+                // TODO id 중복체크
                 else -> ID_OK
             }
         }
@@ -106,8 +106,8 @@ class SignupViewModel : ViewModel() {
         }
         emailJob = viewModelScope.launch {
             _emailErrorCode.value = when {
-                email.value?.isEmail() == false -> EMAIL_IS_NOT_EMAIL_FORMAT    //email 형식 체크
-                //TODO email 중복체크
+                email.value?.isEmail() == false -> EMAIL_IS_NOT_EMAIL_FORMAT // email 형식 체크
+                // TODO email 중복체크
                 else -> EMAIL_OK
             }
         }
@@ -119,7 +119,7 @@ class SignupViewModel : ViewModel() {
         }
         nicknameJob = viewModelScope.launch {
             _nicknameErrorCode.value = when {
-                //TODO nickname 중복 체크
+                // TODO nickname 중복 체크
                 else -> NICKNAME_OK
             }
         }

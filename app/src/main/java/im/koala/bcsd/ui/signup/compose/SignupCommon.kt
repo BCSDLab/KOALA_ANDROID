@@ -163,10 +163,7 @@ fun SignupTermCheckBox(
                 )
             }
         }
-
     }
-
-
 }
 
 @Composable
@@ -250,7 +247,6 @@ fun SignupTextFieldWithErrorMessage(
                 fontSize = 11.sp
             )
         }
-
     }
 }
 
@@ -381,7 +377,6 @@ private fun SignupCheckBoxPreview() {
     val checked = rememberSaveable { mutableStateOf(false) }
     val opened = rememberSaveable { mutableStateOf(false) }
 
-
     KoalaTheme {
         Box(
             modifier = Modifier
@@ -398,7 +393,8 @@ private fun SignupCheckBoxPreview() {
                 termsText = "asdfasdf\nasdfasdf",
                 onOpenButtonClicked = {
                     opened.value == it
-                })
+                }
+            )
         }
     }
 }
@@ -483,9 +479,7 @@ private fun SignupCompletedDialogPreview() {
                 .background(MaterialTheme.colors.background)
                 .padding(16.dp)
         ) {
-            SignupCompletedDialog {
-
-            }
+            SignupCompletedDialog {}
         }
     }
 }

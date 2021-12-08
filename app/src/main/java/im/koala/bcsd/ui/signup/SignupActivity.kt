@@ -188,7 +188,8 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
                             }.using(
                                 SizeTransform(clip = false)
                             )
-                        }) { step ->
+                        }
+                    ) { step ->
                         when (step) {
                             STEP_TERMS -> SignupTermScreen(
                                 isCheckedTermsPrivacy,
@@ -236,9 +237,7 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
                                 onNicknameChanged = {
                                     signupViewModel.setNickname(it)
                                 },
-                                onFocusChanged = {
-
-                                }
+                                onFocusChanged = {}
                             )
                         }
                     }

@@ -27,7 +27,7 @@ object PasswordChecker {
         return when {
             password.length < 8 -> PASSWORD_LESS_THAN_7_CHARACTERS
             password.length > 15 -> PASSWORD_MORE_THAN_16_CHARACTERS
-            //TODO Branch not supported characters
+            // TODO Branch not supported characters
             else -> {
                 var isError = false
                 var errorCode = PASSWORD_NOT_HAVE_SOME_CHARACTERS
@@ -47,7 +47,7 @@ object PasswordChecker {
     }
 
     @Composable
-    fun PasswordErrorString(passwordErrorCode: Int) : String?{
+    fun PasswordErrorString(passwordErrorCode: Int): String? {
         return when {
             passwordErrorCode == PASSWORD_LESS_THAN_7_CHARACTERS -> {
                 stringResource(R.string.signup_password_error_length_lower_8)
