@@ -77,9 +77,7 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
     val keyboardOpened by keyboardAsState()
 
     val step = rememberSaveable { mutableStateOf(STEP_TERMS) }
-
-    val isCheckedTermsPrivacy = rememberSaveable { mutableStateOf(false) }
-    val isCheckedTermsKoala = rememberSaveable { mutableStateOf(false) }
+    val nextButtonEnabled = rememberSaveable { mutableStateOf(false) }
 
     val id = signupViewModel.id.observeAsState("")
     val password = signupViewModel.password.observeAsState("")
@@ -93,24 +91,6 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
     val emailErrorCode = signupViewModel.emailErrorCode.observeAsState(EMAIL_OK)
     val nicknameErrorCode = signupViewModel.nicknameErrorCode.observeAsState(NICKNAME_OK)
     val signupCompleted = signupViewModel.signupCompleted.observeAsState(false)
-
-    val canSignUp = idErrorCode.value == ID_OK &&
-        passwordErrorCode.value == PasswordChecker.PASSWORD_OK &&
-        passwordMatch.value &&
-        emailErrorCode.value == EMAIL_OK &&
-        nicknameErrorCode.value == NICKNAME_OK &&
-        id.value.isNotEmpty() &&
-        password.value.isNotEmpty() &&
-        password2.value.isNotEmpty() &&
-        email.value.isNotEmpty() &&
-        nickname.value.isNotEmpty()
-
-    val nextButtonEnabled = when (step.value) {
-        STEP_TERMS -> isCheckedTermsPrivacy.value && isCheckedTermsKoala.value
-        STEP_PERMISSION -> true
-        STEP_INPUT_USER_INFO -> canSignUp
-        else -> false
-    }
 
     val nextButtonText =
         if (step.value == STEP_INPUT_USER_INFO) {
@@ -172,7 +152,7 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
                                         step.value++
                                     }
                                 },
-                                enabled = nextButtonEnabled
+                                enabled = nextButtonEnabled.value
                             ) {
                                 Text(text = nextButtonText)
                             }
@@ -200,11 +180,13 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
                         }
                     ) { step ->
                         when (step) {
-                            STEP_TERMS -> SignupTermScreen(
-                                isCheckedTermsPrivacy,
-                                isCheckedTermsKoala
-                            )
-                            STEP_PERMISSION -> SignupPermissionScreen()
+                            STEP_TERMS -> SignupTermScreen {
+                                nextButtonEnabled.value = it
+                            }
+                            STEP_PERMISSION -> {
+                                SignupPermissionScreen()
+                                nextButtonEnabled.value = true
+                            }
                             STEP_INPUT_USER_INFO -> SignupInputUserInfo(
                                 id = id.value,
                                 password = password.value,

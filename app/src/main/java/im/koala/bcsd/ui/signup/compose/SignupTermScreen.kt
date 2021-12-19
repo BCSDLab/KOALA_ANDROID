@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,11 +24,13 @@ import kotlinx.coroutines.launch
 @ExperimentalAnimationApi
 @Composable
 fun SignupTermScreen(
-    isCheckedTermsPrivacy: MutableState<Boolean>,
-    isCheckedTermsKoala: MutableState<Boolean>
+    onSignUpStateChanged: (signUpEnabled: Boolean) -> Unit
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+
+    val isCheckedTermsPrivacy = rememberSaveable { mutableStateOf(false) }
+    val isCheckedTermsKoala = rememberSaveable { mutableStateOf(false) }
 
     val isOpenedTermsPrivacy = rememberSaveable { mutableStateOf(false) }
     val isOpenedTermsKoala = rememberSaveable { mutableStateOf(false) }
@@ -39,6 +40,8 @@ fun SignupTermScreen(
             listState.animateScrollToItem(index = index)
         }
     }
+
+    fun isSignUpEnabled() = isCheckedTermsPrivacy.value && isCheckedTermsKoala.value
 
     LazyColumn(
         state = listState
@@ -67,6 +70,7 @@ fun SignupTermScreen(
                                 isOpenedTermsPrivacy.value = false
                                 isOpenedTermsKoala.value = false
                             }
+                            onSignUpStateChanged(isSignUpEnabled())
                         },
                         termsText = null
                     )
@@ -89,6 +93,7 @@ fun SignupTermScreen(
                         if (it) {
                             isOpenedTermsPrivacy.value = false
                         }
+                        onSignUpStateChanged(isSignUpEnabled())
                     },
                     termsText = stringResource(R.string.signup_terms_privacy_detail)
                 )
@@ -106,6 +111,7 @@ fun SignupTermScreen(
                         if (it) {
                             isOpenedTermsKoala.value = false
                         }
+                        onSignUpStateChanged(isSignUpEnabled())
                     },
                     termsText = stringResource(R.string.signup_terms_koala_detail)
                 )
@@ -127,10 +133,9 @@ private fun SignupTermScreenPreview() {
                 ) {}
             }
         ) {
-            SignupTermScreen(
-                rememberSaveable { mutableStateOf(false) },
-                rememberSaveable { mutableStateOf(false) },
-            )
+            SignupTermScreen {
+
+            }
         }
     }
 }
