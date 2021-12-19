@@ -71,6 +71,8 @@ dependencies {
     implementation project.androidLifecycleViewmodelCompose
     implementation project.androidLifecycleRuntimeKtx
 
+    implementation project.androidxNavigationCompose
+
     testImplementation project.junit
     androidTestImplementation project.androidJunit
     androidTestImplementation project.espresso

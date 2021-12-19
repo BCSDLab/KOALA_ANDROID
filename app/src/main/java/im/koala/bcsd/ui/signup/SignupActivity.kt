@@ -2,29 +2,15 @@ package im.koala.bcsd.ui.signup
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.with
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -35,25 +21,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.appbar.KoalaTextAppBar
 import im.koala.bcsd.ui.button.KoalaButton
 import im.koala.bcsd.ui.indicator.KoalaDotIndicator
-import im.koala.bcsd.ui.signup.compose.SignupCompletedDialog
-import im.koala.bcsd.ui.signup.compose.SignupInputUserInfo
 import im.koala.bcsd.ui.signup.compose.SignupPermissionScreen
 import im.koala.bcsd.ui.signup.compose.SignupTermScreen
 import im.koala.bcsd.ui.theme.KoalaTheme
-import im.koala.bcsd.util.PasswordChecker
 import im.koala.bcsd.util.compose.Keyboard
 import im.koala.bcsd.util.compose.keyboardAsState
-import kotlinx.coroutines.launch
 
-const val STEP_TERMS = 0
-const val STEP_PERMISSION = 1
-const val STEP_INPUT_USER_INFO = 2
+const val STEP_TERMS = "STEP_TERMS"
+const val STEP_PERMISSION = "STEP_PERMISSION"
+const val STEP_INPUT_USER_INFO = "STEP_INPUT_USER_INFO"
 
-const val STEP_COUNT = 3
+const val DOT_COUNT = 3
 
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
@@ -72,48 +58,20 @@ class SignupActivity : ComponentActivity() {
 @ExperimentalAnimationApi
 @Composable
 fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
+    val navController = rememberNavController().apply {
+        enableOnBackPressed(true)
+    }
+    val backStackEntry by navController.currentBackStackEntryAsState()
     val coroutineScope = rememberCoroutineScope()
     val activity = LocalContext.current as SignupActivity
     val keyboardOpened by keyboardAsState()
 
-    val step = rememberSaveable { mutableStateOf(STEP_TERMS) }
+    val nextButtonText = rememberSaveable { mutableStateOf("") }
     val nextButtonEnabled = rememberSaveable { mutableStateOf(false) }
 
-    val id = signupViewModel.id.observeAsState("")
-    val password = signupViewModel.password.observeAsState("")
-    val password2 = signupViewModel.password2.observeAsState("")
-    val email = signupViewModel.email.observeAsState("")
-    val nickname = signupViewModel.nickname.observeAsState("")
-    val idErrorCode = signupViewModel.idErrorCode.observeAsState(ID_OK)
-    val passwordErrorCode =
-        signupViewModel.passwordErrorCode.observeAsState(PasswordChecker.PASSWORD_OK)
-    val passwordMatch = signupViewModel.passwordMatch.observeAsState(true)
-    val emailErrorCode = signupViewModel.emailErrorCode.observeAsState(EMAIL_OK)
-    val nicknameErrorCode = signupViewModel.nicknameErrorCode.observeAsState(NICKNAME_OK)
-    val signupCompleted = signupViewModel.signupCompleted.observeAsState(false)
-
-    val nextButtonText =
-        if (step.value == STEP_INPUT_USER_INFO) {
-            stringResource(R.string.signup_finish)
-        } else {
-            stringResource(R.string.signup_next)
-        }
-
-    val onBack = {
-        if (step.value == STEP_TERMS) activity.finish()
-        else step.value--
-        Unit
-    }
-
-    BackHandler(onBack = onBack)
+    val dotPosition = rememberSaveable { mutableStateOf(0) }
 
     KoalaTheme {
-        if (signupCompleted.value) {
-            SignupCompletedDialog {
-                // TODO : Login screen gogo
-            }
-        }
-
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
@@ -124,7 +82,7 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
                     KoalaTextAppBar(
                         title = stringResource(R.string.app_bar_title_signup),
                         showBackButton = true,
-                        onBackClick = onBack
+                        onBackClick = { navController.navigateUp() }
                     ) {}
                 },
                 bottomBar = {
@@ -135,7 +93,8 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
                         ) {
                             KoalaDotIndicator(
                                 modifier = Modifier.padding(16.dp),
-                                dotCount = STEP_COUNT, dotPosition = step.value
+                                dotCount = DOT_COUNT,
+                                dotPosition = dotPosition.value
                             )
 
                             KoalaButton(
@@ -144,23 +103,38 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
                                     .fillMaxWidth()
                                     .height(48.dp),
                                 onClick = {
-                                    if (step.value == STEP_INPUT_USER_INFO) {
-                                        coroutineScope.launch {
-                                            signupViewModel.signUp()
-                                        }
-                                    } else {
-                                        step.value++
-                                    }
                                 },
                                 enabled = nextButtonEnabled.value
                             ) {
-                                Text(text = nextButtonText)
+                                Text(text = nextButtonText.value)
                             }
                         }
                     }
                 }
             ) { innerPadding ->
-                Box(
+                NavHost(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    navController = navController,
+                    startDestination = STEP_TERMS
+                ) {
+                    composable(STEP_TERMS) {
+                        dotPosition.value = 0
+                        nextButtonText.value = stringResource(id = R.string.signup_next)
+                        SignupTermScreen {
+                            nextButtonEnabled.value = it
+                        }
+                    }
+
+                    composable(STEP_PERMISSION) {
+                        dotPosition.value = 1
+                        nextButtonText.value = stringResource(id = R.string.signup_next)
+                        nextButtonEnabled.value = true
+                        SignupPermissionScreen()
+                    }
+                }
+                /*Box(
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize()
@@ -232,7 +206,7 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
                             )
                         }
                     }
-                }
+                }*/
             }
         }
     }
