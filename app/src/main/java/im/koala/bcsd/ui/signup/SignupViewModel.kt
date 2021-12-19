@@ -1,10 +1,13 @@
 package im.koala.bcsd.ui.signup
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import im.koala.bcsd.util.PasswordChecker
+import im.koala.bcsd.ui.signup.state.SignUpInputUiState
+import im.koala.domain.util.checkpassword.PasswordChecker
 import im.koala.bcsd.util.isEmail
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -19,6 +22,8 @@ const val NICKNAME_OK = 0
 const val NICKNAME_IS_DUPLICATED = 1
 
 class SignupViewModel : ViewModel() {
+    val signUpValueUiState by mutableStateOf(SignUpInputUiState())
+
     private val _id = MutableLiveData<String>()
     private val _password = MutableLiveData<String>()
     private val _password2 = MutableLiveData<String>()
