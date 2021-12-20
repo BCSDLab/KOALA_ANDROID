@@ -12,10 +12,10 @@ sealed class PasswordCheckResult(val errorCode: Int) {
 
     object NotSupportCharactersError : PasswordCheckResult(PasswordChecker.ERR_CONTAINS_NOT_SUPPORTED_CHARACTERS)
 
-    class MultipleError(errorCode: Int) : PasswordCheckResult(errorCode)
+    class PasswordCheckError(errorCode: Int) : PasswordCheckResult(errorCode)
 
     operator fun plus(other: PasswordCheckResult): PasswordCheckResult =
-        MultipleError(this.errorCode or other.errorCode)
+        PasswordCheckError(this.errorCode or other.errorCode)
 
     operator fun contains(passwordCheckResult: PasswordCheckResult) =
         if (passwordCheckResult == OK) {

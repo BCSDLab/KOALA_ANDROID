@@ -17,24 +17,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import im.koala.bcsd.R
+import im.koala.bcsd.ui.signup.state.SignUpInputUiState
+import im.koala.domain.util.checkemail.EmailCheckResult
+import im.koala.domain.util.checkid.IdCheckResult
+import im.koala.domain.util.checknickname.NicknameCheckResult
+import im.koala.domain.util.checkpassword.PasswordCheckResult
 import kotlinx.coroutines.launch
 
 @ExperimentalComposeUiApi
 @Composable
-fun SignupInputUserInfo(
-    id: String,
-    password: String,
-    password2: String,
-    email: String,
-    nickname: String,
-    idErrorMessage: String?,
-    passwordErrorMessage: String?,
-    password2ErrorMessage: String?,
-    emailErrorMessage: String?,
-    nicknameErrorMessage: String?,
+fun SignupInputUserInfoScreen(
+    signUpInputUiState: SignUpInputUiState,
     onIdChanged: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
-    onPassword2Changed: (String) -> Unit,
+    onPasswordConfirmChanged: (String) -> Unit,
     onEmailChanged: (String) -> Unit,
     onNicknameChanged: (String) -> Unit,
     onFocusChanged: () -> Unit
@@ -75,10 +71,10 @@ fun SignupInputUserInfo(
                             onFocusChanged()
                         }
                     },
-                    value = id,
+                    value = signUpInputUiState.id,
                     onValueChange = onIdChanged,
-                    isError = idErrorMessage != null,
-                    errorMessage = idErrorMessage ?: "",
+                    isError = signUpInputUiState.idCheckResult != IdCheckResult.OK,
+                    errorMessage = idErrorMessage(idCheckResult = signUpInputUiState.idCheckResult),
                     hint = stringResource(R.string.signup_input_hint_id),
                     keyboardActions = KeyboardActions(
                         onNext = {
@@ -97,10 +93,10 @@ fun SignupInputUserInfo(
                             onFocusChanged()
                         }
                     },
-                    value = password,
+                    value = signUpInputUiState.password,
                     onValueChange = onPasswordChanged,
-                    isError = passwordErrorMessage != null,
-                    errorMessage = passwordErrorMessage ?: "",
+                    isError = signUpInputUiState.passwordCheckResult != PasswordCheckResult.OK,
+                    errorMessage = passwordErrorMessage(passwordCheckResult = signUpInputUiState.passwordCheckResult),
                     hint = stringResource(R.string.signup_input_hint_password),
                     imeAction = ImeAction.Next,
                     keyboardActions = KeyboardActions(
@@ -117,10 +113,10 @@ fun SignupInputUserInfo(
                             onFocusChanged()
                         }
                     },
-                    value = password2,
-                    onValueChange = onPassword2Changed,
-                    isError = password2ErrorMessage != null,
-                    errorMessage = password2ErrorMessage ?: "",
+                    value = signUpInputUiState.passwordConfirm,
+                    onValueChange = onPasswordConfirmChanged,
+                    isError = !signUpInputUiState.isPasswordConfirmMatch,
+                    errorMessage = stringResource(id = R.string.signup_input_error_password_not_match),
                     hint = stringResource(R.string.signup_input_hint_password_2),
                     imeAction = ImeAction.Next,
                     keyboardActions = KeyboardActions(
@@ -137,10 +133,10 @@ fun SignupInputUserInfo(
                             onFocusChanged()
                         }
                     },
-                    value = email,
+                    value = signUpInputUiState.email,
                     onValueChange = onEmailChanged,
-                    isError = emailErrorMessage != null,
-                    errorMessage = emailErrorMessage ?: "",
+                    isError = signUpInputUiState.emailCheckResult != EmailCheckResult.OK,
+                    errorMessage = emailErrorMessage(emailCheckResult = signUpInputUiState.emailCheckResult),
                     hint = stringResource(R.string.signup_input_hint_email),
                     keyboardActions = KeyboardActions(
                         onNext = {
@@ -159,10 +155,10 @@ fun SignupInputUserInfo(
                             onFocusChanged()
                         }
                     },
-                    value = nickname,
+                    value = signUpInputUiState.nickname,
                     onValueChange = onNicknameChanged,
-                    isError = nicknameErrorMessage != null,
-                    errorMessage = nicknameErrorMessage ?: "",
+                    isError = signUpInputUiState.nicknameCheckResult != NicknameCheckResult.OK,
+                    errorMessage = nicknameErrorMessage(nicknameCheckResult = signUpInputUiState.nicknameCheckResult),
                     hint = stringResource(R.string.signup_input_hint_nickname),
                     keyboardActions = KeyboardActions(
                         onDone = {
@@ -177,3 +173,59 @@ fun SignupInputUserInfo(
         }
     }
 }
+
+@Composable
+private fun idErrorMessage(idCheckResult: IdCheckResult) = when (idCheckResult) {
+    IdCheckResult.IdDuplicatedError -> stringResource(id = R.string.signup_input_error_id_duplicated)
+    IdCheckResult.NoSuchInputError -> stringResource(id = R.string.signup_input_error_id_no_input)
+    IdCheckResult.OK -> ""
+}
+
+@Composable
+private fun passwordErrorMessage(passwordCheckResult: PasswordCheckResult) =
+    when (passwordCheckResult) {
+        in PasswordCheckResult.NoSuchInputError -> stringResource(id = R.string.signup_input_error_password_no_input)
+        in PasswordCheckResult.NotContainsEnglishError -> stringResource(
+            id = R.string.signup_password_error_not_contains,
+            stringResource(id = R.string.english)
+        )
+        in PasswordCheckResult.NotContainsNumberError -> stringResource(
+            id = R.string.signup_password_error_not_contains,
+            stringResource(id = R.string.number)
+        )
+        in PasswordCheckResult.NotContainsSpecialCharacterError -> stringResource(
+            id = R.string.signup_password_error_not_contains,
+            stringResource(id = R.string.special)
+        )
+        in PasswordCheckResult.NotContainsEnglishError + PasswordCheckResult.NotContainsNumberError -> stringResource(
+            id = R.string.signup_password_error_not_contains,
+            "${stringResource(id = R.string.english)}, ${stringResource(id = R.string.number)}"
+        )
+        in PasswordCheckResult.NotContainsNumberError + PasswordCheckResult.NotContainsSpecialCharacterError -> stringResource(
+            id = R.string.signup_password_error_not_contains,
+            "${stringResource(id = R.string.number)}, ${stringResource(id = R.string.special)}"
+        )
+        in PasswordCheckResult.NotContainsSpecialCharacterError + PasswordCheckResult.NotContainsEnglishError -> stringResource(
+            id = R.string.signup_password_error_not_contains,
+            "${stringResource(id = R.string.english)}, ${stringResource(id = R.string.special)}"
+        )
+        in PasswordCheckResult.TooLongCharactersError -> stringResource(id = R.string.signup_password_error_length_upper_15)
+        in PasswordCheckResult.TooShortCharactersError -> stringResource(id = R.string.signup_password_error_length_lower_8)
+        else -> ""
+    }
+
+@Composable
+private fun emailErrorMessage(emailCheckResult: EmailCheckResult) = when (emailCheckResult) {
+    EmailCheckResult.EmailDuplicatedError -> stringResource(id = R.string.signup_input_error_email_duplicated)
+    EmailCheckResult.NoSuchInputError -> stringResource(id = R.string.signup_input_error_email_no_input)
+    EmailCheckResult.NotEmailFormatError -> stringResource(id = R.string.signup_input_error_email_format_not_match)
+    EmailCheckResult.OK -> ""
+}
+
+@Composable
+private fun nicknameErrorMessage(nicknameCheckResult: NicknameCheckResult) =
+    when (nicknameCheckResult) {
+        NicknameCheckResult.NicknameDuplicatedError -> stringResource(id = R.string.signup_input_error_nickname_duplicated)
+        NicknameCheckResult.NoSuchInputError -> stringResource(id = R.string.signup_input_error_nickname_no_input)
+        NicknameCheckResult.OK -> ""
+    }

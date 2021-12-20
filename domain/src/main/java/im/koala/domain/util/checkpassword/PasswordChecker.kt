@@ -49,37 +49,6 @@ object PasswordChecker {
         if (password.isEmpty()) PasswordCheckResult.NoSuchInputError
         else PasswordCheckResult.OK
 
-    /*@Composable
-    fun PasswordErrorString(passwordErrorCode: Int): String? {
-        return when {
-            passwordErrorCode == PASSWORD_LESS_THAN_7_CHARACTERS -> {
-                stringResource(R.string.signup_password_error_length_lower_8)
-            }
-            passwordErrorCode == PASSWORD_MORE_THAN_16_CHARACTERS -> {
-                stringResource(R.string.signup_password_error_length_upper_15)
-            }
-            passwordErrorCode and 0xf0000000.toInt() == PASSWORD_NOT_HAVE_SOME_CHARACTERS -> {
-                val notContains = mutableListOf<String>()
-
-                if (passwordErrorCode and 0x0f000000 == PASSWORD_ENGLISH) {
-                    notContains.add(stringResource(R.string.english))
-                }
-                if (passwordErrorCode and 0x00f00000 == PASSWORD_NUMBER) {
-                    notContains.add(stringResource(R.string.number))
-                }
-                if (passwordErrorCode and 0x000f0000 == PASSWORD_SPECIAL) {
-                    notContains.add(stringResource(R.string.special))
-                }
-
-                stringResource(
-                    R.string.signup_password_error_not_contains,
-                    notContains.joinToString()
-                )
-            }
-            else -> null
-        }
-    }*/
-
     /* e.g.
     0x10000010 -> No input
     0x11xxxxxx -> Contains not supported characters

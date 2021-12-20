@@ -55,4 +55,9 @@
     <string name="signup_completed_title">회원가입이 되었습니다.</string>
     <string name="signup_completed_message">환영합니다. 지금 바로 Koala를 이용해 볼까요?</string>
     <string name="signup_goto_login">로그인하러 가기</string>
+    <string name="signup_input_error_id_no_input">아이디를 입력해주세요.</string>
+    <string name="signup_input_error_password_no_input">비밀번호를 입력해주세요.</string>
+    <string name="signup_input_error_email_no_input">이메일을 입력해주세요.</string>
+    <string name="signup_input_error_email_duplicated">중복된 이메일입니다.</string>
+    <string name="signup_input_error_nickname_no_input">닉네임을 입력해주세요.</string>
 </resources>

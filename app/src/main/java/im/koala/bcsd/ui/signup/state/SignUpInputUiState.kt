@@ -11,9 +11,9 @@ data class SignUpInputUiState(
     val passwordConfirm: String = "",
     val email: String = "",
     val nickname: String = "",
-    val idErrorCode: IdCheckResult = IdCheckResult.OK,
-    val passwordErrorCode: PasswordCheckResult = PasswordCheckResult.OK,
+    val idCheckResult: IdCheckResult = IdCheckResult.OK,
+    val passwordCheckResult: PasswordCheckResult = PasswordCheckResult.OK,
     val isPasswordConfirmMatch: Boolean = true,
-    val emailErrorCode: EmailCheckResult = EmailCheckResult.OK,
-    val nicknameErrorCode: NicknameCheckResult = NicknameCheckResult.OK
+    val emailCheckResult: EmailCheckResult = EmailCheckResult.OK,
+    val nicknameCheckResult: NicknameCheckResult = NicknameCheckResult.OK
 )

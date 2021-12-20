@@ -46,13 +46,13 @@ class SignupViewModel(
 
     fun checkId() {
         signUpValueUiState = signUpValueUiState.copy(
-            idErrorCode = signUpCheckIdUseCase(signUpValueUiState.id)
+            idCheckResult = signUpCheckIdUseCase(signUpValueUiState.id)
         )
     }
 
     fun checkPassword() {
         signUpValueUiState = signUpValueUiState.copy(
-            passwordErrorCode = signUpCheckPasswordUseCase(signUpValueUiState.password)
+            passwordCheckResult = signUpCheckPasswordUseCase(signUpValueUiState.password)
         )
     }
 
@@ -67,13 +67,13 @@ class SignupViewModel(
 
     fun checkEmail() {
         signUpValueUiState = signUpValueUiState.copy(
-            emailErrorCode = signUpCheckEmailUseCase(signUpValueUiState.email)
+            emailCheckResult = signUpCheckEmailUseCase(signUpValueUiState.email)
         )
     }
 
     fun checkNickname() {
         signUpValueUiState = signUpValueUiState.copy(
-            nicknameErrorCode = signUpCheckNicknameUseCase(signUpValueUiState.nickname)
+            nicknameCheckResult = signUpCheckNicknameUseCase(signUpValueUiState.nickname)
         )
     }
 

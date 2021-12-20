@@ -12,23 +12,21 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.appbar.KoalaTextAppBar
 import im.koala.bcsd.ui.button.KoalaButton
 import im.koala.bcsd.ui.indicator.KoalaDotIndicator
+import im.koala.bcsd.ui.signup.compose.SignupInputUserInfoScreen
 import im.koala.bcsd.ui.signup.compose.SignupPermissionScreen
 import im.koala.bcsd.ui.signup.compose.SignupTermScreen
 import im.koala.bcsd.ui.theme.KoalaTheme
@@ -61,9 +59,6 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
     val navController = rememberNavController().apply {
         enableOnBackPressed(true)
     }
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val coroutineScope = rememberCoroutineScope()
-    val activity = LocalContext.current as SignupActivity
     val keyboardOpened by keyboardAsState()
 
     val nextButtonText = rememberSaveable { mutableStateOf("") }
@@ -103,6 +98,11 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
                                     .fillMaxWidth()
                                     .height(48.dp),
                                 onClick = {
+                                    when(navController.currentBackStackEntry?.destination?.route) {
+                                        STEP_TERMS -> navController.navigate(STEP_PERMISSION)
+                                        STEP_PERMISSION -> navController.navigate(STEP_INPUT_USER_INFO)
+                                        STEP_INPUT_USER_INFO -> signupViewModel.signUp()
+                                    }
                                 },
                                 enabled = nextButtonEnabled.value
                             ) {
@@ -133,80 +133,22 @@ fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
                         nextButtonEnabled.value = true
                         SignupPermissionScreen()
                     }
-                }
-                /*Box(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    AnimatedContent(
-                        targetState = step.value,
-                        transitionSpec = {
-                            if (targetState > initialState) {
-                                slideInHorizontally({ width -> width / 2 }) + fadeIn() with
-                                    slideOutHorizontally({ width -> -width / 2 }) + fadeOut()
-                            } else {
-                                slideInHorizontally({ width -> -width / 2 }) + fadeIn() with
-                                    slideOutHorizontally({ width -> width / 2 }) + fadeOut()
-                            }.using(
-                                SizeTransform(clip = false)
-                            )
-                        }
-                    ) { step ->
-                        when (step) {
-                            STEP_TERMS -> SignupTermScreen {
-                                nextButtonEnabled.value = it
-                            }
-                            STEP_PERMISSION -> {
-                                SignupPermissionScreen()
-                                nextButtonEnabled.value = true
-                            }
-                            STEP_INPUT_USER_INFO -> SignupInputUserInfo(
-                                id = id.value,
-                                password = password.value,
-                                password2 = password2.value,
-                                email = email.value,
-                                nickname = nickname.value,
-                                idErrorMessage = when (idErrorCode.value) {
-                                    ID_IS_DUPLICATED -> stringResource(R.string.signup_input_error_id_duplicated)
-                                    else -> null
-                                },
-                                passwordErrorMessage = PasswordChecker.PasswordErrorString(
-                                    passwordErrorCode = passwordErrorCode.value
-                                ),
-                                password2ErrorMessage = if (!passwordMatch.value) {
-                                    stringResource(id = R.string.signup_input_error_password_not_match)
-                                } else {
-                                    null
-                                },
-                                emailErrorMessage = when (emailErrorCode.value) {
-                                    EMAIL_IS_NOT_EMAIL_FORMAT -> stringResource(R.string.signup_input_error_email_format_not_match)
-                                    else -> null
-                                },
-                                nicknameErrorMessage = when (nicknameErrorCode.value) {
-                                    NICKNAME_IS_DUPLICATED -> stringResource(R.string.signup_input_error_nickname_duplicated)
-                                    else -> null
-                                },
-                                onIdChanged = {
-                                    signupViewModel.setId(it)
-                                },
-                                onPasswordChanged = {
-                                    signupViewModel.setPassword(it)
-                                },
-                                onPassword2Changed = {
-                                    signupViewModel.setPassword2(it)
-                                },
-                                onEmailChanged = {
-                                    signupViewModel.setEmail(it)
-                                },
-                                onNicknameChanged = {
-                                    signupViewModel.setNickname(it)
-                                },
-                                onFocusChanged = {}
-                            )
+
+                    composable(STEP_INPUT_USER_INFO) {
+                        dotPosition.value = 2
+                        nextButtonText.value = stringResource(id = R.string.signup_finish)
+                        SignupInputUserInfoScreen(
+                            signUpInputUiState = signupViewModel.signUpValueUiState,
+                            onIdChanged = signupViewModel::setId,
+                            onPasswordChanged = signupViewModel::setPassword,
+                            onPasswordConfirmChanged = signupViewModel::setPasswordConfirm,
+                            onEmailChanged = signupViewModel::setEmail,
+                            onNicknameChanged = signupViewModel::setNickname
+                        ) {
+
                         }
                     }
-                }*/
+                }
             }
         }
     }
