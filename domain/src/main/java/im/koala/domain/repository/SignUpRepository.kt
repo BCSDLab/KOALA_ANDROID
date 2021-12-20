@@ -21,5 +21,5 @@ interface SignUpRepository {
         password: String,
         email: String,
         nickname: String
-    )
+    ): Boolean
 }

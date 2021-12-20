@@ -1,41 +1,53 @@
 package im.koala.domain.util.checkpassword
 
+import im.koala.domain.constants.PASSWORD_LENGTH_MAX
+import im.koala.domain.constants.PASSWORD_LENGTH_MIN
+
 object PasswordChecker {
-    fun checkPassword(password: CharSequence): Int {
-        return checkPasswordContainsNotSupportedCharacter(password) or
-            checkPasswordLength(password) or
-            checkPasswordContainsEnglish(password) or
-            checkPasswordContainsNumber(password) or
-            checkPasswordContainsSymbol(password) or
-            checkPasswordNoneInput(password)
+    fun checkPassword(password: CharSequence): PasswordCheckResult {
+        return checkPasswordNoneInput(password) +
+            checkPasswordLength(password) +
+            checkPasswordContainsNotSupportedCharacter(password) +
+            checkPasswordNotContains(password)
     }
 
     private fun checkPasswordContainsNotSupportedCharacter(password: CharSequence) =
-        if (PasswordRegexps.REGEX_MATCH_SUPPORTED_CHARACTERS.matchEntire(password) == null) ERR_CONTAINS_NOT_SUPPORTED_CHARACTERS
-        else NO_ERR
+        if (PasswordRegexps.REGEX_MATCH_SUPPORTED_CHARACTERS.matchEntire(password) == null) PasswordCheckResult.NotSupportCharactersError
+        else PasswordCheckResult.OK
 
     private fun checkPasswordLength(password: CharSequence) =
         when {
-            password.length < PASSWORD_LENGTH_MIN -> ERR_LENGTH_TOO_SHORT
-            password.length > PASSWORD_LENGTH_MAX -> ERR_LENGTH_TOO_LONG
-            else -> NO_ERR
+            password.length < PASSWORD_LENGTH_MIN -> PasswordCheckResult.TooShortCharactersError
+            password.length > PASSWORD_LENGTH_MAX -> PasswordCheckResult.TooLongCharactersError
+            else -> PasswordCheckResult.OK
         }
 
-    private fun checkPasswordContainsEnglish(password: CharSequence) =
-        if (PasswordRegexps.REGEX_CONTAINS_ENGLISH.matchEntire(password) == null) ERR_NOT_CONTAINS_ENGLISH
-        else NO_ERR
+    private fun checkPasswordNotContains(password: CharSequence): PasswordCheckResult {
+        val noEnglish =
+            if (PasswordRegexps.REGEX_CONTAINS_ENGLISH.matchEntire(password) == null) {
+                PasswordCheckResult.NotContainsEnglishError
+            } else {
+                PasswordCheckResult.OK
+            }
+        val noDigit =
+            if (PasswordRegexps.REGEX_CONTAINS_NUMBER.matchEntire(password) == null) {
+                PasswordCheckResult.NotContainsNumberError
+            } else {
+                PasswordCheckResult.OK
+            }
+        val noSpecials =
+            if (PasswordRegexps.REGEX_CONTAINS_SPECIAL_CHARACTER.matchEntire(password) == null) {
+                PasswordCheckResult.NotContainsSpecialCharacterError
+            } else {
+                PasswordCheckResult.OK
+            }
 
-    private fun checkPasswordContainsNumber(password: CharSequence) =
-        if (PasswordRegexps.REGEX_CONTAINS_NUMBER.matchEntire(password) == null) ERR_NOT_CONTAINS_NUMBER
-        else NO_ERR
-
-    private fun checkPasswordContainsSymbol(password: CharSequence) =
-        if (PasswordRegexps.REGEX_CONTAINS_SPECIAL_CHARACTER.matchEntire(password) == null) ERR_NOT_CONTAINS_SPECIAL_CHARACTER
-        else NO_ERR
+        return noEnglish + noDigit + noSpecials
+    }
 
     private fun checkPasswordNoneInput(password: CharSequence) =
-        if (password.isEmpty()) ERR_NO_INPUT
-        else NO_ERR
+        if (password.isEmpty()) PasswordCheckResult.NoSuchInputError
+        else PasswordCheckResult.OK
 
     /*@Composable
     fun PasswordErrorString(passwordErrorCode: Int): String? {
@@ -68,8 +80,13 @@ object PasswordChecker {
         }
     }*/
 
-    const val PASSWORD_LENGTH_MIN = 8
-    const val PASSWORD_LENGTH_MAX = 15
+    /* e.g.
+    0x10000010 -> No input
+    0x11xxxxxx -> Contains not supported characters
+    0x10000100 -> Not contains special characters
+    0x10101100 -> Length is too short and not contains number and special characters
+    0x10200100 -> Length is too long and not contains special characters
+    */
 
     const val MASK_ERR_CONTAINS_NOT_SUPPORTED_CHARACTERS = 0x1f000000
     const val MASK_ERR_LENGTH = 0x10f00000
@@ -87,18 +104,5 @@ object PasswordChecker {
     const val ERR_NOT_CONTAINS_SPECIAL_CHARACTER = 0x10000100
     const val ERR_NO_INPUT = 0x10000010
 
-    const val NO_ERR = 0x10000000
-
-    fun contains(errorCode: Int, containsErrorCode: Int, mask: Int): Boolean {
-        return errorCode and mask == containsErrorCode
-    }
-
-    /* e.g.
-    0x10000010 -> No input
-    0x11xxxxxx -> Contains not supported characters
-    0x10000100 -> Not contains special characters
-    0x10101100 -> Length is too short and not contains number and special characters
-    0x10200100 -> Length is too long and not contains special characters
-    */
-
+    const val NO_ERR = 0x00000000
 }
