@@ -1,5 +1,7 @@
 package im.koala.bcsd.ui.signup
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,6 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -64,6 +67,7 @@ fun SignupContent(signupViewModel: SignupViewModel) {
     val navController = rememberNavController().apply {
         enableOnBackPressed(true)
     }
+    val activity = LocalContext.current as Activity
     val keyboardOpened by keyboardAsState()
 
     val nextButtonText = rememberSaveable { mutableStateOf("") }
@@ -74,7 +78,10 @@ fun SignupContent(signupViewModel: SignupViewModel) {
     KoalaTheme {
         if (signupViewModel.signupCompleted) {
             SignupCompletedDialog {
-                // TODO : Login screen gogo
+                activity.setResult(Activity.RESULT_OK, Intent().apply {
+                    putExtra(SignUpContract.LOGIN_ID, signupViewModel.signUpValueUiState.id)
+                })
+                activity.finish()
             }
         }
 
