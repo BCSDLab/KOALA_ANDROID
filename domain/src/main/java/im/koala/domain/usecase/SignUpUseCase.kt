@@ -1,8 +1,9 @@
 package im.koala.domain.usecase
 
 import im.koala.domain.repository.SignUpRepository
+import javax.inject.Inject
 
-class SignUpUseCase(
+class SignUpUseCase @Inject constructor(
     private val signUpRepository: SignUpRepository
 ) {
     operator fun invoke(
@@ -10,7 +11,7 @@ class SignUpUseCase(
         password: String,
         email: String,
         nickname: String
-    ) : Boolean{
+    ): Boolean {
         return signUpRepository.signUp(id, password, email, nickname)
     }
 }

@@ -2,8 +2,9 @@ package im.koala.domain.usecase
 
 import im.koala.domain.repository.SignUpRepository
 import im.koala.domain.util.checknickname.NicknameCheckResult
+import javax.inject.Inject
 
-class SignUpCheckNicknameUseCase(
+class SignUpCheckNicknameUseCase @Inject constructor(
     private val signUpRepository: SignUpRepository
 ) {
     operator fun invoke(nickname: String): NicknameCheckResult =

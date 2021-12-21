@@ -3,6 +3,7 @@ package im.koala.bcsd.ui.signup
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -18,10 +19,10 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.appbar.KoalaTextAppBar
 import im.koala.bcsd.ui.button.KoalaButton
@@ -41,13 +42,16 @@ const val DOT_COUNT = 3
 
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
+@AndroidEntryPoint
 class SignupActivity : ComponentActivity() {
+
+    private val signupViewModel : SignupViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            SignupContent()
+            SignupContent(signupViewModel)
         }
     }
 }
@@ -55,7 +59,7 @@ class SignupActivity : ComponentActivity() {
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @Composable
-fun SignupContent(signupViewModel: SignupViewModel = viewModel()) {
+fun SignupContent(signupViewModel: SignupViewModel) {
     val navController = rememberNavController().apply {
         enableOnBackPressed(true)
     }

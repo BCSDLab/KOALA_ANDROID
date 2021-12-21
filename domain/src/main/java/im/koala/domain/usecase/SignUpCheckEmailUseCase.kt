@@ -3,8 +3,9 @@ package im.koala.domain.usecase
 import im.koala.domain.repository.SignUpRepository
 import im.koala.domain.util.checkemail.EmailCheckResult
 import im.koala.domain.util.checkemail.EmailChecker
+import javax.inject.Inject
 
-class SignUpCheckEmailUseCase(
+class SignUpCheckEmailUseCase @Inject constructor(
     private val signUpRepository: SignUpRepository
 ) {
     operator fun invoke(email: String): EmailCheckResult =

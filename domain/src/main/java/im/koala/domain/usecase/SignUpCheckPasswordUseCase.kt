@@ -2,11 +2,12 @@ package im.koala.domain.usecase
 
 import im.koala.domain.util.checkpassword.PasswordCheckResult
 import im.koala.domain.util.checkpassword.PasswordChecker
+import javax.inject.Inject
 
 /**
  * @see im.koala.domain.util.checkpassword.PasswordChecker.Companion
  */
-class SignUpCheckPasswordUseCase {
+class SignUpCheckPasswordUseCase @Inject constructor() {
     operator fun invoke(password: String): PasswordCheckResult =
         PasswordChecker.checkPassword(password)
 }

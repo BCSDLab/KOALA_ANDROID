@@ -4,10 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import im.koala.bcsd.ui.signup.state.SignUpInputUiState
 import im.koala.domain.usecase.*
+import javax.inject.Inject
 
-class SignupViewModel(
+@HiltViewModel
+class SignupViewModel @Inject constructor(
     private val signUpCheckIdUseCase: SignUpCheckIdUseCase,
     private val signUpCheckPasswordUseCase: SignUpCheckPasswordUseCase,
     private val signUpCheckPasswordConfirmUseCase: SignUpCheckPasswordConfirmUseCase,
