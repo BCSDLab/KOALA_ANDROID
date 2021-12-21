@@ -21,6 +21,7 @@ import im.koala.bcsd.ui.theme.GrayBorder
 import im.koala.bcsd.ui.theme.KoalaTheme
 import kotlinx.coroutines.launch
 
+@ExperimentalAnimationApi
 @Composable
 fun SignupTermScreen(
     onSignUpStateChanged: (signUpEnabled: Boolean) -> Unit
