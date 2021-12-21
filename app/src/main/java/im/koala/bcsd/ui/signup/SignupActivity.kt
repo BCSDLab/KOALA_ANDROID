@@ -155,9 +155,7 @@ fun SignupContent(signupViewModel: SignupViewModel) {
                             onPasswordConfirmChanged = signupViewModel::setPasswordConfirm,
                             onEmailChanged = signupViewModel::setEmail,
                             onNicknameChanged = signupViewModel::setNickname
-                        ) {
-
-                        }
+                        )
                     }
                 }
             }

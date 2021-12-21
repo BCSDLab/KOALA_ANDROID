@@ -33,8 +33,7 @@ fun SignupInputUserInfoScreen(
     onPasswordChanged: (String) -> Unit,
     onPasswordConfirmChanged: (String) -> Unit,
     onEmailChanged: (String) -> Unit,
-    onNicknameChanged: (String) -> Unit,
-    onFocusChanged: () -> Unit
+    onNicknameChanged: (String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
@@ -69,7 +68,6 @@ fun SignupInputUserInfoScreen(
                     modifier = Modifier.onFocusChanged {
                         if (it.isFocused) {
                             animateScrollToItem(0)
-                            onFocusChanged()
                         }
                     },
                     value = signUpInputUiState.id,
@@ -91,7 +89,6 @@ fun SignupInputUserInfoScreen(
                     modifier = Modifier.onFocusChanged {
                         if (it.isFocused) {
                             animateScrollToItem(1)
-                            onFocusChanged()
                         }
                     },
                     value = signUpInputUiState.password,
@@ -111,7 +108,6 @@ fun SignupInputUserInfoScreen(
                     modifier = Modifier.onFocusChanged {
                         if (it.isFocused) {
                             animateScrollToItem(2)
-                            onFocusChanged()
                         }
                     },
                     value = signUpInputUiState.passwordConfirm,
@@ -131,7 +127,6 @@ fun SignupInputUserInfoScreen(
                     modifier = Modifier.onFocusChanged {
                         if (it.isFocused) {
                             animateScrollToItem(3)
-                            onFocusChanged()
                         }
                     },
                     value = signUpInputUiState.email,
@@ -153,7 +148,6 @@ fun SignupInputUserInfoScreen(
                     modifier = Modifier.onFocusChanged {
                         if (it.isFocused) {
                             animateScrollToItem(4)
-                            onFocusChanged()
                         }
                     },
                     value = signUpInputUiState.nickname,
