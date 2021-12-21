@@ -88,7 +88,9 @@ fun SignupContent(signupViewModel: SignupViewModel) {
                     KoalaTextAppBar(
                         title = stringResource(R.string.app_bar_title_signup),
                         showBackButton = true,
-                        onBackClick = { navController.navigateUp() }
+                        onBackClick = {
+                            if(!navController.navigateUp()) activity.finish()
+                        }
                     ) {}
                 },
                 bottomBar = {
