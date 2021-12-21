@@ -7,6 +7,10 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.koala.bcsd.ui.signup.state.SignUpInputUiState
 import im.koala.domain.usecase.*
+import im.koala.domain.util.checkemail.EmailCheckResult
+import im.koala.domain.util.checkid.IdCheckResult
+import im.koala.domain.util.checknickname.NicknameCheckResult
+import im.koala.domain.util.checkpassword.PasswordCheckStatus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -85,9 +89,16 @@ class SignupViewModel @Inject constructor(
         checkNickname()
         checkId()
         with(signUpValueUiState) {
-            signupCompleted = signUpUseCase(
-                id, password, email, nickname
-            )
+            if (idCheckResult == IdCheckResult.OK &&
+                passwordCheckResult == PasswordCheckStatus.OK &&
+                isPasswordConfirmMatch &&
+                emailCheckResult == EmailCheckResult.OK &&
+                nicknameCheckResult == NicknameCheckResult.OK
+            ) {
+                signupCompleted = signUpUseCase(
+                    id, password, email, nickname
+                )
+            }
         }
     }
 }
