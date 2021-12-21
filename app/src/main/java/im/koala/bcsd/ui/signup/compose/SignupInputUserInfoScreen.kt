@@ -181,48 +181,48 @@ private fun idErrorMessage(idCheckResult: IdCheckResult) = when (idCheckResult) 
 @Composable
 private fun passwordErrorMessage(passwordCheckResult: PasswordCheckResult): String {
     return when {
-        //비밀번호 입력 없음
+        // 비밀번호 입력 없음
         PasswordCheckStatus.NoSuchInputError in passwordCheckResult -> {
             stringResource(id = R.string.signup_input_error_password_no_input)
         }
-        //사용 불가능 문자(이모티콘 등) 포함
+        // 사용 불가능 문자(이모티콘 등) 포함
         PasswordCheckStatus.NotSupportCharactersError in passwordCheckResult -> stringResource(
             id = R.string.signup_password_error_not_support_character
         )
-        //15자 이상
+        // 15자 이상
         PasswordCheckStatus.TooLongCharactersError in passwordCheckResult -> {
             stringResource(id = R.string.signup_password_error_length_upper_15)
         }
-        //8자 이하
+        // 8자 이하
         PasswordCheckStatus.TooShortCharactersError in passwordCheckResult -> {
             stringResource(id = R.string.signup_password_error_length_lower_8)
         }
-        //영문자 없음
+        // 영문자 없음
         PasswordCheckStatus.NotContainsEnglishError in passwordCheckResult -> stringResource(
             id = R.string.signup_password_error_not_contains,
             stringResource(id = R.string.english)
         )
-        //숫자 없음
+        // 숫자 없음
         PasswordCheckStatus.NotContainsNumberError in passwordCheckResult -> stringResource(
             id = R.string.signup_password_error_not_contains,
             stringResource(id = R.string.number)
         )
-        //특수문자 없음
+        // 특수문자 없음
         PasswordCheckStatus.NotContainsSpecialCharacterError in passwordCheckResult -> stringResource(
             id = R.string.signup_password_error_not_contains,
             stringResource(id = R.string.special)
         )
-        //영어 + 숫자 없음
+        // 영어 + 숫자 없음
         PasswordCheckStatus.NotContainsEnglishError + PasswordCheckStatus.NotContainsNumberError in passwordCheckResult -> stringResource(
             id = R.string.signup_password_error_not_contains,
             "${stringResource(id = R.string.english)}, ${stringResource(id = R.string.number)}"
         )
-        //숫자 + 특수문자 없음
+        // 숫자 + 특수문자 없음
         PasswordCheckStatus.NotContainsNumberError + PasswordCheckStatus.NotContainsSpecialCharacterError in passwordCheckResult -> stringResource(
             id = R.string.signup_password_error_not_contains,
             "${stringResource(id = R.string.number)}, ${stringResource(id = R.string.special)}"
         )
-        //영어 + 특수문자 없음
+        // 영어 + 특수문자 없음
         PasswordCheckStatus.NotContainsSpecialCharacterError + PasswordCheckStatus.NotContainsEnglishError in passwordCheckResult -> stringResource(
             id = R.string.signup_password_error_not_contains,
             "${stringResource(id = R.string.english)}, ${stringResource(id = R.string.special)}"

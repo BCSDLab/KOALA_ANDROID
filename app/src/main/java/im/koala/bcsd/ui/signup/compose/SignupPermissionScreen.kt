@@ -83,7 +83,10 @@ fun SignupPermissionScreen() {
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             CompositionLocalProvider(LocalContentColor provides MaterialTheme.colors.onBackground) {
-                Icon(painter = painterResource(id = R.drawable.ic_signup_permission_info), contentDescription = "")
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_signup_permission_info),
+                    contentDescription = ""
+                )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
                     text = stringResource(R.string.signup_permission_info),

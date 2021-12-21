@@ -10,7 +10,7 @@ object PasswordChecker {
             checkPasswordContainsNotSupportedCharacter(password) +
             checkPasswordNotContains(password)
 
-        if(result == PasswordCheckStatus.OK) return PasswordCheckStatus.OK
+        if (result == PasswordCheckStatus.OK) return PasswordCheckStatus.OK
         return result
     }
 

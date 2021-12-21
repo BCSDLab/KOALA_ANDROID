@@ -10,9 +10,24 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -35,7 +50,14 @@ import im.koala.bcsd.R
 import im.koala.bcsd.ui.findid.FindIdActivity
 import im.koala.bcsd.ui.findpassword.FindPasswordActivity
 import im.koala.bcsd.ui.signup.SignUpContract
-import im.koala.bcsd.ui.theme.*
+import im.koala.bcsd.ui.theme.Black
+import im.koala.bcsd.ui.theme.GrayBorder
+import im.koala.bcsd.ui.theme.GrayDisabled
+import im.koala.bcsd.ui.theme.GrayNormal
+import im.koala.bcsd.ui.theme.Green
+import im.koala.bcsd.ui.theme.KoalaTheme
+import im.koala.bcsd.ui.theme.White
+import im.koala.bcsd.ui.theme.Yellow2
 
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
@@ -108,6 +130,7 @@ fun LoginScreen() {
         }
     }
 }
+
 @Composable
 fun LoginTypeTabScreen(
     modifier: Modifier,
@@ -190,6 +213,7 @@ fun LoginTypeTabScreen(
         }
     }
 }
+
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
 @Composable
@@ -198,7 +222,7 @@ fun NormalScreen(
     context: Context
 ) {
     val signUpContract = rememberLauncherForActivityResult(contract = SignUpContract()) {
-        //회원가입 성공하면 회원가입 때 사용한 id 반환, 아니면 null
+        // 회원가입 성공하면 회원가입 때 사용한 id 반환, 아니면 null
     }
 
     ConstraintLayout(modifier = modifier) {
@@ -386,6 +410,7 @@ fun NormalScreen(
         }
     }
 }
+
 @Composable
 fun SnsLoginScreen(
     modifier: Modifier
@@ -479,6 +504,7 @@ fun SnsLoginScreen(
         )
     }
 }
+
 @Composable
 fun SnsLoginButton(
     modifier: Modifier,

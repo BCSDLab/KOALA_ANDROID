@@ -15,7 +15,7 @@ open class PasswordCheckResult(val errorCode: Int) {
     operator fun plus(other: PasswordCheckResult): PasswordCheckResult =
         PasswordCheckResult(this.errorCode or other.errorCode)
 
-    operator fun contains(passwordCheckResult: PasswordCheckResult) : Boolean {
+    operator fun contains(passwordCheckResult: PasswordCheckResult): Boolean {
         return this.errorCode and passwordCheckResult.errorCode == passwordCheckResult.errorCode
     }
 
@@ -25,7 +25,6 @@ open class PasswordCheckResult(val errorCode: Int) {
 
     fun isOK() = this == PasswordCheckStatus.OK
     fun isError() = this != PasswordCheckStatus.OK
-
 }
 
 sealed class PasswordCheckStatus(errorCode: Int) : PasswordCheckResult(errorCode) {

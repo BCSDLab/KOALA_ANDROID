@@ -71,18 +71,50 @@ class SignUpCheckPasswordUseCaseTest {
         Assert.assertNotNull(signUpCheckPasswordUseCase("1")[PasswordCheckStatus.TooShortCharactersError])
         Assert.assertNotNull(signUpCheckPasswordUseCase("$")[PasswordCheckStatus.TooShortCharactersError])
         Assert.assertNotNull(signUpCheckPasswordUseCase("asdf")[PasswordCheckStatus.TooShortCharactersError])
-        Assert.assertTrue(PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase("a1S2d3"))
-        Assert.assertTrue(PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase("aAa***"))
-        Assert.assertTrue(PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase("*123*"))
-        Assert.assertTrue(PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase("heLlo"))
+        Assert.assertTrue(
+            PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase(
+                "a1S2d3"
+            )
+        )
+        Assert.assertTrue(
+            PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase(
+                "aAa***"
+            )
+        )
+        Assert.assertTrue(
+            PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase(
+                "*123*"
+            )
+        )
+        Assert.assertTrue(
+            PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase(
+                "heLlo"
+            )
+        )
 
         Assert.assertNull(signUpCheckPasswordUseCase("abcdefghijklmnopqrstuvwxyz")[PasswordCheckStatus.TooShortCharactersError])
         Assert.assertNull(signUpCheckPasswordUseCase("12345678901234567890")[PasswordCheckStatus.TooShortCharactersError])
         Assert.assertNull(signUpCheckPasswordUseCase("$#$^*%&!@#(%&!@#$(&*")[PasswordCheckStatus.TooShortCharactersError])
-        Assert.assertFalse(PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase("loremipsumdolorsitamet"))
-        Assert.assertFalse(PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase("aaa111sss222ddd333fff444"))
-        Assert.assertFalse(PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase("aaa***sss(((ddd)))fff___"))
-        Assert.assertFalse(PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase("*1@35^7*9)*1@35^7*9)*1@35^7*9)*"))
+        Assert.assertFalse(
+            PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase(
+                "loremipsumdolorsitamet"
+            )
+        )
+        Assert.assertFalse(
+            PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase(
+                "aaa111sss222ddd333fff444"
+            )
+        )
+        Assert.assertFalse(
+            PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase(
+                "aaa***sss(((ddd)))fff___"
+            )
+        )
+        Assert.assertFalse(
+            PasswordCheckStatus.TooShortCharactersError in signUpCheckPasswordUseCase(
+                "*1@35^7*9)*1@35^7*9)*1@35^7*9)*"
+            )
+        )
     }
 
     @Test
@@ -91,10 +123,26 @@ class SignUpCheckPasswordUseCaseTest {
         Assert.assertNull(signUpCheckPasswordUseCase("1")[PasswordCheckStatus.TooLongCharactersError])
         Assert.assertNull(signUpCheckPasswordUseCase("$")[PasswordCheckStatus.TooLongCharactersError])
         Assert.assertNull(signUpCheckPasswordUseCase("asdf")[PasswordCheckStatus.TooLongCharactersError])
-        Assert.assertFalse(PasswordCheckStatus.TooLongCharactersError in signUpCheckPasswordUseCase("a1S2d3"))
-        Assert.assertFalse(PasswordCheckStatus.TooLongCharactersError in signUpCheckPasswordUseCase("aAa***"))
-        Assert.assertFalse(PasswordCheckStatus.TooLongCharactersError in signUpCheckPasswordUseCase("*123*"))
-        Assert.assertFalse(PasswordCheckStatus.TooLongCharactersError in signUpCheckPasswordUseCase("heLlo"))
+        Assert.assertFalse(
+            PasswordCheckStatus.TooLongCharactersError in signUpCheckPasswordUseCase(
+                "a1S2d3"
+            )
+        )
+        Assert.assertFalse(
+            PasswordCheckStatus.TooLongCharactersError in signUpCheckPasswordUseCase(
+                "aAa***"
+            )
+        )
+        Assert.assertFalse(
+            PasswordCheckStatus.TooLongCharactersError in signUpCheckPasswordUseCase(
+                "*123*"
+            )
+        )
+        Assert.assertFalse(
+            PasswordCheckStatus.TooLongCharactersError in signUpCheckPasswordUseCase(
+                "heLlo"
+            )
+        )
 
         Assert.assertNotNull(signUpCheckPasswordUseCase("abcdefghijklmnopqrstuvwxyz")[PasswordCheckStatus.TooLongCharactersError])
         Assert.assertNotNull(signUpCheckPasswordUseCase("12345678901234567890")[PasswordCheckStatus.TooLongCharactersError])
@@ -109,11 +157,19 @@ class SignUpCheckPasswordUseCaseTest {
     fun `이모티콘이 포함된 비밀번호`() {
         Assert.assertNotNull(signUpCheckPasswordUseCase("asdf🧐fdsa")[PasswordCheckStatus.NotSupportCharactersError])
         Assert.assertNotNull(signUpCheckPasswordUseCase("✈️👎🇰🇷TECH👍")[PasswordCheckStatus.NotSupportCharactersError])
-        Assert.assertTrue(PasswordCheckStatus.NotSupportCharactersError in signUpCheckPasswordUseCase("✈️👎🇰🇷🧑‍🔧👍KOREATECH"))
+        Assert.assertTrue(
+            PasswordCheckStatus.NotSupportCharactersError in signUpCheckPasswordUseCase(
+                "✈️👎🇰🇷🧑‍🔧👍KOREATECH"
+            )
+        )
 
         Assert.assertNull(signUpCheckPasswordUseCase("asdffdsa")[PasswordCheckStatus.NotSupportCharactersError])
         Assert.assertNull(signUpCheckPasswordUseCase("skybodakoreaTECH")[PasswordCheckStatus.NotSupportCharactersError])
-        Assert.assertFalse(PasswordCheckStatus.NotSupportCharactersError in signUpCheckPasswordUseCase("SKYBODAKOREATECH"))
+        Assert.assertFalse(
+            PasswordCheckStatus.NotSupportCharactersError in signUpCheckPasswordUseCase(
+                "SKYBODAKOREATECH"
+            )
+        )
     }
 
     @Test

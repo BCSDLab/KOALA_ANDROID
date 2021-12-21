@@ -134,7 +134,6 @@ private fun SignupTermScreenPreview() {
             }
         ) {
             SignupTermScreen {
-
             }
         }
     }

@@ -7,7 +7,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -49,7 +53,7 @@ const val DOT_COUNT = 3
 @AndroidEntryPoint
 class SignupActivity : ComponentActivity() {
 
-    private val signupViewModel : SignupViewModel by viewModels()
+    private val signupViewModel: SignupViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,9 +82,12 @@ fun SignupContent(signupViewModel: SignupViewModel) {
     KoalaTheme {
         if (signupViewModel.signupCompleted) {
             SignupCompletedDialog {
-                activity.setResult(Activity.RESULT_OK, Intent().apply {
-                    putExtra(SignUpContract.LOGIN_ID, signupViewModel.signUpValueUiState.id)
-                })
+                activity.setResult(
+                    Activity.RESULT_OK,
+                    Intent().apply {
+                        putExtra(SignUpContract.LOGIN_ID, signupViewModel.signUpValueUiState.id)
+                    }
+                )
                 activity.finish()
             }
         }
@@ -96,7 +103,7 @@ fun SignupContent(signupViewModel: SignupViewModel) {
                         title = stringResource(R.string.app_bar_title_signup),
                         showBackButton = true,
                         onBackClick = {
-                            if(!navController.navigateUp()) activity.finish()
+                            if (!navController.navigateUp()) activity.finish()
                         }
                     ) {}
                 },
@@ -118,9 +125,11 @@ fun SignupContent(signupViewModel: SignupViewModel) {
                                     .fillMaxWidth()
                                     .height(48.dp),
                                 onClick = {
-                                    when(navController.currentBackStackEntry?.destination?.route) {
+                                    when (navController.currentBackStackEntry?.destination?.route) {
                                         STEP_TERMS -> navController.navigate(STEP_PERMISSION)
-                                        STEP_PERMISSION -> navController.navigate(STEP_INPUT_USER_INFO)
+                                        STEP_PERMISSION -> navController.navigate(
+                                            STEP_INPUT_USER_INFO
+                                        )
                                         STEP_INPUT_USER_INFO -> signupViewModel.signUp()
                                     }
                                 },

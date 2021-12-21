@@ -38,7 +38,7 @@ ext {
     constraintLayoutCompose = "androidx.constraintlayout:constraintlayout-compose:$constraint_layout"
 
     /* Dependency - Icon Compose */
-   // iconCompose = "androidx.constraintlayout:constraintlayout-compose:$compose_version"
+    // iconCompose = "androidx.constraintlayout:constraintlayout-compose:$compose_version"
 
 
     /* Dependency - Activity Compose */

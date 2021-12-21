@@ -32,7 +32,6 @@ class SignUpRepositoryModule {
             ): Boolean {
                 return true
             }
-
         }
     }
 }
