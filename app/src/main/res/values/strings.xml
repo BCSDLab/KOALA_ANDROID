@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">KOALA_ANDROID</string>
+
     <string name="back_button_content_description">Back</string>
     <string name="koala_logo_content_description">Back</string>
+
     <string name="login_id">아이디</string>
     <string name="login_pw">비밀번호 입력</string>
     <string name="login">로그인</string>
@@ -16,6 +18,17 @@
     <string name="google_login">구글 로그인</string>
     <string name="naver_login">네이버 로그인</string>
     <string name="kakao_login">카카오 로그인</string>
+    <string name="find_password_id">아이디 입력</string>
+    <string name="find_password_email">이메일 입력 (인증번호가 전송됩니다.)</string>
+    <string name="find_password_put_verify_number">인증번호 입력</string>
+    <string name="find_password_send_verify_number">인증번호 입력</string>
+    <string name="find_password_verify_done">인증완료</string>
+    <string name="find_password_app_bar">비밀번호찾기</string>
+    <string name="find_password_new_password">새 비밀번호 변경</string>
+    <string name="find_password_new_password_sub">비밀번호를 새로운 비밀번호로 변경해주세요!</string>
+    <string name="find_password_new_password_form">(영문, 숫자, 특수기호 포함 8자~15자)</string>
+    <string name="find_password_check_new_password">새 비밀번호 확인</string>
+    <string name="find_password_done">완료</string>
     <string name="app_bar_title_signup">회원가입</string>
     <string name="signup_subtitle_terms">약관 동의</string>
     <string name="signup_subtitle_terms_description">원활한 사용을 위하여 필수 약관 동의가 필요합니다.</string>
