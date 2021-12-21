@@ -22,6 +22,7 @@ import im.koala.domain.util.checkemail.EmailCheckResult
 import im.koala.domain.util.checkid.IdCheckResult
 import im.koala.domain.util.checknickname.NicknameCheckResult
 import im.koala.domain.util.checkpassword.PasswordCheckResult
+import im.koala.domain.util.checkpassword.PasswordCheckStatus
 import kotlinx.coroutines.launch
 
 @ExperimentalComposeUiApi
@@ -95,7 +96,7 @@ fun SignupInputUserInfoScreen(
                     },
                     value = signUpInputUiState.password,
                     onValueChange = onPasswordChanged,
-                    isError = signUpInputUiState.passwordCheckResult != PasswordCheckResult.OK,
+                    isError = signUpInputUiState.passwordCheckResult != PasswordCheckStatus.OK,
                     errorMessage = passwordErrorMessage(passwordCheckResult = signUpInputUiState.passwordCheckResult),
                     hint = stringResource(R.string.signup_input_hint_password),
                     imeAction = ImeAction.Next,
@@ -182,37 +183,44 @@ private fun idErrorMessage(idCheckResult: IdCheckResult) = when (idCheckResult) 
 }
 
 @Composable
-private fun passwordErrorMessage(passwordCheckResult: PasswordCheckResult) =
-    when (passwordCheckResult) {
-        in PasswordCheckResult.NoSuchInputError -> stringResource(id = R.string.signup_input_error_password_no_input)
-        in PasswordCheckResult.NotContainsEnglishError -> stringResource(
+private fun passwordErrorMessage(passwordCheckResult: PasswordCheckResult): String {
+    return when (passwordCheckResult) {
+        in PasswordCheckStatus.NoSuchInputError -> {
+            stringResource(id = R.string.signup_input_error_password_no_input)
+        }
+        in PasswordCheckStatus.TooLongCharactersError -> {
+            stringResource(id = R.string.signup_password_error_length_upper_15)
+        }
+        in PasswordCheckStatus.TooShortCharactersError -> {
+            stringResource(id = R.string.signup_password_error_length_lower_8)
+        }
+        in PasswordCheckStatus.NotContainsEnglishError -> stringResource(
             id = R.string.signup_password_error_not_contains,
             stringResource(id = R.string.english)
         )
-        in PasswordCheckResult.NotContainsNumberError -> stringResource(
+        in PasswordCheckStatus.NotContainsNumberError -> stringResource(
             id = R.string.signup_password_error_not_contains,
             stringResource(id = R.string.number)
         )
-        in PasswordCheckResult.NotContainsSpecialCharacterError -> stringResource(
+        in PasswordCheckStatus.NotContainsSpecialCharacterError -> stringResource(
             id = R.string.signup_password_error_not_contains,
             stringResource(id = R.string.special)
         )
-        in PasswordCheckResult.NotContainsEnglishError + PasswordCheckResult.NotContainsNumberError -> stringResource(
+        in PasswordCheckStatus.NotContainsEnglishError + PasswordCheckStatus.NotContainsNumberError -> stringResource(
             id = R.string.signup_password_error_not_contains,
             "${stringResource(id = R.string.english)}, ${stringResource(id = R.string.number)}"
         )
-        in PasswordCheckResult.NotContainsNumberError + PasswordCheckResult.NotContainsSpecialCharacterError -> stringResource(
+        in PasswordCheckStatus.NotContainsNumberError + PasswordCheckStatus.NotContainsSpecialCharacterError -> stringResource(
             id = R.string.signup_password_error_not_contains,
             "${stringResource(id = R.string.number)}, ${stringResource(id = R.string.special)}"
         )
-        in PasswordCheckResult.NotContainsSpecialCharacterError + PasswordCheckResult.NotContainsEnglishError -> stringResource(
+        in PasswordCheckStatus.NotContainsSpecialCharacterError + PasswordCheckStatus.NotContainsEnglishError -> stringResource(
             id = R.string.signup_password_error_not_contains,
             "${stringResource(id = R.string.english)}, ${stringResource(id = R.string.special)}"
         )
-        in PasswordCheckResult.TooLongCharactersError -> stringResource(id = R.string.signup_password_error_length_upper_15)
-        in PasswordCheckResult.TooShortCharactersError -> stringResource(id = R.string.signup_password_error_length_lower_8)
         else -> ""
     }
+}
 
 @Composable
 private fun emailErrorMessage(emailCheckResult: EmailCheckResult) = when (emailCheckResult) {

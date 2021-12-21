@@ -5,49 +5,52 @@ import im.koala.domain.constants.PASSWORD_LENGTH_MIN
 
 object PasswordChecker {
     fun checkPassword(password: CharSequence): PasswordCheckResult {
-        return checkPasswordNoneInput(password) +
+        val result = checkPasswordNoneInput(password) +
             checkPasswordLength(password) +
             checkPasswordContainsNotSupportedCharacter(password) +
             checkPasswordNotContains(password)
+
+        if(result == PasswordCheckStatus.OK) return PasswordCheckStatus.OK
+        return result
     }
 
     private fun checkPasswordContainsNotSupportedCharacter(password: CharSequence) =
-        if (PasswordRegexps.REGEX_MATCH_SUPPORTED_CHARACTERS.matchEntire(password) == null) PasswordCheckResult.NotSupportCharactersError
-        else PasswordCheckResult.OK
+        if (PasswordRegexps.REGEX_MATCH_SUPPORTED_CHARACTERS.matchEntire(password) == null) PasswordCheckStatus.NotSupportCharactersError
+        else PasswordCheckStatus.OK
 
     private fun checkPasswordLength(password: CharSequence) =
         when {
-            password.length < PASSWORD_LENGTH_MIN -> PasswordCheckResult.TooShortCharactersError
-            password.length > PASSWORD_LENGTH_MAX -> PasswordCheckResult.TooLongCharactersError
-            else -> PasswordCheckResult.OK
+            password.length < PASSWORD_LENGTH_MIN -> PasswordCheckStatus.TooShortCharactersError
+            password.length > PASSWORD_LENGTH_MAX -> PasswordCheckStatus.TooLongCharactersError
+            else -> PasswordCheckStatus.OK
         }
 
     private fun checkPasswordNotContains(password: CharSequence): PasswordCheckResult {
         val noEnglish =
             if (PasswordRegexps.REGEX_CONTAINS_ENGLISH.matchEntire(password) == null) {
-                PasswordCheckResult.NotContainsEnglishError
+                PasswordCheckStatus.NotContainsEnglishError
             } else {
-                PasswordCheckResult.OK
+                PasswordCheckStatus.OK
             }
         val noDigit =
             if (PasswordRegexps.REGEX_CONTAINS_NUMBER.matchEntire(password) == null) {
-                PasswordCheckResult.NotContainsNumberError
+                PasswordCheckStatus.NotContainsNumberError
             } else {
-                PasswordCheckResult.OK
+                PasswordCheckStatus.OK
             }
         val noSpecials =
             if (PasswordRegexps.REGEX_CONTAINS_SPECIAL_CHARACTER.matchEntire(password) == null) {
-                PasswordCheckResult.NotContainsSpecialCharacterError
+                PasswordCheckStatus.NotContainsSpecialCharacterError
             } else {
-                PasswordCheckResult.OK
+                PasswordCheckStatus.OK
             }
 
         return noEnglish + noDigit + noSpecials
     }
 
     private fun checkPasswordNoneInput(password: CharSequence) =
-        if (password.isEmpty()) PasswordCheckResult.NoSuchInputError
-        else PasswordCheckResult.OK
+        if (password.isEmpty()) PasswordCheckStatus.NoSuchInputError
+        else PasswordCheckStatus.OK
 
     /* e.g.
     0x10000010 -> No input
