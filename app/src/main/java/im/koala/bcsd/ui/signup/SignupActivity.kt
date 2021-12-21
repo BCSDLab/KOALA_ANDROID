@@ -27,6 +27,7 @@ import im.koala.bcsd.R
 import im.koala.bcsd.ui.appbar.KoalaTextAppBar
 import im.koala.bcsd.ui.button.KoalaButton
 import im.koala.bcsd.ui.indicator.KoalaDotIndicator
+import im.koala.bcsd.ui.signup.compose.SignupCompletedDialog
 import im.koala.bcsd.ui.signup.compose.SignupInputUserInfoScreen
 import im.koala.bcsd.ui.signup.compose.SignupPermissionScreen
 import im.koala.bcsd.ui.signup.compose.SignupTermScreen
@@ -71,6 +72,12 @@ fun SignupContent(signupViewModel: SignupViewModel) {
     val dotPosition = rememberSaveable { mutableStateOf(0) }
 
     KoalaTheme {
+        if (signupViewModel.signupCompleted) {
+            SignupCompletedDialog {
+                // TODO : Login screen gogo
+            }
+        }
+
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
