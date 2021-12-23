@@ -31,6 +31,13 @@
     <string name="find_password_check_new_password">새 비밀번호 확인</string>
     <string name="find_password_done">완료</string>
 
+    <!--main -->
+    <string name="keyword">키워드</string>
+    <string name="history">히스토리</string>
+    <string name="chatroom">채팅방</string>
+    <string name="setting">설정</string>
+
+
 
 
 
