@@ -50,6 +50,4 @@ sealed class NavScreen(val route: String) {
 
         const val argument0: String = "SettingId"
     }
-
-
 }

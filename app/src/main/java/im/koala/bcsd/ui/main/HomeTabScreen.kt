@@ -15,14 +15,18 @@
  */
 
 package im.koala.bcsd.ui.main
-
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.Crossfade // ktlint-disable import-ordering
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.Scaffold
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.primarySurface
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -62,7 +66,7 @@ fun HomeTabScreen(
                                 contentDescription = null
                             )
                         },
-                        label = { Text(text = stringResource(tab.title), color = Color.White) },
+                        label = { Text(text = stringResource(tab.title), color = MaterialTheme.colors.primary) },
                         selected = tab == selectedTab,
                         onClick = { viewModel.selectTab(tab) },
                         selectedContentColor = MaterialTheme.colors.secondary,
