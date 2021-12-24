@@ -32,7 +32,9 @@ class MainActivity : ComponentActivity() {
                                 .fillMaxWidth()
                                 .padding(16.dp)
                                 .height(48.dp),
-                            onClick = { /*TODO*/ }
+                            onClick = {
+                                throw RuntimeException("Test Crash")
+                            }
                         ) {
                             Greeting("Android")
                         }
