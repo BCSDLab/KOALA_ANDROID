@@ -4,4 +4,4 @@ import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class KoalaApp: Application()
+class KoalaApp : Application()
