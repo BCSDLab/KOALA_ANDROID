@@ -22,7 +22,7 @@ fun MainScreen() {
         rememberLazyListState()
     )
     ProvideWindowInsets {
-        NavHost(navController = navController, startDestination = NavScreen.Keyword.route ) {
+        NavHost(navController = navController, startDestination = NavScreen.Keyword.route) {
             composable(
                 route = NavScreen.Keyword.route,
                 arguments = emptyList()
@@ -30,7 +30,7 @@ fun MainScreen() {
                 HomeTabScreen(
                     viewModel = hiltViewModel(),
                     tabStateHolder = tabStateHolder,
-                    selectItem = {tab, index ->
+                    selectItem = { tab, index ->
                         when (tab) {
                             MainScreenBottomTab.KEYWORD -> navController.navigate("${NavScreen.KeywordDetails.route}/$index")
                             MainScreenBottomTab.HISTORY -> navController.navigate("${NavScreen.HistoryDetails.route}/$index")
@@ -40,10 +40,8 @@ fun MainScreen() {
                     }
                 )
             }
-
         }
     }
-
 }
 
 @Immutable
