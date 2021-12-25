@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,6 +34,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -47,8 +50,7 @@ import androidx.constraintlayout.compose.Dimension
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.findid.FindIdActivity
 import im.koala.bcsd.ui.findpassword.FindPasswordActivity
-import im.koala.bcsd.ui.join.JoinActivity
-import im.koala.bcsd.ui.main.MainViewModel
+import im.koala.bcsd.ui.signup.SignUpContract
 import im.koala.bcsd.ui.theme.Black
 import im.koala.bcsd.ui.theme.GrayBorder
 import im.koala.bcsd.ui.theme.GrayDisabled
@@ -58,6 +60,8 @@ import im.koala.bcsd.ui.theme.KoalaTheme
 import im.koala.bcsd.ui.theme.White
 import im.koala.bcsd.ui.theme.Yellow2
 
+@ExperimentalAnimationApi
+@ExperimentalComposeUiApi
 class LoginActivity : ComponentActivity() {
     private val viewModel: LoginViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +77,8 @@ class LoginActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalComposeUiApi
+@ExperimentalAnimationApi
 @Composable
 fun LoginScreen(context: Context, viewModel: LoginViewModel) {
     val context = LocalContext.current
@@ -89,12 +95,14 @@ fun LoginScreen(context: Context, viewModel: LoginViewModel) {
             drawableId = R.drawable.ic_koala_logo
         )
         LoginTypeTabScreen(
-            modifier = Modifier.constrainAs(loginRowLayout) {
-                top.linkTo(logoImageView.bottom, margin = 40.dp)
-                start.linkTo(parent.start, margin = 16.dp)
-                end.linkTo(parent.end, margin = 16.dp)
-                width = Dimension.fillToConstraints
-            }.size(0.dp, 71.dp),
+            modifier = Modifier
+                .constrainAs(loginRowLayout) {
+                    top.linkTo(logoImageView.bottom, margin = 40.dp)
+                    start.linkTo(parent.start, margin = 16.dp)
+                    end.linkTo(parent.end, margin = 16.dp)
+                    width = Dimension.fillToConstraints
+                }
+                .size(0.dp, 71.dp),
             isNormalLoginState
         )
         if (isNormalLoginState.value) {
@@ -125,6 +133,7 @@ fun LoginScreen(context: Context, viewModel: LoginViewModel) {
         }
     }
 }
+
 @Composable
 fun LoginTypeTabScreen(
     modifier: Modifier,
@@ -207,11 +216,18 @@ fun LoginTypeTabScreen(
         }
     }
 }
+
+@ExperimentalAnimationApi
+@ExperimentalComposeUiApi
 @Composable
 fun NormalScreen(
     modifier: Modifier,
     context: Context
 ) {
+    val signUpContract = rememberLauncherForActivityResult(contract = SignUpContract()) {
+        // 회원가입 성공하면 회원가입 때 사용한 id 반환, 아니면 null
+    }
+
     ConstraintLayout(modifier = modifier) {
         val (idEditText, pwEditText, autoLoginSwitch, autoLoginText, loginButton, rowLayout, snsLoginText) = createRefs()
         val idTextState = remember { mutableStateOf(TextFieldValue()) }
@@ -344,9 +360,7 @@ fun NormalScreen(
             )
             TextButton(
                 onClick = {
-                    Intent(context, JoinActivity::class.java).run {
-                        context.startActivity(this)
-                    }
+                    signUpContract.launch(null)
                 },
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Transparent,
@@ -399,6 +413,7 @@ fun NormalScreen(
         }
     }
 }
+
 @Composable
 fun SnsLoginScreen(
     context: Context,
@@ -496,6 +511,7 @@ fun SnsLoginScreen(
         )
     }
 }
+
 @Composable
 fun SnsLoginButton(
     modifier: Modifier,

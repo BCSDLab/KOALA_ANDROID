@@ -18,7 +18,6 @@
     <string name="google_login">구글 로그인</string>
     <string name="naver_login">네이버 로그인</string>
     <string name="kakao_login">카카오 로그인</string>
-
     <string name="find_password_id">아이디 입력</string>
     <string name="find_password_email">이메일 입력 (인증번호가 전송됩니다.)</string>
     <string name="find_password_put_verify_number">인증번호 입력</string>
@@ -30,16 +29,55 @@
     <string name="find_password_new_password_form">(영문, 숫자, 특수기호 포함 8자~15자)</string>
     <string name="find_password_check_new_password">새 비밀번호 확인</string>
     <string name="find_password_done">완료</string>
+    <string name="app_bar_title_signup">회원가입</string>
+    <string name="signup_subtitle_terms">약관 동의</string>
+    <string name="signup_subtitle_terms_description">원활한 사용을 위하여 필수 약관 동의가 필요합니다.</string>
+    <string name="signup_terms_agree_all">약관 전체동의</string>
+    <string name="signup_terms_privacy">개인정보 이용약관 (필수)</string>
+    <string name="signup_terms_koala">Koala 이용약관 (필수)</string>
+    <string name="signup_terms_privacy_detail">.</string>
+    <string name="signup_terms_koala_detail">\"제1조(목적)\n한강 서비스 이용약관은 bcsd lab에서 서비스를 제공함에 있어, 이용자간의 관리, 의무 및 책임 사항 등을 목적으로 합니다\n\n커뮤니티 이용규칙\n한강 서비스 이용약관은 bcsd lab에서 서비스를 제공함에 있어, 이용자간의 관리, 의무 및 책임 사항 등을 목적으로 합니다\"</string>
+    <string name="signup_subtitle_permission">권한 허용</string>
+    <string name="signup_subtitle_permission_description">원활한 서비스 사용을 위하여 권한 허용이 필요합니다.</string>
+    <string name="signup_permission_item_notification">알림 (필수)</string>
+    <string name="signup_permission_item_notification_description">키워드 알림 시 필수 이용</string>
+    <string name="signup_permission_item_camera">카메라 (선택)</string>
+    <string name="signup_permission_item_camera_description">채팅방 이미지 전송 시 이용</string>
+    <string name="signup_permission_item_storage">저장공간 (선택)</string>
+    <string name="signup_permission_item_notification_storage">채팅방 이미지 저장/업로드</string>
+    <string name="signup_permission_info"><![CDATA[필수 권한을 허용하지 않는 경우,  정상적인 서비스 사용이 어려울 수 있습니다.\n선택 권한을 허용하지 않아도 해당 기능 외 서비스는 정상적으로 사용가능합니다.\n‘설정 > 애플리케이션 > koala > 권한’에서 재설정이 가능합니다.]]></string>
+    <string name="signup_next">다음</string>
+    <string name="signup_finish">완료</string>
+    <string name="signup_subtitle_user_info">회원정보 입력</string>
+    <string name="signup_subtitle_user_info_description">사용할 회원 정보를 입력해주세요.</string>
+    <string name="signup_input_error_id_duplicated">이미 가입된 아이디입니다.</string>
+    <string name="signup_input_hint_id">아이디</string>
+    <string name="signup_password_error_length_lower_8">비밀번호는 8자 이상이어야 합니다.</string>
+    <string name="signup_password_error_length_upper_15">비밀번호는 15자 이하여야 합니다.</string>
+    <string name="english">영어</string>
+    <string name="number">숫자</string>
+    <string name="signup_password_error_not_contains">%1$s가 포함되어 있지 않습니다.</string>
+    <string name="signup_input_hint_password">비밀번호 (영문, 숫자, 특수기호 포함 8자~15자)</string>
+    <string name="signup_input_hint_nickname">닉네임</string>
+    <string name="signup_input_hint_email">이메일</string>
+    <string name="signup_input_hint_password_2">비밀번호 확인</string>
+    <string name="signup_input_error_password_not_match">비밀번호가 일치하지 않습니다.</string>
+    <string name="signup_input_error_email_format_not_match">이메일 형식이 알맞지 않습니다.</string>
+    <string name="signup_input_error_nickname_duplicated">이미 사용중인 닉네임입니다.</string>
+    <string name="special">특수문자</string>
+    <string name="signup_completed_title">회원가입이 되었습니다.</string>
+    <string name="signup_completed_message">환영합니다. 지금 바로 Koala를 이용해 볼까요?</string>
+    <string name="signup_goto_login">로그인하러 가기</string>
+    <string name="signup_input_error_id_no_input">아이디를 입력해주세요.</string>
+    <string name="signup_input_error_password_no_input">비밀번호를 입력해주세요.</string>
+    <string name="signup_input_error_email_no_input">이메일을 입력해주세요.</string>
+    <string name="signup_input_error_email_duplicated">중복된 이메일입니다.</string>
+    <string name="signup_input_error_nickname_no_input">닉네임을 입력해주세요.</string>
+    <string name="signup_password_error_not_support_character">사용할 수 없는 문자가 있습니다.</string>
 
     <!--main -->
     <string name="keyword">키워드</string>
     <string name="history">히스토리</string>
     <string name="chatroom">채팅방</string>
     <string name="setting">설정</string>
-
-
-
-
-
-
 </resources>

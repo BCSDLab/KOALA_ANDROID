@@ -6,9 +6,9 @@ insert_final_newline = false
 trim_trailing_whitespace = true
 end_of_line = lf
 
-[*.{kt,kts}]
+[*.{kt, kts}]
 indent_size = 4
 disabled_rules=import-ordering
 
-[*.{yml,yaml}]
+[*.{yml, yaml}]
 indent_size = 2
