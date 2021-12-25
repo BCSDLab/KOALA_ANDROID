@@ -23,6 +23,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -121,6 +122,8 @@ fun KoalaPasswordTextField(
     isError: Boolean = false,
     showPassword: Boolean = false,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    imeAction: ImeAction = ImeAction.Default,
+    keyboardActions: KeyboardActions = KeyboardActions()
 ) {
     val showPassword = rememberSaveable { mutableStateOf(showPassword) }
 
@@ -148,9 +151,11 @@ fun KoalaPasswordTextField(
         },
         isError = isError,
         keyboardOptions = KeyboardOptions(
+            imeAction = imeAction,
             autoCorrect = false,
             keyboardType = KeyboardType.Password
         ),
+        keyboardActions = keyboardActions,
         singleLine = true,
         maxLines = 1,
         interactionSource = interactionSource,
