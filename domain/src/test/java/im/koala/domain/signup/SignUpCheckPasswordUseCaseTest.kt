@@ -658,7 +658,6 @@ class SignUpCheckPasswordUseCaseTest {
         }
     }
 
-
     @Test
     fun `비밀번호에 숫자와 특수문자가 포함되어 있지 않으면 PasswordCheckResult가 OK가 아니어야 한다`() {
         val signUpCheckPasswordUseCase = SignUpCheckPasswordUseCase()
@@ -754,5 +753,4 @@ class SignUpCheckPasswordUseCaseTest {
             Assert.assertTrue(it.isOK())
         }
     }
-
 }
