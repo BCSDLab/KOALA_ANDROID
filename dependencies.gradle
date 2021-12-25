@@ -122,6 +122,21 @@ ext {
     hiltAndroid = "com.google.dagger:hilt-android:$hilt_version"
     hiltCompiler = "com.google.dagger:hilt-compiler:$hilt_version"
 
+    def hilt_compose_navigation_version = "1.0.0-alpha03"
+    hiltComposeNavigation = "androidx.hilt:hilt-navigation-compose:$hilt_compose_navigation_version"
+
+    def hilt_androidx_version = "1.0.0"
+    hiltAndroidx = "androidx.hilt:hilt-compiler:$hilt_androidx_version"
+
+    /* BottomNavigation - compose */
+    def bottom_navigation_version = "2.4.0-beta02"
+    bottomNavigation =  "androidx.navigation:navigation-compose:$bottom_navigation_version"
+
+    /* compose insets */
+    def accompanist_version = "0.20.0"
+    accompanistInsets = "com.google.accompanist:accompanist-insets:$accompanist_version"
+    accompanistFlowLayout = "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
+
     /* Dependency - coroutine android*/
     def coroutine_android_version = "1.5.0"
     coroutineAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_android_version"

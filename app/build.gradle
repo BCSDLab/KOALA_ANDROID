@@ -79,6 +79,13 @@ dependencies {
 
     implementation project.hiltAndroid
     kapt project.hiltCompiler
+    kapt project.hiltAndroidx
+    implementation project.hiltComposeNavigation
+
+    implementation project.bottomNavigation
+
+    implementation project.accompanistInsets
+    implementation project.accompanistFlowLayout
 
     implementation project.coroutineAndroid
 }
