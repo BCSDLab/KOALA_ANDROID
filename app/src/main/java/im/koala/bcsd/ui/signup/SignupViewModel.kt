@@ -35,6 +35,7 @@ class SignupViewModel @Inject constructor(
 
     fun setId(id: String) {
         signUpValueUiState = signUpValueUiState.copy(id = id)
+        checkId()
     }
 
     fun setPassword(password: String) {
@@ -50,25 +51,27 @@ class SignupViewModel @Inject constructor(
 
     fun setEmail(email: String) {
         signUpValueUiState = signUpValueUiState.copy(email = email)
+        checkEmail()
     }
 
     fun setNickname(nickname: String) {
         signUpValueUiState = signUpValueUiState.copy(nickname = nickname)
+        checkNickname()
     }
 
-    fun checkId() {
+    private fun checkId() {
         signUpValueUiState = signUpValueUiState.copy(
             idCheckResult = signUpCheckIdUseCase(signUpValueUiState.id)
         )
     }
 
-    fun checkPassword() {
+    private fun checkPassword() {
         signUpValueUiState = signUpValueUiState.copy(
             passwordCheckResult = signUpCheckPasswordUseCase(signUpValueUiState.password)
         )
     }
 
-    fun checkPasswordMatch() {
+    private fun checkPasswordMatch() {
         signUpValueUiState = signUpValueUiState.copy(
             isPasswordConfirmMatch = signUpCheckPasswordConfirmUseCase(
                 signUpValueUiState.password,
@@ -77,22 +80,19 @@ class SignupViewModel @Inject constructor(
         )
     }
 
-    fun checkEmail() {
+    private fun checkEmail() {
         signUpValueUiState = signUpValueUiState.copy(
             emailCheckResult = signUpCheckEmailUseCase(signUpValueUiState.email)
         )
     }
 
-    fun checkNickname() {
+    private fun checkNickname() {
         signUpValueUiState = signUpValueUiState.copy(
             nicknameCheckResult = signUpCheckNicknameUseCase(signUpValueUiState.nickname)
         )
     }
 
     fun signUp() {
-        checkEmail()
-        checkNickname()
-        checkId()
         with(signUpValueUiState) {
             if (idCheckResult == IdCheckResult.OK &&
                 passwordCheckResult == PasswordCheckStatus.OK &&
