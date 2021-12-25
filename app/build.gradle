@@ -4,7 +4,8 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
 }
-
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
 android {
     compileSdk 31
 
@@ -14,12 +15,14 @@ android {
         targetSdk 31
         versionCode 10000
         versionName "1.0.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
+        resValue("string", "KAKAO_KEY", properties.getProperty("kakao_key"))
+        manifestPlaceholders = [kakao_oauth_key: "${properties.getProperty('kakao_oauth_key')}"]
     }
+
 
     buildTypes {
         release {
@@ -84,4 +87,6 @@ dependencies {
     implementation project.accompanistFlowLayout
 
     implementation project.coroutineAndroid
+
+    implementation project.kakao_login
 }

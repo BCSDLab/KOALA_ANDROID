@@ -137,4 +137,8 @@ ext {
     /* Dependency - coroutine android*/
     def coroutine_android_version = "1.5.0"
     coroutineAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_android_version"
+
+    /* kakao */
+    def kakao_version = "2.8.4"
+    kakao_login =  "com.kakao.sdk:v2-user:$kakao_version"
 }

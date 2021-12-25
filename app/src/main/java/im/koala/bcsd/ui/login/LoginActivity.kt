@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -47,6 +48,7 @@ import im.koala.bcsd.R
 import im.koala.bcsd.ui.findid.FindIdActivity
 import im.koala.bcsd.ui.findpassword.FindPasswordActivity
 import im.koala.bcsd.ui.join.JoinActivity
+import im.koala.bcsd.ui.main.MainViewModel
 import im.koala.bcsd.ui.theme.Black
 import im.koala.bcsd.ui.theme.GrayBorder
 import im.koala.bcsd.ui.theme.GrayDisabled
@@ -57,13 +59,14 @@ import im.koala.bcsd.ui.theme.White
 import im.koala.bcsd.ui.theme.Yellow2
 
 class LoginActivity : ComponentActivity() {
+    private val viewModel: LoginViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             KoalaTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    LoginScreen()
+                    LoginScreen(context = this, viewModel = viewModel)
                 }
             }
         }
@@ -71,7 +74,7 @@ class LoginActivity : ComponentActivity() {
 }
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(context: Context, viewModel: LoginViewModel) {
     val context = LocalContext.current
     var isNormalLoginState = remember { mutableStateOf(true) }
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -108,6 +111,7 @@ fun LoginScreen() {
             )
         } else {
             SnsLoginScreen(
+                context = context,
                 modifier = Modifier.constrainAs(normalLoginConstraintLyaout) {
                     top.linkTo(loginRowLayout.bottom)
                     start.linkTo(parent.start)
@@ -115,7 +119,8 @@ fun LoginScreen() {
                     bottom.linkTo(parent.bottom)
                     height = Dimension.fillToConstraints
                     width = Dimension.fillToConstraints
-                }
+                },
+                viewModel = viewModel
             )
         }
     }
@@ -396,7 +401,9 @@ fun NormalScreen(
 }
 @Composable
 fun SnsLoginScreen(
-    modifier: Modifier
+    context: Context,
+    modifier: Modifier,
+    viewModel: LoginViewModel
 ) {
     ConstraintLayout(modifier = modifier) {
         val (googleButton, googleIcon, naverButton, naverIcon, kakaoButton, kakaoIcon) = createRefs()
@@ -473,7 +480,9 @@ fun SnsLoginScreen(
             backgroundColor = Yellow2,
             textColor = Black,
             text = stringResource(id = R.string.kakao_login),
-            onClick = {}
+            onClick = {
+                viewModel.kakaoLogin(context)
+            }
         )
         DrawImageView(
             modifier = Modifier
