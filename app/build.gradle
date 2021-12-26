@@ -27,6 +27,10 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [crashlyticsCollectionEnabled:"true"]
+        }
+        debug {
+            manifestPlaceholders = [crashlyticsCollectionEnabled:"false"]
         }
     }
     compileOptions {

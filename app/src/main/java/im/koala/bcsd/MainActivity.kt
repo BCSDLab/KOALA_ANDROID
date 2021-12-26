@@ -16,12 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import im.koala.bcsd.ui.button.KoalaButton
 import im.koala.bcsd.ui.theme.KoalaTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
         setContent {
             KoalaTheme {
                 // A surface container using the 'background' color from the theme
