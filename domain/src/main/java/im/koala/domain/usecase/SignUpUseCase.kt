@@ -6,7 +6,7 @@ import javax.inject.Inject
 class SignUpUseCase @Inject constructor(
     private val signUpRepository: SignUpRepository
 ) {
-    operator fun invoke(
+    suspend operator fun invoke(
         id: String,
         password: String,
         email: String,

@@ -8,7 +8,7 @@ import javax.inject.Inject
 class SignUpCheckEmailUseCase @Inject constructor(
     private val signUpRepository: SignUpRepository
 ) {
-    operator fun invoke(email: String): EmailCheckResult =
+    suspend operator fun invoke(email: String): EmailCheckResult =
         when {
             email.isBlank() -> EmailCheckResult.NoSuchInputError
             !EmailChecker.isEmail(email) -> EmailCheckResult.NotEmailFormatError
