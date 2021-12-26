@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 @InstallIn(SingletonComponent::class)
 class ApiModule {
 
-    val isDebug get() = BuildConfig.BUILD_TYPE == "debug"
+    private val isDebug get() = BuildConfig.BUILD_TYPE == "debug"
 
     private val gson: Gson
         get() = GsonBuilder().setLenient().create()

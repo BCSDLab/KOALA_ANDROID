@@ -3,6 +3,7 @@ package im.koala.bcsd.ui.signup
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -41,6 +42,7 @@ import im.koala.bcsd.ui.signup.compose.SignupTermScreen
 import im.koala.bcsd.ui.theme.KoalaTheme
 import im.koala.bcsd.util.compose.Keyboard
 import im.koala.bcsd.util.compose.keyboardAsState
+import im.koala.domain.entity.signup.SignUpResult
 
 const val STEP_TERMS = "STEP_TERMS"
 const val STEP_PERMISSION = "STEP_PERMISSION"
@@ -80,15 +82,20 @@ fun SignupContent(signUpViewModel: SignUpViewModel) {
     val dotPosition = rememberSaveable { mutableStateOf(0) }
 
     KoalaTheme {
-        if (signUpViewModel.signupCompleted) {
-            SignupCompletedDialog {
-                activity.setResult(
-                    Activity.RESULT_OK,
-                    Intent().apply {
-                        putExtra(SignUpContract.LOGIN_ID, signUpViewModel.signUpValueUiState.id)
-                    }
-                )
-                activity.finish()
+        when (signUpViewModel.signUpResult) {
+            is SignUpResult.Failed -> {
+                Toast.makeText(activity, (signUpViewModel.signUpResult as SignUpResult.Failed).errorMessage, Toast.LENGTH_SHORT).show()
+            }
+            is SignUpResult.OK -> {
+                SignupCompletedDialog {
+                    activity.setResult(
+                        Activity.RESULT_OK,
+                        Intent().apply {
+                            putExtra(SignUpContract.LOGIN_ID, signUpViewModel.signUpValueUiState.id)
+                        }
+                    )
+                    activity.finish()
+                }
             }
         }
 

@@ -1,4 +1,4 @@
-package im.koala.domain.signup
+package im.koala.domain.entity.signup
 
 import im.koala.domain.usecase.SignUpCheckPasswordUseCase
 import im.koala.domain.util.checkpassword.PasswordCheckStatus

@@ -1,5 +1,7 @@
 package im.koala.domain.repository
 
+import im.koala.domain.entity.signup.SignUpResult
+
 interface SignUpRepository {
     /**
      * @return true if id is duplicated, false if id is not duplicated
@@ -17,9 +19,9 @@ interface SignUpRepository {
     suspend fun checkNicknameDuplicate(nickname: String): Boolean
 
     suspend fun signUp(
-        id: String,
+        accountId: String,
         password: String,
-        email: String,
-        nickname: String
-    ): Boolean
+        accountEmail: String,
+        accountNickname: String
+    ): SignUpResult
 }

@@ -2,6 +2,7 @@ package im.koala.data.repository
 
 import im.koala.data.module.RemoteDataSource
 import im.koala.data.source.SignUpDataSource
+import im.koala.domain.entity.signup.SignUpResult
 import im.koala.domain.repository.SignUpRepository
 import javax.inject.Inject
 
@@ -21,11 +22,11 @@ class SignUpRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signUp(
-        id: String,
+        accountId: String,
         password: String,
-        email: String,
-        nickname: String
-    ): Boolean {
-        TODO("Not yet implemented")
+        accountEmail: String,
+        accountNickname: String
+    ): SignUpResult {
+        return signUpRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
     }
 }

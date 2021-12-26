@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.koala.bcsd.ui.signup.state.SignUpInputUiState
+import im.koala.domain.entity.signup.SignUpResult
 import im.koala.domain.usecase.SignUpCheckEmailUseCase
 import im.koala.domain.usecase.SignUpCheckIdUseCase
 import im.koala.domain.usecase.SignUpCheckNicknameUseCase
@@ -37,7 +38,7 @@ class SignUpViewModel @Inject constructor(
     var signUpValueUiState by mutableStateOf(SignUpInputUiState())
         private set
 
-    var signupCompleted by mutableStateOf(false)
+    var signUpResult by mutableStateOf<SignUpResult?>(null)
         private set
 
     fun setId(id: String) {
@@ -131,7 +132,7 @@ class SignUpViewModel @Inject constructor(
                     emailCheckResult == EmailCheckResult.OK &&
                     nicknameCheckResult == NicknameCheckResult.OK
                 ) {
-                    signupCompleted = signUpUseCase(
+                    signUpResult = signUpUseCase(
                         id, password, email, nickname
                     )
                 }

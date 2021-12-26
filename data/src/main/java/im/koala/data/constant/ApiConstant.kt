@@ -10,6 +10,7 @@ const val KOALA_API_URL_USER = "user"
 const val KOALA_API_URL_ACCOUNT_CHECK = "$KOALA_API_URL_USER/account-check"
 const val KOALA_API_URL_EMAIL_CHECK = "$KOALA_API_URL_USER/email-check"
 const val KOALA_API_URL_NICKNAME_CHECK = "$KOALA_API_URL_USER/nickname-check"
+const val KOALA_API_URL_SIGN_UP = "$KOALA_API_URL_USER/sing-in"
 
 // SignUp
 const val KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE = "존재하는 계정입니다"
