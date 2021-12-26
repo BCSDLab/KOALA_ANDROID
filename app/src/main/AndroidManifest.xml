@@ -12,7 +12,7 @@
         android:theme="@style/Theme.Koala.NoActionBar">
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
-            android:value="false" />
+            android:value="${crashlyticsCollectionEnabled}" />
         <activity
             android:name=".ui.findpassword.FindPasswordActivity"
             android:exported="false" />
