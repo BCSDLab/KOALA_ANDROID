@@ -140,4 +140,16 @@ ext {
     /* Dependency - coroutine android*/
     def coroutine_android_version = "1.5.0"
     coroutineAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_android_version"
+
+    /* Dependency - firebase platform */
+    def firebase_platform_version = "29.0.3"
+    firebasePlatform = "com.google.firebase:firebase-bom:$firebase_platform_version"
+
+    /* Dependency - firebase analytics ktx */
+    def firebase_analytics_ktx_version = "20.0.2"
+    firebaseAnalyticsKtx = "com.google.firebase:firebase-analytics-ktx:$firebase_analytics_ktx_version"
+
+    /* Dependency - firebase crashlytics ktx */
+    def firebase_crashlytics_ktx_version = "18.2.6"
+    firebaseCrashlyticsKtx = "com.google.firebase:firebase-crashlytics-ktx:$firebase_crashlytics_ktx_version"
 }

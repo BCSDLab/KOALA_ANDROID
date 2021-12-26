@@ -3,6 +3,8 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -25,6 +27,10 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [crashlyticsCollectionEnabled:"true"]
+        }
+        debug {
+            manifestPlaceholders = [crashlyticsCollectionEnabled:"false"]
         }
     }
     compileOptions {
@@ -52,6 +58,10 @@ android {
 dependencies {
     implementation project(path: ':domain')
     implementation project(path: ':data')
+
+    implementation platform(project.firebasePlatform)
+    implementation project.firebaseAnalyticsKtx
+    implementation project.firebaseCrashlyticsKtx
 
     implementation project.androidKtx
     implementation project.androidxAppCompat
