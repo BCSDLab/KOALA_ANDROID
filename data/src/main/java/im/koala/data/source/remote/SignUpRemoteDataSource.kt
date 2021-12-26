@@ -1,5 +1,6 @@
 package im.koala.data.source.remote
 
+import android.util.Log
 import im.koala.data.api.NoAuthApi
 import im.koala.data.api.response.toErrorResponse
 import im.koala.data.constant.KOALA_API_ERROR_CODE_DUPLICATED_EMAIL
@@ -17,8 +18,10 @@ class SignUpRemoteDataSource @Inject constructor(
 ) : SignUpDataSource {
     override suspend fun checkIdIsAvailable(id: String): Boolean {
         return try {
-            noAuthApi.checkAccount(id) != KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE
+            val result = noAuthApi.checkAccount(id)
+            result != KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE
         } catch (t: Throwable) {
+            Log.e(this.javaClass.simpleName, t.message ?: "")
             if(t is HttpException) {
                 if(t.toErrorResponse().errorCode == KOALA_API_ERROR_CODE_DUPLICATED_ID) return true
                 else throw t
@@ -29,7 +32,7 @@ class SignUpRemoteDataSource @Inject constructor(
 
     override suspend fun checkNicknameIsAvailable(nickname: String): Boolean {
         return try {
-            noAuthApi.checkAccount(nickname) == KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE
+            noAuthApi.checkNickname(nickname) == KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE
         } catch (t: Throwable) {
             if(t is HttpException) {
                 if(t.toErrorResponse().errorCode == KOALA_API_ERROR_CODE_DUPLICATED_NICKNAME) return false

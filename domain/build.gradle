@@ -39,6 +39,8 @@ dependencies {
     androidTestImplementation project.androidJunit
     androidTestImplementation project.espresso
 
+    implementation project.coroutineCore
+
     implementation project.hiltAndroid
     kapt project.hiltCompiler
 }

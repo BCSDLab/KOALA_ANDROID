@@ -80,4 +80,5 @@
     <string name="history">히스토리</string>
     <string name="chatroom">채팅방</string>
     <string name="setting">설정</string>
+    <string name="sign_up_input_loading_message">잠시만 기다려 주세요.</string>
 </resources>

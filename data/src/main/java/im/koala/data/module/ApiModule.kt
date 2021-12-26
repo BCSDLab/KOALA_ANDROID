@@ -1,5 +1,7 @@
 package im.koala.data.module
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,6 +13,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
 
 @Module
@@ -19,9 +22,12 @@ class ApiModule {
 
     val isDebug get() = BuildConfig.BUILD_TYPE == "debug"
 
+    private val gson: Gson
+        get() = GsonBuilder().setLenient().create()
+
     private val baseHttpLoggingInterceptor: HttpLoggingInterceptor
         get() = HttpLoggingInterceptor().apply {
-            level = if(isDebug) {
+            level = if (isDebug) {
                 HttpLoggingInterceptor.Level.BODY
             } else {
                 HttpLoggingInterceptor.Level.HEADERS
@@ -36,15 +42,16 @@ class ApiModule {
             .addInterceptor(baseHttpLoggingInterceptor)
             .build()
 
-    private val noAuthRetrofit : Retrofit
-    get() = Retrofit.Builder()
-        .client(okHttpClient)
-        .baseUrl(KOALA_API_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    private val noAuthRetrofit: Retrofit
+        get() = Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl(KOALA_API_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
 
     @Provides
-    fun provideNoAuthApi() : NoAuthApi {
+    fun provideNoAuthApi(): NoAuthApi {
         return noAuthRetrofit.create(NoAuthApi::class.java)
     }
 }

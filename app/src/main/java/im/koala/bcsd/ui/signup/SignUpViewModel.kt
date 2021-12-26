@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.koala.bcsd.ui.signup.state.SignUpInputUiState
 import im.koala.domain.usecase.SignUpCheckEmailUseCase
@@ -16,10 +17,12 @@ import im.koala.domain.util.checkemail.EmailCheckResult
 import im.koala.domain.util.checkid.IdCheckResult
 import im.koala.domain.util.checknickname.NicknameCheckResult
 import im.koala.domain.util.checkpassword.PasswordCheckStatus
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignupViewModel @Inject constructor(
+class SignUpViewModel @Inject constructor(
     private val signUpCheckIdUseCase: SignUpCheckIdUseCase,
     private val signUpCheckPasswordUseCase: SignUpCheckPasswordUseCase,
     private val signUpCheckPasswordConfirmUseCase: SignUpCheckPasswordConfirmUseCase,
@@ -27,6 +30,10 @@ class SignupViewModel @Inject constructor(
     private val signUpCheckNicknameUseCase: SignUpCheckNicknameUseCase,
     private val signUpUseCase: SignUpUseCase
 ) : ViewModel() {
+    private var checkIdJob: Job? = null
+    private var checkEmailJob: Job? = null
+    private var checkNicknameJob: Job? = null
+
     var signUpValueUiState by mutableStateOf(SignUpInputUiState())
         private set
 
@@ -60,9 +67,16 @@ class SignupViewModel @Inject constructor(
     }
 
     private fun checkId() {
-        signUpValueUiState = signUpValueUiState.copy(
-            idCheckResult = signUpCheckIdUseCase(signUpValueUiState.id)
-        )
+        checkIdJob?.cancel()
+        checkIdJob = viewModelScope.launch {
+            signUpValueUiState = signUpValueUiState.copy(
+                idCheckResult = IdCheckResult.Loading
+            )
+
+            signUpValueUiState = signUpValueUiState.copy(
+                idCheckResult = signUpCheckIdUseCase(signUpValueUiState.id)
+            )
+        }
     }
 
     private fun checkPassword() {
@@ -81,28 +95,46 @@ class SignupViewModel @Inject constructor(
     }
 
     private fun checkEmail() {
-        signUpValueUiState = signUpValueUiState.copy(
-            emailCheckResult = signUpCheckEmailUseCase(signUpValueUiState.email)
-        )
+        checkEmailJob?.cancel()
+        checkEmailJob = viewModelScope.launch {
+            signUpValueUiState = signUpValueUiState.copy(
+                emailCheckResult = EmailCheckResult.Loading
+            )
+            signUpValueUiState = signUpValueUiState.copy(
+                emailCheckResult = signUpCheckEmailUseCase(signUpValueUiState.email)
+            )
+        }
     }
 
     private fun checkNickname() {
-        signUpValueUiState = signUpValueUiState.copy(
-            nicknameCheckResult = signUpCheckNicknameUseCase(signUpValueUiState.nickname)
-        )
+        checkNicknameJob?.cancel()
+        checkNicknameJob = viewModelScope.launch {
+            signUpValueUiState = signUpValueUiState.copy(
+                nicknameCheckResult = NicknameCheckResult.Loading
+            )
+            signUpValueUiState = signUpValueUiState.copy(
+                nicknameCheckResult = signUpCheckNicknameUseCase(signUpValueUiState.nickname)
+            )
+        }
     }
 
     fun signUp() {
-        with(signUpValueUiState) {
-            if (idCheckResult == IdCheckResult.OK &&
-                passwordCheckResult == PasswordCheckStatus.OK &&
-                isPasswordConfirmMatch &&
-                emailCheckResult == EmailCheckResult.OK &&
-                nicknameCheckResult == NicknameCheckResult.OK
-            ) {
-                signupCompleted = signUpUseCase(
-                    id, password, email, nickname
-                )
+        viewModelScope.launch {
+            checkIdJob?.join()
+            checkNicknameJob?.join()
+            checkEmailJob?.join()
+
+            with(signUpValueUiState) {
+                if (idCheckResult == IdCheckResult.OK &&
+                    passwordCheckResult == PasswordCheckStatus.OK &&
+                    isPasswordConfirmMatch &&
+                    emailCheckResult == EmailCheckResult.OK &&
+                    nicknameCheckResult == NicknameCheckResult.OK
+                ) {
+                    signupCompleted = signUpUseCase(
+                        id, password, email, nickname
+                    )
+                }
             }
         }
     }
