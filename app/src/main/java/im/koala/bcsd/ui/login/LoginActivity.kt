@@ -3,6 +3,7 @@ package im.koala.bcsd.ui.login
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -47,9 +48,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import dagger.hilt.android.AndroidEntryPoint
 import im.koala.bcsd.R
+import im.koala.bcsd.state.NetworkState
 import im.koala.bcsd.ui.findid.FindIdActivity
 import im.koala.bcsd.ui.findpassword.FindPasswordActivity
+import im.koala.bcsd.ui.main.MainActivity
 import im.koala.bcsd.ui.signup.SignUpContract
 import im.koala.bcsd.ui.theme.Black
 import im.koala.bcsd.ui.theme.GrayBorder
@@ -59,9 +63,11 @@ import im.koala.bcsd.ui.theme.Green
 import im.koala.bcsd.ui.theme.KoalaTheme
 import im.koala.bcsd.ui.theme.White
 import im.koala.bcsd.ui.theme.Yellow2
+import im.koala.domain.model.CommonResponse
 
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
+@AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
     private val viewModel: LoginViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +79,25 @@ class LoginActivity : ComponentActivity() {
                     LoginScreen(context = this, viewModel = viewModel)
                 }
             }
+        }
+        viewModel.snsLoginState.observe(this, {
+            when (it) {
+                is NetworkState.Loading -> {
+
+                }
+                is NetworkState.Success<*> -> {
+                    goToMainActivity()
+                }
+                is NetworkState.Fail<*> -> {
+                    val response = it.data as CommonResponse
+                    Toast.makeText(this,response.errorMessage,Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+    }
+    private fun goToMainActivity() {
+        Intent(this, MainActivity::class.java).run {
+            startActivity(this)
         }
     }
 }

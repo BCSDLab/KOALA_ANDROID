@@ -93,4 +93,6 @@ dependencies {
     implementation project.coroutineAndroid
 
     implementation project.kakao_login
+
+    implementation project.hawk
 }
