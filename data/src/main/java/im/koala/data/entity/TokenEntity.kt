@@ -12,5 +12,4 @@ class TokenEntity {
 class TokenBodyEntity : CommonEntity() {
     @SerializedName("body")
     var body: TokenEntity? = null
-
 }

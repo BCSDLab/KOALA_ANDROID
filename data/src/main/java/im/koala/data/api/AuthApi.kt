@@ -1,4 +1,3 @@
 package im.koala.data.api
 
-interface AuthApi {
-}
+interface AuthApi

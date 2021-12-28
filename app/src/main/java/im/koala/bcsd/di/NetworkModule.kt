@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class AUTH
@@ -72,7 +71,6 @@ object NetworkModule {
                 .build()
             chain.proceed(newRequest)
         }
-
     }
     @NOAUTH
     @Provides
@@ -131,5 +129,4 @@ object NetworkModule {
     fun provideAuthApi(@AUTH retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
     }
-
 }

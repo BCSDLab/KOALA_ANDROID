@@ -10,7 +10,7 @@ import javax.inject.Inject
 class UserRepositoryImpl @Inject constructor (
     private val userRemoteDataSource: UserRemoteDataSource,
     private val userLocalDataSource: UserLocalDataSource
-    ): UserRepository {
+) : UserRepository {
     override suspend fun postSnsLogin(
         snsType: String,
         snsAccessToken: String,
@@ -25,7 +25,8 @@ class UserRepositoryImpl @Inject constructor (
                     refreshToken = response.body()?.body?.refreshToken!!
                 }.run {
                     userLocalDataSource.saveToken(this)
-                    onSuccess(this) }
+                    onSuccess(this)
+                }
             } else {
                 CommonResponse().apply { errorMessage = response.body()!!.errorMessage }
                     .run { onFail(this) }

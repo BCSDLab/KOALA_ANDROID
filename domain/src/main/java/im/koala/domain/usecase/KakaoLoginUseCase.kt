@@ -18,6 +18,7 @@ class KakaoLoginUseCase @Inject constructor (
             snsType = KAKAO,
             accessToken = accessToken,
             onSuccess = { onSuccess(it) },
-            onFail = { onFail(it) })
+            onFail = { onFail(it) }
+        )
     }
 }

@@ -5,7 +5,7 @@ import im.koala.data.entity.TokenBodyEntity
 import retrofit2.Response
 import javax.inject.Inject
 
-class UserRemoteDataSourceImpl@Inject constructor (private val noAuth: NoAuthApi): UserRemoteDataSource {
+class UserRemoteDataSourceImpl@Inject constructor (private val noAuth: NoAuthApi) : UserRemoteDataSource {
 
     override suspend fun postSnsLogin(snsType: String, accessToken: String): Response<TokenBodyEntity> {
         return noAuth.postSnsLogin(snsType = snsType, accessToken = accessToken)

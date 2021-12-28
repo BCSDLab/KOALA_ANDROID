@@ -1,5 +1,6 @@
 package im.koala.bcsd.ui.login
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -12,16 +13,20 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -32,6 +37,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -46,6 +53,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import dagger.hilt.android.AndroidEntryPoint
@@ -80,20 +89,6 @@ class LoginActivity : ComponentActivity() {
                 }
             }
         }
-        viewModel.snsLoginState.observe(this, {
-            when (it) {
-                is NetworkState.Loading -> {
-
-                }
-                is NetworkState.Success<*> -> {
-                    goToMainActivity()
-                }
-                is NetworkState.Fail<*> -> {
-                    val response = it.data as CommonResponse
-                    Toast.makeText(this,response.errorMessage,Toast.LENGTH_SHORT).show()
-                }
-            }
-        })
     }
     private fun goToMainActivity() {
         Intent(this, MainActivity::class.java).run {
@@ -445,6 +440,7 @@ fun SnsLoginScreen(
     modifier: Modifier,
     viewModel: LoginViewModel
 ) {
+    val snsLoginState by viewModel.snsLoginState.observeAsState(NetworkState.Uninitialized)
     ConstraintLayout(modifier = modifier) {
         val (googleButton, googleIcon, naverButton, naverIcon, kakaoButton, kakaoIcon) = createRefs()
         /*구글버튼*/
@@ -534,6 +530,44 @@ fun SnsLoginScreen(
                 },
             drawableId = R.drawable.ic_kakao_logo
         )
+    }
+    when (snsLoginState) {
+        is NetworkState.Loading -> {
+            DummyProgress(viewModel = viewModel)
+        }
+        is NetworkState.Success<*> -> {
+            Intent(context, MainActivity::class.java).run {
+                context.startActivity(this)
+            }
+            (context as? Activity)?.finish()
+        }
+        is NetworkState.Fail<*> -> {
+            val response = (snsLoginState as NetworkState.Fail<*>).data as CommonResponse
+            Toast.makeText(context, response.errorMessage, Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+@Composable
+fun DummyProgress(viewModel: LoginViewModel) {
+    val snsLoginState by viewModel.snsLoginState.observeAsState(NetworkState.Uninitialized)
+
+    if (snsLoginState is NetworkState.Loading) {
+        Dialog(
+            onDismissRequest = { },
+            DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(100.dp)
+                    .background(White, shape = RoundedCornerShape(12.dp))
+            ) {
+                Column {
+                    CircularProgressIndicator(modifier = Modifier.padding(6.dp, 0.dp, 0.dp, 0.dp))
+                    Text(text = "Loading...", Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp))
+                }
+            }
+        }
     }
 }
 

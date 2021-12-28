@@ -10,5 +10,4 @@ import retrofit2.http.Path
 interface NoAuthApi {
     @POST(SNSLOGIN)
     suspend fun postSnsLogin(@Header("Authorization") accessToken: String, @Path("snsType") snsType: String): Response<TokenBodyEntity>
-
 }
