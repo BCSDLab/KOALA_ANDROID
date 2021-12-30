@@ -21,7 +21,9 @@ class UserRepositoryImpl @Inject constructor (
         if (response.isSuccessful) {
             if (response.body()?.code == 200) {
                 TokenResponse().apply {
-                    accessToken = response.body()?.body?.accessToken!!
+                    accessToken = response.body()?.body?.accessToken ?: run {
+                        onFail(CommonResponse.UNKOWN); return
+                    }
                     refreshToken = response.body()?.body?.refreshToken!!
                 }.run {
                     userLocalDataSource.saveToken(this)

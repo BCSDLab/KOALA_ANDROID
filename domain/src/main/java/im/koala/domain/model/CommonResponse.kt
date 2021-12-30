@@ -14,6 +14,6 @@ open class CommonResponse {
     val errorTrace: String? = null
 
     companion object {
-        val UNKOWN = CommonResponse().apply { errorMessage = "오류가 발생하였습니다. 네트워크 환경을 확인해주세요" }
+        val UNKOWN = CommonResponse()
     }
 }

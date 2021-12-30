@@ -35,7 +35,7 @@ class LoginViewModel@Inject constructor(
     }
     fun executeKakaoLogin(token: String) {
         viewModelScope.launch {
-            kakaoLoginUseCase.invoke(
+            kakaoLoginUseCase(
                 accessToken = token,
                 onSuccess = {
                     _snsLoginState.value = NetworkState.Success(it)
