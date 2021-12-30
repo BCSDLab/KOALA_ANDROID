@@ -94,6 +94,14 @@ dependencies {
     kapt project.hiltCompiler
     kapt project.hiltAndroidx
     implementation project.hiltComposeNavigation
+    testImplementation project.hiltTest
+    kaptTest project.kaptTest
+    androidTestImplementation project.hiltAndroidTest
+    kaptAndroidTest project.hiltKaptAndroid
+    testImplementation project.mockito
+    testImplementation project.archcore
+    testImplementation project.coroutineTest
+    implementation project.okhttp
 
     implementation project.bottomNavigation
 

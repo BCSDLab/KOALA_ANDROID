@@ -26,7 +26,6 @@ class LoginViewModel@Inject constructor(
         }
     }
     fun kakaoLogin(context: Context) {
-        _snsLoginState.value = NetworkState.Loading
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
             UserApiClient.instance.loginWithKakaoTalk(context, callback = callback)
         } else {
@@ -34,6 +33,7 @@ class LoginViewModel@Inject constructor(
         }
     }
     fun executeKakaoLogin(token: String) {
+        _snsLoginState.value = NetworkState.Loading
         viewModelScope.launch {
             kakaoLoginUseCase(
                 accessToken = token,

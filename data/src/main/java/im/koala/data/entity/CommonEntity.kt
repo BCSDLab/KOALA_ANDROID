@@ -7,13 +7,13 @@ open class CommonEntity {
     val className: String? = null
 
     @SerializedName("errorMessage")
-    val errorMessage: String? = null
+    var errorMessage: String? = null
 
     @SerializedName("message")
     val message: String? = null
 
     @SerializedName("code")
-    val code: Int? = null
+    var code: Int? = null
 
     @SerializedName("httpStatus")
     val httpStatus: String? = null

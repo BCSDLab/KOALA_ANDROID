@@ -13,7 +13,11 @@ open class CommonResponse {
 
     val errorTrace: String? = null
 
+    /* 테스트코드에 사용 */
     companion object {
         val UNKOWN = CommonResponse()
+        val FAIL = CommonResponse().apply {
+            errorMessage = "fail"
+        }
     }
 }

@@ -30,7 +30,7 @@ class UserRepositoryImpl @Inject constructor (
                     onSuccess(this)
                 }
             } else {
-                CommonResponse().apply { errorMessage = response.body()!!.errorMessage }
+                CommonResponse.FAIL.apply { errorMessage = response.body()!!.errorMessage }
                     .run { onFail(this) }
             }
         } else {

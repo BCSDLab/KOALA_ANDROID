@@ -12,4 +12,17 @@ class TokenEntity {
 class TokenBodyEntity : CommonEntity() {
     @SerializedName("body")
     var body: TokenEntity? = null
+    companion object {
+        val SUCCESS = TokenBodyEntity().apply {
+            code = 200
+            body = TokenEntity().apply {
+                accessToken = "accessToken"
+                refreshToken = "refreshToken"
+            }
+        }
+        val FAIL = TokenBodyEntity().apply {
+            code = 315
+            errorMessage = "fail"
+        }
+    }
 }
