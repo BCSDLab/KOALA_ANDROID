@@ -50,4 +50,9 @@ dependencies {
 
     implementation project.hiltAndroid
     kapt project.hiltCompiler
+
+    implementation project.coroutineAndroid
+
+
+    implementation project.hawk
 }
