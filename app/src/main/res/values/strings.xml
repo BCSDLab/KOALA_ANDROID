@@ -74,6 +74,7 @@
     <string name="signup_input_error_email_duplicated">중복된 이메일입니다.</string>
     <string name="signup_input_error_nickname_no_input">닉네임을 입력해주세요.</string>
     <string name="signup_password_error_not_support_character">사용할 수 없는 문자가 있습니다.</string>
+    <string name="tutorial_keyword_content">키워드와 알림을 받을 대상을 선택하여 원하는 알림을 받아 보세요!</string>
 
     <!--main -->
     <string name="keyword">키워드</string>
