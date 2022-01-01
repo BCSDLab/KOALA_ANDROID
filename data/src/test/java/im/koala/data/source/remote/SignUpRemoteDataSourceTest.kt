@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import im.koala.data.api.NoAuthApi
 import im.koala.data.api.request.signup.SignUpRequest
+import im.koala.data.api.response.ResponseWrapper
 import im.koala.data.api.response.signup.SignUpResultResponse
 import im.koala.data.constant.KOALA_API_SIGN_UP_CHECK_EMAIL_OK_MESSAGE
 import im.koala.data.constant.KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE
@@ -60,7 +61,10 @@ class SignUpRemoteDataSourceTest {
         TestCoroutineScope().launch {
             val id = "abc"
             Mockito.`when`(noAuthApi.checkAccount(id)).thenReturn(
-                Response.success(KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE)
+                ResponseWrapper(
+                    body = KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE,
+                    code = 200
+                )
             )
 
             Assert.assertFalse(signUpRemoteDataSource.checkIdIsAvailable(id))
@@ -84,22 +88,25 @@ class SignUpRemoteDataSourceTest {
     }
 
     @Test
-    fun `API의 checkEmail에서 존재하지 않는 Account를 반환할 경우 checkNicknameIsAvailable이 true를 반환`() {
+    fun `API의 checkEmail에서 존재하지 않는 Email을 반환할 경우 checkEmailIsAvailable이 true를 반환`() {
         TestCoroutineScope().launch {
-            val id = "abc"
-            Mockito.`when`(noAuthApi.checkEmail(id)).thenReturn(
-                Response.success(KOALA_API_SIGN_UP_CHECK_EMAIL_OK_MESSAGE)
+            val email = "abc@abc.com"
+            Mockito.`when`(noAuthApi.checkEmail(email)).thenReturn(
+                ResponseWrapper(
+                    body = KOALA_API_SIGN_UP_CHECK_EMAIL_OK_MESSAGE,
+                    code = 200
+                )
             )
 
-            Assert.assertTrue(signUpRemoteDataSource.checkIdIsAvailable(id))
+            Assert.assertTrue(signUpRemoteDataSource.checkEmailIsAvailable(email))
         }
     }
 
     @Test
-    fun `API의 checkEmail에서 존재하는 Account를 반환할 경우 checkNicknameIsAvailable이 false를 반환`() {
+    fun `API의 checkEmail에서 존재하는 Email을 반환할 경우 checkEmailIsAvailable이 false를 반환`() {
         TestCoroutineScope().launch {
-            val id = "abc"
-            Mockito.`when`(noAuthApi.checkEmail(id)).thenThrow(
+            val email = "abc@abc.com"
+            Mockito.`when`(noAuthApi.checkEmail(email)).thenThrow(
                 HttpException(
                     Response.error<String>(
                         400,
@@ -114,12 +121,12 @@ class SignUpRemoteDataSourceTest {
                 )
             )
 
-            Assert.assertFalse(signUpRemoteDataSource.checkIdIsAvailable(id))
+            Assert.assertFalse(signUpRemoteDataSource.checkEmailIsAvailable(email))
         }
     }
 
     @Test
-    fun `API의 checkEmail에서 예외가 발생할 경우 checkNicknameIsAvailable이 그대로 예외 전달`() {
+    fun `API의 checkEmail에서 예외가 발생할 경우 checkEmailIsAvailable이 그대로 예외 전달`() {
         TestCoroutineScope().launch {
             val id = "abc"
             Mockito.`when`(noAuthApi.checkEmail(id)).thenThrow(
@@ -128,29 +135,32 @@ class SignUpRemoteDataSourceTest {
 
             Assert.assertThrows(JsonParseException::class.java) {
                 TestCoroutineScope().launch {
-                    signUpRemoteDataSource.checkIdIsAvailable(id)
+                    signUpRemoteDataSource.checkEmailIsAvailable(id)
                 }
             }
         }
     }
 
     @Test
-    fun `API의 checkNickname에서 존재하지 않는 Account를 반환할 경우 checkNicknameIsAvailable이 true를 반환`() {
+    fun `API의 checkNickname에서 존재하지 않는 Nickname을 반환할 경우 checkNicknameIsAvailable이 true를 반환`() {
         TestCoroutineScope().launch {
-            val id = "abc"
-            Mockito.`when`(noAuthApi.checkNickname(id)).thenReturn(
-                Response.success(KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE)
+            val nickname = "abc"
+            Mockito.`when`(noAuthApi.checkNickname(nickname)).thenReturn(
+                ResponseWrapper(
+                    body = KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE,
+                    code = 200
+                )
             )
 
-            Assert.assertTrue(signUpRemoteDataSource.checkIdIsAvailable(id))
+            Assert.assertTrue(signUpRemoteDataSource.checkNicknameIsAvailable(nickname))
         }
     }
 
     @Test
-    fun `API의 checkNickname에서 존재하는 Account를 반환할 경우 checkNicknameIsAvailable이 false를 반환`() {
+    fun `API의 checkNickname에서 존재하는 Nickname을 반환할 경우 checkNicknameIsAvailable이 false를 반환`() {
         TestCoroutineScope().launch {
-            val id = "abc"
-            Mockito.`when`(noAuthApi.checkNickname(id)).thenThrow(
+            val nickname = "abc"
+            Mockito.`when`(noAuthApi.checkNickname(nickname)).thenThrow(
                 HttpException(
                     Response.error<String>(
                         400,
@@ -166,7 +176,7 @@ class SignUpRemoteDataSourceTest {
                 )
             )
 
-            Assert.assertFalse(signUpRemoteDataSource.checkIdIsAvailable(id))
+            Assert.assertFalse(signUpRemoteDataSource.checkNicknameIsAvailable(nickname))
         }
     }
 
@@ -180,7 +190,7 @@ class SignUpRemoteDataSourceTest {
 
             Assert.assertThrows(JsonParseException::class.java) {
                 TestCoroutineScope().launch {
-                    signUpRemoteDataSource.checkIdIsAvailable(id)
+                    signUpRemoteDataSource.checkNicknameIsAvailable(id)
                 }
             }
         }
@@ -392,8 +402,8 @@ class SignUpRemoteDataSourceTest {
                     )
                 )
             ).thenReturn(
-                Response.success(
-                    Gson().fromJson(
+                ResponseWrapper(
+                    body = Gson().fromJson(
                         """
                             {
                               "id": 71,
@@ -407,7 +417,8 @@ class SignUpRemoteDataSourceTest {
                             }
                         """.trimIndent(),
                         SignUpResultResponse::class.java
-                    )
+                    ),
+                    code = 200
                 )
             )
 

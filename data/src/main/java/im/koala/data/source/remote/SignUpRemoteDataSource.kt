@@ -22,35 +22,42 @@ class SignUpRemoteDataSource @Inject constructor(
 ) : SignUpDataSource {
     override suspend fun checkIdIsAvailable(id: String): Boolean {
         return try {
-            noAuthApi.checkAccount(id).body() != KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE
+            noAuthApi.checkAccount(id).body != KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE
         } catch (t: Throwable) {
             Log.e(this.javaClass.simpleName, t.message ?: "")
             if (t is HttpException) {
                 if (t.toErrorResponse().errorCode == KOALA_API_ERROR_CODE_DUPLICATED_ID) return true
                 else throw t
-            } else throw t
+            } else{
+                throw t
+            }
         }
     }
 
     override suspend fun checkNicknameIsAvailable(nickname: String): Boolean {
         return try {
-            noAuthApi.checkNickname(nickname).body() == KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE
+            noAuthApi.checkNickname(nickname).body == KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE
         } catch (t: Throwable) {
             if (t is HttpException) {
                 if (t.toErrorResponse().errorCode == KOALA_API_ERROR_CODE_DUPLICATED_NICKNAME) return false
                 else throw t
-            } else throw t
+            } else{
+                throw t
+            }
         }
     }
 
     override suspend fun checkEmailIsAvailable(email: String): Boolean {
         return try {
-            noAuthApi.checkEmail(email).body() == KOALA_API_SIGN_UP_CHECK_EMAIL_OK_MESSAGE
+            noAuthApi.checkEmail(email).body == KOALA_API_SIGN_UP_CHECK_EMAIL_OK_MESSAGE
         } catch (t: Throwable) {
+            Log.e("checkEmailIsAvailable", t.stackTraceToString())
             if (t is HttpException) {
                 if (t.toErrorResponse().errorCode == KOALA_API_ERROR_CODE_DUPLICATED_EMAIL) return false
                 else throw t
-            } else throw t
+            } else {
+                throw t
+            }
         }
     }
 
@@ -68,8 +75,8 @@ class SignUpRemoteDataSource @Inject constructor(
                     nickname = accountNickname,
                     password = password.toSHA256()
                 )
-            ).body()
-            result?.toSignUpResult() ?: SignUpResult.Failed("Body is null")
+            ).body
+            result.toSignUpResult()
         } catch (t: Throwable) {
             val errorMessage =
                 if (t is HttpException) t.toErrorResponse().errorMessage else t.message ?: ""

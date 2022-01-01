@@ -1,6 +1,7 @@
 package im.koala.data.api
 
 import im.koala.data.api.request.signup.SignUpRequest
+import im.koala.data.api.response.ResponseWrapper
 import im.koala.data.api.response.signup.SignUpResultResponse
 import im.koala.data.constant.KOALA_API_URL_ACCOUNT_CHECK
 import im.koala.data.constant.KOALA_API_URL_EMAIL_CHECK
@@ -20,22 +21,22 @@ interface NoAuthApi {
     @GET(KOALA_API_URL_ACCOUNT_CHECK)
     suspend fun checkAccount(
         @Query("account") account: String
-    ): Response<String>
+    ): ResponseWrapper<String>
 
     @GET(KOALA_API_URL_NICKNAME_CHECK)
     suspend fun checkNickname(
         @Query("nickname") nickname: String
-    ): Response<String>
+    ): ResponseWrapper<String>
 
     @GET(KOALA_API_URL_EMAIL_CHECK)
     suspend fun checkEmail(
         @Query("email") email: String
-    ): Response<String>
+    ): ResponseWrapper<String>
 
     @POST(KOALA_API_URL_SIGN_UP)
     suspend fun signUp(
         @Body signUpRequest: SignUpRequest
-    ): Response<SignUpResultResponse>
+    ): ResponseWrapper<SignUpResultResponse>
 
     @POST(SNSLOGIN)
     suspend fun postSnsLogin(
