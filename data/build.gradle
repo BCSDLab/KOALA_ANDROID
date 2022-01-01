@@ -44,7 +44,7 @@ dependencies {
     implementation project.okhttp
     implementation project.okhttpLogging
 
-    implementation project.mockitoCore
+    implementation project.mockito
 
     implementation project.coroutineCore
     testImplementation project.coroutineTest
