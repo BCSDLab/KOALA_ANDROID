@@ -22,8 +22,7 @@ class SignUpRemoteDataSource @Inject constructor(
 ) : SignUpDataSource {
     override suspend fun checkIdIsAvailable(id: String): Boolean {
         return try {
-            val result = noAuthApi.checkAccount(id)
-            result != KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE
+            noAuthApi.checkAccount(id).body() != KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE
         } catch (t: Throwable) {
             Log.e(this.javaClass.simpleName, t.message ?: "")
             if (t is HttpException) {
@@ -35,7 +34,7 @@ class SignUpRemoteDataSource @Inject constructor(
 
     override suspend fun checkNicknameIsAvailable(nickname: String): Boolean {
         return try {
-            noAuthApi.checkNickname(nickname) == KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE
+            noAuthApi.checkNickname(nickname).body() == KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE
         } catch (t: Throwable) {
             if (t is HttpException) {
                 if (t.toErrorResponse().errorCode == KOALA_API_ERROR_CODE_DUPLICATED_NICKNAME) return false
@@ -46,7 +45,7 @@ class SignUpRemoteDataSource @Inject constructor(
 
     override suspend fun checkEmailIsAvailable(email: String): Boolean {
         return try {
-            noAuthApi.checkEmail(email) == KOALA_API_SIGN_UP_CHECK_EMAIL_OK_MESSAGE
+            noAuthApi.checkEmail(email).body() == KOALA_API_SIGN_UP_CHECK_EMAIL_OK_MESSAGE
         } catch (t: Throwable) {
             if (t is HttpException) {
                 if (t.toErrorResponse().errorCode == KOALA_API_ERROR_CODE_DUPLICATED_EMAIL) return false
@@ -69,9 +68,8 @@ class SignUpRemoteDataSource @Inject constructor(
                     nickname = accountNickname,
                     password = password.toSHA256()
                 )
-            )
-
-            result.toSignUpResult()
+            ).body()
+            result?.toSignUpResult() ?: SignUpResult.Failed("Body is null")
         } catch (t: Throwable) {
             val errorMessage =
                 if (t is HttpException) t.toErrorResponse().errorMessage else t.message ?: ""
