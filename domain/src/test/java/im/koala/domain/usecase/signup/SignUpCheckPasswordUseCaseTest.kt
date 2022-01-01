@@ -1,6 +1,6 @@
 package im.koala.domain.entity.signup
 
-import im.koala.domain.usecase.SignUpCheckPasswordUseCase
+import im.koala.domain.usecase.signup.SignUpCheckPasswordUseCase
 import im.koala.domain.util.checkpassword.PasswordCheckStatus
 import org.junit.Assert
 import org.junit.Test

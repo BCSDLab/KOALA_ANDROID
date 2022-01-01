@@ -42,6 +42,9 @@ dependencies {
     implementation project.coroutineCore
     testImplementation project.coroutineTest
 
+    testImplementation project.mockito
+    implementation project.mockitoKotlin
+
     implementation project.hiltAndroid
     kapt project.hiltCompiler
     implementation project.coroutineAndroid

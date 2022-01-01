@@ -116,6 +116,8 @@ ext {
     /* Dependency - mockito*/
     def mockito_version = "4.2.0"
     mockito = "org.mockito:mockito-inline:$mockito_version"
+    def mockito_kotlin_version = "4.0.0"
+    mockitoKotlin = "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
 
     /* Dependency - arch.core.testing */
     def archcore_version = "1.1.1"
