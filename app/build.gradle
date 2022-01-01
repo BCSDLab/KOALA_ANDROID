@@ -3,8 +3,11 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
-
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
 android {
     compileSdk 31
 
@@ -14,17 +17,23 @@ android {
         targetSdk 31
         versionCode 10000
         versionName "1.0.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
+        resValue("string", "KAKAO_KEY", properties.getProperty("kakao_key"))
+        manifestPlaceholders = [kakao_oauth_key: "${properties.getProperty('kakao_oauth_key')}"]
     }
+
 
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [crashlyticsCollectionEnabled:"true"]
+        }
+        debug {
+            manifestPlaceholders = [crashlyticsCollectionEnabled:"false"]
         }
     }
     compileOptions {
@@ -52,6 +61,10 @@ android {
 dependencies {
     implementation project(path: ':domain')
     implementation project(path: ':data')
+
+    implementation platform(project.firebasePlatform)
+    implementation project.firebaseAnalyticsKtx
+    implementation project.firebaseCrashlyticsKtx
 
     implementation project.androidKtx
     implementation project.androidxAppCompat
@@ -81,6 +94,14 @@ dependencies {
     kapt project.hiltCompiler
     kapt project.hiltAndroidx
     implementation project.hiltComposeNavigation
+    testImplementation project.hiltTest
+    kaptTest project.kaptTest
+    androidTestImplementation project.hiltAndroidTest
+    kaptAndroidTest project.hiltKaptAndroid
+    testImplementation project.mockito
+    testImplementation project.archcore
+    testImplementation project.coroutineTest
+    implementation project.okhttp
 
     implementation project.bottomNavigation
 
@@ -88,4 +109,8 @@ dependencies {
     implementation project.accompanistFlowLayout
 
     implementation project.coroutineAndroid
+
+    implementation project.kakao_login
+
+    implementation project.hawk
 }

@@ -87,7 +87,7 @@ ext {
     glideAnnotation = "com.github.bumptech.glide:compiler:$glide_version"
 
     /* Dependency - okhttp */
-    def okhttp_version = "3.12.0"
+    def okhttp_version = "4.9.0"
     okhttp = "com.squareup.okhttp3:okhttp:$okhttp_version"
     okhttpLogging = "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
 
@@ -113,6 +113,14 @@ ext {
     def android_junit_version = "1.1.3"
     androidJunit = "androidx.test.ext:junit:$android_junit_version"
 
+    /* Dependency - mockito*/
+    def mockito_version = "4.2.0"
+    mockito = "org.mockito:mockito-inline:$mockito_version"
+
+    /* Dependency - arch.core.testing */
+    def archcore_version = "1.1.1"
+    archcore = "android.arch.core:core-testing:$archcore_version"
+
     /* Dependency - espresso */
     def espresso_version = "3.4.0"
     espresso = "androidx.test.espresso:espresso-core:$espresso_version"
@@ -121,6 +129,11 @@ ext {
     def hilt_version = "2.38.1"
     hiltAndroid = "com.google.dagger:hilt-android:$hilt_version"
     hiltCompiler = "com.google.dagger:hilt-compiler:$hilt_version"
+    hiltTest = "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptTest = "com.google.dagger:hilt-android-compiler:$hilt_version"
+    hiltAndroidTest = "com.google.dagger:hilt-android-testing:$hilt_version"
+    hiltKaptAndroid = "com.google.dagger:hilt-android-compiler$hilt_version"
+    androidTestAnnotation = "com.google.dagger:hilt-android-compiler$hilt_version"
 
     def hilt_compose_navigation_version = "1.0.0-alpha03"
     hiltComposeNavigation = "androidx.hilt:hilt-navigation-compose:$hilt_compose_navigation_version"
@@ -143,7 +156,23 @@ ext {
     coroutineAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
     coroutineTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutine_version"
 
-    /* Dependency - Mockito */
-    def mockito_version = "4.2.0"
-    mockitoCore = "org.mockito:mockito-core:$mockito_version"
+    /* Dependency - coroutine android*/
+    def coroutine_android_version = "1.5.0"
+    coroutineAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_android_version"
+    coroutineTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutine_android_version"
+
+    /* kakao */
+    def kakao_version = "2.8.4"
+    kakao_login =  "com.kakao.sdk:v2-user:$kakao_version"
+    /* Dependency - firebase platform */
+    def firebase_platform_version = "29.0.3"
+    firebasePlatform = "com.google.firebase:firebase-bom:$firebase_platform_version"
+
+    /* Dependency - firebase analytics ktx */
+    def firebase_analytics_ktx_version = "20.0.2"
+    firebaseAnalyticsKtx = "com.google.firebase:firebase-analytics-ktx:$firebase_analytics_ktx_version"
+
+    /* Dependency - firebase crashlytics ktx */
+    def firebase_crashlytics_ktx_version = "18.2.6"
+    firebaseCrashlyticsKtx = "com.google.firebase:firebase-crashlytics-ktx:$firebase_crashlytics_ktx_version"
 }

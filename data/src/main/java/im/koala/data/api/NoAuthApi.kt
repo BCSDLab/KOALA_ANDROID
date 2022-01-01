@@ -32,4 +32,6 @@ interface NoAuthApi {
         @Body signUpRequest: SignUpRequest
     ): SignUpResultResponse
 
+    @POST(SNSLOGIN)
+    suspend fun postSnsLogin(@Header("Authorization") accessToken: String, @Path("snsType") snsType: String): Response<TokenBodyEntity>
 }
