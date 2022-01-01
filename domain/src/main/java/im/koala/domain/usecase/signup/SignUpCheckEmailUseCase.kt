@@ -1,4 +1,4 @@
-package im.koala.domain.usecase
+package im.koala.domain.usecase.signup
 
 import im.koala.domain.repository.SignUpRepository
 import im.koala.domain.util.checkemail.EmailCheckResult

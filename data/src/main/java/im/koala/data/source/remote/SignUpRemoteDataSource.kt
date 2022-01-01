@@ -1,6 +1,5 @@
 package im.koala.data.source.remote
 
-import android.util.Log
 import im.koala.data.api.NoAuthApi
 import im.koala.data.api.request.signup.SignUpRequest
 import im.koala.data.api.response.toErrorResponse
@@ -20,11 +19,11 @@ import javax.inject.Inject
 class SignUpRemoteDataSource @Inject constructor(
     private val noAuthApi: NoAuthApi
 ) : SignUpDataSource {
+
     override suspend fun checkIdIsAvailable(id: String): Boolean {
         return try {
             noAuthApi.checkAccount(id).body != KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE
         } catch (t: Throwable) {
-            Log.e(this.javaClass.simpleName, t.message ?: "")
             if (t is HttpException) {
                 if (t.toErrorResponse().errorCode == KOALA_API_ERROR_CODE_DUPLICATED_ID) return true
                 else throw t
@@ -51,7 +50,6 @@ class SignUpRemoteDataSource @Inject constructor(
         return try {
             noAuthApi.checkEmail(email).body == KOALA_API_SIGN_UP_CHECK_EMAIL_OK_MESSAGE
         } catch (t: Throwable) {
-            Log.e("checkEmailIsAvailable", t.stackTraceToString())
             if (t is HttpException) {
                 if (t.toErrorResponse().errorCode == KOALA_API_ERROR_CODE_DUPLICATED_EMAIL) return false
                 else throw t
@@ -75,11 +73,14 @@ class SignUpRemoteDataSource @Inject constructor(
                     nickname = accountNickname,
                     password = password.toSHA256()
                 )
-            ).body
-            result.toSignUpResult()
+            )
+            result.body.toSignUpResult()
         } catch (t: Throwable) {
             val errorMessage =
-                if (t is HttpException) t.toErrorResponse().errorMessage else t.message ?: ""
+                if (t is HttpException)
+                    t.toErrorResponse().errorMessage
+                else
+                    t.message ?: ""
             SignUpResult.Failed(errorMessage)
         }
     }
