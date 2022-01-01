@@ -44,7 +44,6 @@ class SignUpCheckNicknameUseCaseTest {
         }
     }
 
-
     @Test
     fun `nickname이 중복되면 NicknameCheckResult_IdDuplicatedError가 반환된다`() = runBlockingTest {
         val nickname = "SKYBODAKOREATECH"
@@ -55,9 +54,7 @@ class SignUpCheckNicknameUseCaseTest {
             NicknameCheckResult.NicknameDuplicatedError,
             signUpCheckNicknameUseCase(nickname)
         )
-
     }
-
 
     @Test
     fun `nickname 조건이 모두 충족되면 NicknameCheckResult_OK가 반환된다`() = runBlockingTest {
@@ -69,7 +66,5 @@ class SignUpCheckNicknameUseCaseTest {
             NicknameCheckResult.OK,
             signUpCheckNicknameUseCase(nickname)
         )
-
     }
-
 }

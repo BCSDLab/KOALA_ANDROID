@@ -11,8 +11,8 @@ data class ErrorResponse(
     @SerializedName("errorTrace") val errorTrace: String
 )
 
-fun Throwable.toErrorResponse() : ErrorResponse {
-    if(this !is HttpException) throw IllegalStateException("Not HttpException")
+fun Throwable.toErrorResponse(): ErrorResponse {
+    if (this !is HttpException) throw IllegalStateException("Not HttpException")
 
     val body = this.response()?.errorBody()
 

@@ -44,7 +44,6 @@ class SignUpCheckIdUseCaseTest {
         }
     }
 
-
     @Test
     fun `id가 중복되면 IdCheckResult_IdDuplicatedError가 반환된다`() = runBlockingTest {
         val id = "SKYBODAKOREATECH"
@@ -57,7 +56,6 @@ class SignUpCheckIdUseCaseTest {
         )
     }
 
-
     @Test
     fun `id 조건이 모두 충족되면 IdCheckResult_OK가 반환된다`() = runBlockingTest {
         val id = "SKYBODAKOREATECH"
@@ -69,5 +67,4 @@ class SignUpCheckIdUseCaseTest {
             signUpCheckIdUseCase(id)
         )
     }
-
 }

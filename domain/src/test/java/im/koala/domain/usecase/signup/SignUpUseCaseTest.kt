@@ -17,7 +17,6 @@ import org.mockito.kotlin.whenever
 @ExperimentalCoroutinesApi
 class SignUpUseCaseTest {
 
-
     @Mock
     private lateinit var signUpRepository: SignUpRepository
 

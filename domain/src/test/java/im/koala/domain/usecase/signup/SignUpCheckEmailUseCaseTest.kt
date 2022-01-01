@@ -44,7 +44,6 @@ class SignUpCheckEmailUseCaseTest {
         }
     }
 
-
     @Test
     fun `이메일이 이메일 형식이 아닐 경우 EmailCheckResult_NotEmailFormatError가 반환된다`() = runBlockingTest {
         val emails = listOf(
@@ -64,7 +63,6 @@ class SignUpCheckEmailUseCaseTest {
         }
     }
 
-
     @Test
     fun `이메일이 중복될 경우 EmailCheckResult_NotEmailFormatError가 반환된다`() = runBlockingTest {
         val email = "skyboda@koreatech.ac.kr"
@@ -77,7 +75,6 @@ class SignUpCheckEmailUseCaseTest {
         )
     }
 
-
     @Test
     fun `이메일 조건을 모두 충족하면 EmailCheckResult_OK가 반환된다`() = runBlockingTest {
         val email = "skyboda@koreatech.ac.kr"
@@ -89,5 +86,4 @@ class SignUpCheckEmailUseCaseTest {
             signUpCheckEmailUseCase(email)
         )
     }
-
 }

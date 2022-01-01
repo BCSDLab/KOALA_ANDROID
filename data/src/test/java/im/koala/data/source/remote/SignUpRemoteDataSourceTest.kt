@@ -66,7 +66,6 @@ class SignUpRemoteDataSourceTest {
             Assert.assertTrue(signUpRemoteDataSource.checkIdIsAvailable(id))
         }
 
-
     @Test
     fun `API의 checkAccount에서 존재하는 Account를 반환할 경우 checkIdIsAvailable이 false를 반환`() =
         runBlockingTest {
@@ -99,7 +98,6 @@ class SignUpRemoteDataSourceTest {
         }
     }
 
-
     @Test
     fun `API의 checkEmail에서 존재하지 않는 Email을 반환할 경우 checkEmailIsAvailable이 true를 반환`() =
         runBlockingTest {
@@ -115,7 +113,6 @@ class SignUpRemoteDataSourceTest {
 
             Assert.assertTrue(signUpRemoteDataSource.checkEmailIsAvailable(email))
         }
-
 
     @Test
     fun `API의 checkEmail에서 존재하는 Email을 반환할 경우 checkEmailIsAvailable이 false를 반환`() =
@@ -133,14 +130,13 @@ class SignUpRemoteDataSourceTest {
                               "code": 125,
                               "errorTrace": "in.koala.serviceImpl.UserServiceImpl.checkFindEmail(UserServiceImpl.java:153)"
                             }
-                    """.trimIndent().toResponseBody()
+                            """.trimIndent().toResponseBody()
                         )
                     )
                 )
 
             Assert.assertFalse(signUpRemoteDataSource.checkEmailIsAvailable(email))
         }
-
 
     @Test
     fun `API의 checkEmail에서 예외가 발생할 경우 checkEmailIsAvailable이 그대로 예외 전달`() = runBlockingTest {
@@ -158,7 +154,6 @@ class SignUpRemoteDataSourceTest {
         }
     }
 
-
     @Test
     fun `API의 checkNickname에서 존재하지 않는 Nickname을 반환할 경우 checkNicknameIsAvailable이 true를 반환`() =
         runBlockingTest {
@@ -174,7 +169,6 @@ class SignUpRemoteDataSourceTest {
 
             Assert.assertTrue(signUpRemoteDataSource.checkNicknameIsAvailable(nickname))
         }
-
 
     @Test
     fun `API의 checkNickname에서 존재하는 Nickname을 반환할 경우 checkNicknameIsAvailable이 false를 반환`() =
@@ -193,14 +187,13 @@ class SignUpRemoteDataSourceTest {
                               "code": 124,
                               "errorTrace": "in.koala.serviceImpl.UserServiceImpl.checkNickname(UserServiceImpl.java:223)"
                             }
-                    """.trimIndent().toResponseBody()
+                            """.trimIndent().toResponseBody()
                         )
                     )
                 )
 
             Assert.assertFalse(signUpRemoteDataSource.checkNicknameIsAvailable(nickname))
         }
-
 
     @Test
     fun `API의 checkNickname에서 예외가 발생할 경우 checkNicknameIsAvailable이 그대로 예외 전달`() = runBlockingTest {
@@ -217,7 +210,6 @@ class SignUpRemoteDataSourceTest {
             }
         }
     }
-
 
     @Test
     fun `API의 signUp에서 이메일 형식에 맞지 않는 예외가 발생할 경우 signUp이 errorMessage가 포함된 SignUpResult_Error를 반환`() =
@@ -251,7 +243,6 @@ class SignUpRemoteDataSourceTest {
             )
         }
 
-
     @Test
     fun `API의 signUp에서 이미 존재하는 이메일 예외가 발생할 경우 signUp이 errorMessage가 포함된 SignUpResult_Error를 반환`() =
         runBlockingTest {
@@ -271,7 +262,7 @@ class SignUpRemoteDataSourceTest {
                               "code": 125,
                               "errorTrace": "in.koala.serviceImpl.UserServiceImpl.signUp(UserServiceImpl.java:167)"
                             }
-                    """.trimIndent().toResponseBody()
+                        """.trimIndent().toResponseBody()
                     )
                 )
             )
@@ -281,7 +272,6 @@ class SignUpRemoteDataSourceTest {
                 signUpRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
             )
         }
-
 
     @Test
     fun `API의 signUp에서 이미 존재하는 아이디 예외가 발생할 경우 signUp이 errorMessage가 포함된 SignUpResult_Error를 반환`() =
@@ -302,7 +292,7 @@ class SignUpRemoteDataSourceTest {
                               "code": 123,
                               "errorTrace": "in.koala.serviceImpl.UserServiceImpl.signUp(UserServiceImpl.java:162)"
                             }
-                    """.trimIndent().toResponseBody()
+                        """.trimIndent().toResponseBody()
                     )
                 )
             )
@@ -312,7 +302,6 @@ class SignUpRemoteDataSourceTest {
                 signUpRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
             )
         }
-
 
     @Test
     fun `API의 signUp에서 이미 존재하는 닉네임 예외가 발생할 경우 signUp이 errorMessage가 포함된 SignUpResult_Error를 반환`() =
@@ -333,7 +322,7 @@ class SignUpRemoteDataSourceTest {
                               "code": 124,
                               "errorTrace": "in.koala.serviceImpl.UserServiceImpl.signUp(UserServiceImpl.java:165)"
                             }
-                    """.trimIndent().toResponseBody()
+                        """.trimIndent().toResponseBody()
                     )
                 )
             )
@@ -343,7 +332,6 @@ class SignUpRemoteDataSourceTest {
                 signUpRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
             )
         }
-
 
     @Test
     fun `API의 signUp에서 정상적으로 회원가입이 진행될 경우 signUp이 signup 입력 정보가 포함된 SignUpResult_OK를 반환`() =
@@ -386,5 +374,4 @@ class SignUpRemoteDataSourceTest {
                 signUpRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
             )
         }
-
 }

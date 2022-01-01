@@ -39,7 +39,6 @@ class SignUpRepositoryTest {
         Assert.assertFalse(signUpRepository.checkIdDuplicate(id))
     }
 
-
     @Test
     fun `remoteDataSource의 checkIdIsAvailable이 false를 반환할 경우 true를 반환한다`() = runBlockingTest {
         val id = "aaa"
@@ -48,7 +47,6 @@ class SignUpRepositoryTest {
 
         Assert.assertFalse(signUpRepository.checkIdDuplicate(id))
     }
-
 
     @Test
     fun `remoteDataSource의 checkEmailIsAvailable이 true를 반환할 경우 false를 반환한다`() = runBlockingTest {
@@ -59,7 +57,6 @@ class SignUpRepositoryTest {
         Assert.assertFalse(signUpRepository.checkEmailDuplicate(email))
     }
 
-
     @Test
     fun `remoteDataSource의 checkEmailIsAvailable이 false를 반환할 경우 true를 반환한다`() = runBlockingTest {
         val email = "aaa@gmail.com"
@@ -68,7 +65,6 @@ class SignUpRepositoryTest {
 
         Assert.assertFalse(signUpRepository.checkEmailDuplicate(email))
     }
-
 
     @Test
     fun `remoteDataSource의 checkNicknameIsAvailable이 true를 반환할 경우 false를 반환한다`() = runBlockingTest {
@@ -79,7 +75,6 @@ class SignUpRepositoryTest {
         Assert.assertFalse(signUpRepository.checkNicknameDuplicate(nickname))
     }
 
-
     @Test
     fun `remoteDataSource의 checkNicknameIsAvailable이 false를 반환할 경우 true를 반환한다`() = runBlockingTest {
         val nickname = "asdf"
@@ -88,7 +83,6 @@ class SignUpRepositoryTest {
 
         Assert.assertFalse(signUpRepository.checkNicknameDuplicate(nickname))
     }
-
 
     @Test
     fun `signUp이 성공할 경우 SignUpResult_OK가 반환된다`() = runBlockingTest {
@@ -128,7 +122,6 @@ class SignUpRepositoryTest {
         )
     }
 
-
     @Test
     fun `signUp이 실패할 경우 SignUpResult_Failed가 반환된다`() = runBlockingTest {
         val accountId = "string22"
@@ -152,5 +145,4 @@ class SignUpRepositoryTest {
             signUpRepository.signUp(accountId, password, accountEmail, accountNickname)
         )
     }
-
 }

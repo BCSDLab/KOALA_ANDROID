@@ -27,7 +27,7 @@ class SignUpRemoteDataSource @Inject constructor(
             if (t is HttpException) {
                 if (t.toErrorResponse().errorCode == KOALA_API_ERROR_CODE_DUPLICATED_ID) return true
                 else throw t
-            } else{
+            } else {
                 throw t
             }
         }
@@ -40,7 +40,7 @@ class SignUpRemoteDataSource @Inject constructor(
             if (t is HttpException) {
                 if (t.toErrorResponse().errorCode == KOALA_API_ERROR_CODE_DUPLICATED_NICKNAME) return false
                 else throw t
-            } else{
+            } else {
                 throw t
             }
         }
