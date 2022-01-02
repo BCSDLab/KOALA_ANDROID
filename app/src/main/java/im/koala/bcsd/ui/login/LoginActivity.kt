@@ -489,7 +489,9 @@ fun SnsLoginScreen(
             backgroundColor = Green,
             textColor = White,
             text = stringResource(id = R.string.naver_login),
-            onClick = {}
+            onClick = {
+                viewModel.naverLogin(context)
+            }
         )
         DrawImageView(
             modifier = Modifier

@@ -21,6 +21,8 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+        resValue("string","naver_client_id",properties.getProperty("naverClientId"))
+        resValue("string","naver_clinet_secret",properties.getProperty("naverClientSecret"))
         resValue("string", "KAKAO_KEY", properties.getProperty("kakao_key"))
         manifestPlaceholders = [kakao_oauth_key: "${properties.getProperty('kakao_oauth_key')}"]
     }
@@ -113,4 +115,6 @@ dependencies {
     implementation project.kakao_login
 
     implementation project.hawk
+
+    implementation project.naverIdLogin
 }

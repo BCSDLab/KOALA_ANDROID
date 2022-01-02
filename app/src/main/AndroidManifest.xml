@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="im.koala.bcsd">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
@@ -53,6 +54,17 @@
                     android:scheme="{kakao_oauth_key}" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.nhn.android.naverlogin.ui.OAuthLoginActivity"
+            android:exported="true"
+            tools:node="merge"></activity>
+        <activity
+            android:name="com.nhn.android.naverlogin.ui.OAuthLoginInAppBrowserActivity"
+            android:exported="true"
+            tools:node="merge"></activity>
+        <activity android:name="com.nhn.android.naverlogin.ui.OAuthCustomTabActivity"
+            android:exported="true"
+            tools:node="merge"/>
     </application>
 
 </manifest>
