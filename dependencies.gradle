@@ -114,8 +114,10 @@ ext {
     androidJunit = "androidx.test.ext:junit:$android_junit_version"
 
     /* Dependency - mockito*/
-    def mockito_version = "3.4.0"
+    def mockito_version = "4.2.0"
     mockito = "org.mockito:mockito-inline:$mockito_version"
+    def mockito_kotlin_version = "4.0.0"
+    mockitoKotlin = "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
 
     /* Dependency - arch.core.testing */
     def archcore_version = "1.1.1"
@@ -149,6 +151,12 @@ ext {
     def accompanist_version = "0.20.0"
     accompanistInsets = "com.google.accompanist:accompanist-insets:$accompanist_version"
     accompanistFlowLayout = "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
+
+    /* Dependency - coroutine android */
+    def coroutine_version = "1.5.0"
+    coroutineCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+    coroutineAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+    coroutineTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutine_version"
 
     /* Dependency - coroutine android*/
     def coroutine_android_version = "1.5.0"
