@@ -6,12 +6,15 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.google.accompanist.insets.ProvideWindowInsets
 import im.koala.bcsd.R
 import im.koala.bcsd.navigation.NavScreen
+import im.koala.bcsd.ui.keyword.KeywordDetailScreen
 
 @Composable
 fun MainScreen() {
@@ -39,6 +42,21 @@ fun MainScreen() {
                         }
                     }
                 )
+            }
+            composable(
+                route = NavScreen.KeywordDetails.routeWithArgument,
+                arguments = listOf(
+                    navArgument(NavScreen.KeywordDetails.argument0) { type = NavType.LongType }
+                )
+            ) { backStackEntry ->
+
+                val posterId =
+                    backStackEntry.arguments?.getLong(NavScreen.KeywordDetails.argument0)
+                        ?: return@composable
+
+                KeywordDetailScreen() {
+                    navController.navigateUp()
+                }
             }
         }
     }

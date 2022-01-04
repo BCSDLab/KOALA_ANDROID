@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import im.koala.data.api.AuthApi
 import im.koala.data.api.NoAuthApi
 import im.koala.data.repository.UserRepositoryImpl
 import im.koala.data.repository.local.UserLocalDataSource
@@ -12,6 +13,7 @@ import im.koala.data.repository.local.UserLocalDataSourceImpl
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.data.repository.remote.UserRemoteDataSourceImpl
 import im.koala.domain.repository.UserRepository
+import im.koala.domain.usecase.GetKeywordListUseCase
 import im.koala.domain.usecase.KakaoLoginUseCase
 
 @Module
@@ -20,9 +22,10 @@ object RepositoryModule {
 
     @Provides
     fun provideUserRemoteDataSource(
-        @NOAUTH noAuthApi: NoAuthApi
+        @NOAUTH noAuthApi: NoAuthApi,
+        @AUTH authApi: AuthApi
     ): UserRemoteDataSource {
-        return UserRemoteDataSourceImpl(noAuthApi)
+        return UserRemoteDataSourceImpl(noAuthApi, authApi)
     }
 
     @Provides
@@ -41,8 +44,16 @@ object RepositoryModule {
     @Provides
     @ViewModelScoped
     fun provideKakaoUseCase(
-        noAuthRepository: UserRepository
+        userRepository: UserRepository
     ): KakaoLoginUseCase {
-        return KakaoLoginUseCase(noAuthRepository)
+        return KakaoLoginUseCase(userRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetKeywordListUseCase(
+        userRepository: UserRepository
+    ): GetKeywordListUseCase {
+        return GetKeywordListUseCase(userRepository)
     }
 }

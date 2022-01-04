@@ -1,6 +1,7 @@
 package im.koala.bcsd.datasource
 
 import im.koala.bcsd.scenario.Scenario
+import im.koala.data.entity.KeywordBodyEntity
 import im.koala.data.entity.TokenBodyEntity
 import im.koala.data.repository.remote.UserRemoteDataSource
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -27,6 +28,24 @@ class TestUserRemoteDataSource : UserRemoteDataSource {
             }
         }
     }
+
+    override suspend fun getKeyword(): Response<KeywordBodyEntity> {
+        when (scenario) {
+            Scenario.SUCCESS -> {
+                return Response.success(KeywordBodyEntity.SUCCESS)
+            }
+            Scenario.FAIL -> {
+                return Response.success(KeywordBodyEntity.FAIL)
+            }
+            Scenario.ERROR -> {
+                return Response.error(
+                    400,
+                    "{\"code\":[\"400\"]}".toResponseBody("application/json".toMediaTypeOrNull())
+                )
+            }
+        }
+    }
+
     fun chageScenario(scenario: Scenario) {
         this.scenario = scenario
     }

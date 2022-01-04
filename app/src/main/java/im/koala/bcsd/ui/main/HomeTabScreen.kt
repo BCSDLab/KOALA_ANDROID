@@ -31,7 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsPadding
-import im.koala.bcsd.ui.appbar.KoalaAppBar
 import im.koala.bcsd.ui.chatroom.ChatRoomScreen
 import im.koala.bcsd.ui.history.HistoryScreen
 import im.koala.bcsd.ui.keyword.KeywordScreen
@@ -41,14 +40,13 @@ import androidx.compose.animation.Crossfade
 fun HomeTabScreen(
     viewModel: MainViewModel,
     tabStateHolder: HomeTabStateHolder,
-    selectItem: (MainScreenBottomTab, Long) -> Unit
+    selectItem: (MainScreenBottomTab, Int) -> Unit
 ) {
     val selectedTab by viewModel.selectedTab
     val tabs = MainScreenBottomTab.values()
 
     Scaffold(
         backgroundColor = MaterialTheme.colors.primarySurface,
-        topBar = { KoalaAppBar() },
         bottomBar = {
 
             BottomNavigation(
@@ -81,7 +79,7 @@ fun HomeTabScreen(
         Crossfade(selectedTab) { destination ->
             when (destination) {
                 MainScreenBottomTab.KEYWORD -> KeywordScreen(
-                    modifier
+                    modifier, tabStateHolder.keywordLazyListState, viewModel, selectItem
                 )
                 MainScreenBottomTab.HISTORY -> HistoryScreen(
                     modifier

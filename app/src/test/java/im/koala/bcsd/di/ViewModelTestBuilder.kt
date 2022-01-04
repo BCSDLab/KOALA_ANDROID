@@ -3,7 +3,9 @@ package im.koala.bcsd.di
 import im.koala.bcsd.datasource.TestUserLocalDataSource
 import im.koala.bcsd.datasource.TestUserRemoteDataSource
 import im.koala.bcsd.ui.login.LoginViewModel
+import im.koala.bcsd.ui.main.MainViewModel
 import im.koala.data.repository.UserRepositoryImpl
+import im.koala.domain.usecase.GetKeywordListUseCase
 import im.koala.domain.usecase.KakaoLoginUseCase
 
 class ViewModelTestBuilder {
@@ -13,10 +15,11 @@ class ViewModelTestBuilder {
 
     /* UseCase */
     fun provideKakaoLoginUsecase(): KakaoLoginUseCase = KakaoLoginUseCase(provideUserRepository())
+    fun provideGetKeywordListUseCase(): GetKeywordListUseCase = GetKeywordListUseCase(provideUserRepository())
 
     /* ViewModel */
     fun provideLoginViewModel(): LoginViewModel = LoginViewModel(provideKakaoLoginUsecase())
-
+    fun provideMainViewModel(): MainViewModel = MainViewModel(provideGetKeywordListUseCase())
     /* Datasource - Datasource는 Scenario값을 변경해야하기에 변수 선언 및 싱글톤으로 설계*/
     companion object {
         val localUserDataSource: TestUserLocalDataSource = TestUserLocalDataSource()
