@@ -7,9 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -25,16 +23,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.button.KoalaCircularCheckBox
 import im.koala.bcsd.ui.login.LoginActivity
 import im.koala.bcsd.ui.theme.*
 
 
+
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @Composable
-fun TutorialLastScreen(navController: NavController){
+fun TutorialLastScreen(){
     val context = LocalContext.current
 
     Column(
@@ -46,10 +46,7 @@ fun TutorialLastScreen(navController: NavController){
         Spacer(modifier = Modifier.padding(top = 64.dp))
 
         Text(text = stringResource(id = R.string.tutorial_chatting_title),
-            modifier = Modifier
-                .height(36.dp)
-                .width(111.dp)
-            ,
+            modifier = Modifier.size(111.dp,36.dp),
             textAlign = TextAlign.Center,
             fontSize = 24.sp,
             color = colorResource(R.color.koala_black),
@@ -83,7 +80,7 @@ fun TutorialLastScreen(navController: NavController){
                 Canvas(
                     modifier = Modifier
                         .padding(start = 45.7.dp)
-                        .size(221.562.dp, 101.989.dp)
+                        .size(221.6.dp, 102.dp)
                         .shadow(elevation = 4.dp)
                 ){
                     drawRoundRect(
@@ -95,7 +92,7 @@ fun TutorialLastScreen(navController: NavController){
                 Canvas(
                     modifier = Modifier
                         .padding(start = 24.6.dp, top = 30.5.dp)
-                        .size(266.109.dp, 123.09.dp)
+                        .size(266.1.dp, 123.1.dp)
                         .shadow(elevation = 4.dp)
                 ){
                     drawRoundRect(
@@ -107,7 +104,7 @@ fun TutorialLastScreen(navController: NavController){
                 Box(modifier = Modifier.padding(top=68.dp)){
                     Canvas(
                         modifier = Modifier
-                            .size(313.dp, 145.363.dp)
+                            .size(313.dp, 145.4.dp)
                             .shadow(elevation = 4.dp)
                     ){
                         drawRoundRect(
@@ -129,11 +126,13 @@ fun TutorialLastScreen(navController: NavController){
                             )
 
                             Column(modifier = Modifier.padding(start = 8.dp)) {
-                                Row(){
+                                Row{
                                     Text(
                                         text = "쭈꾸리",
+                                        modifier = Modifier.size(39.dp,21.dp),
                                         fontSize = 14.sp,
-                                        color = colorResource(id = R.color.koala_black)
+                                        color = colorResource(id = R.color.koala_black),
+                                        style = MaterialTheme.typography.h2
                                     )
 
                                     Text(
@@ -148,7 +147,8 @@ fun TutorialLastScreen(navController: NavController){
                                     text = "안녕안녕요~~반가워요!",
                                     fontSize = 12.sp,
                                     color = colorResource(id = R.color.koala_black),
-                                    modifier = Modifier.padding(top = 4.dp)
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = MaterialTheme.typography.caption
                                 )
                             }
                         }
@@ -169,7 +169,9 @@ fun TutorialLastScreen(navController: NavController){
                                     Text(
                                         text = "ddsndms",
                                         fontSize = 14.sp,
-                                        color = colorResource(id = R.color.koala_black)
+                                        modifier = Modifier.size(39.dp,21.dp),
+                                        color = colorResource(id = R.color.koala_black),
+                                        style = MaterialTheme.typography.h2
                                     )
 
                                     Text(
@@ -184,7 +186,8 @@ fun TutorialLastScreen(navController: NavController){
                                     text = "반갑습니다ㅋ 공지 확인 하셨죠?",
                                     fontSize = 12.sp,
                                     color = colorResource(id = R.color.koala_black),
-                                    modifier = Modifier.padding(top = 4.dp)
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = MaterialTheme.typography.caption
                                 )
                             }
                         }
@@ -193,22 +196,23 @@ fun TutorialLastScreen(navController: NavController){
             }
 
             Image(
-                painter = painterResource(id = R.drawable.tutorial_last_page_message),
+                painter = painterResource(id = R.drawable.ic_tutorial_last_page_message),
                 contentDescription = null,
                 modifier = Modifier.size(95.dp,73.152.dp)
             )
 
             Image(
-                painter = painterResource(id = R.drawable.tutorial_last_page_person),
+                painter = painterResource(id = R.drawable.ic_tutorial_last_page_person),
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(start = 201.dp, top = 121.3.dp)
+                    .padding(start = 201.dp, top = 113.dp)
                     .size(108.056.dp, 143.096.dp)
             )
         }
 
+        Spacer(modifier = Modifier.padding(top = 41.6.dp))
+
         Row(modifier= Modifier
-            .padding(top = 41.6.dp)
             .width(80.dp)){
             KoalaCircularCheckBox(
                 checked = false,
@@ -263,19 +267,22 @@ fun TutorialLastScreen(navController: NavController){
             Text(
                 text = stringResource(id = R.string.tutorial_start),
                 color = colorResource(id = R.color.white),
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                style = MaterialTheme.typography.button
             )
         }
 
     }
 }
 
+@ExperimentalAnimationApi
+@ExperimentalComposeUiApi
 @Preview
 @Composable
 fun PreviewTutorialLastScreen(){
-//    KoalaTheme() {
-//        Surface(color = GrayBorder) {
-//            TutorialLastScreen()
-//        }
-//    }
+    KoalaTheme() {
+        Surface(color = GrayBorder) {
+            TutorialLastScreen()
+        }
+    }
 }

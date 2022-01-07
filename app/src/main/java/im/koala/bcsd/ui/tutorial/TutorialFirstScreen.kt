@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -19,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.button.KoalaCircularCheckBox
 import im.koala.bcsd.ui.theme.*
@@ -69,18 +72,19 @@ fun TutorialFirstScreen(navController: NavController){
         Box{
             Image(
                 painter = painterResource(id = R.drawable.tutorial_first_page_example),
-                contentDescription = "키워드 예시",
+                contentDescription = null,
                 modifier = Modifier
                     .padding(top = 55.dp)
                     .size(283.dp, 210.dp)
             )
 
             Image(
-                painter = painterResource(id = R.drawable.tutorial_first_page_person),
-                contentDescription = "키워드 사람",
+                painter = painterResource(id = R.drawable.ic_tutorial_first_page_person),
+                contentDescription = null,
                 modifier = Modifier
-                    .padding(start = 176.4.dp)
-                    .size(90.6.dp, 136.1.dp)
+                    .align(Alignment.TopEnd)
+                    .padding(end=16.dp)
+                    .size(90.561.dp, 136.121.dp)
 
             )
         }
@@ -152,9 +156,10 @@ fun TutorialFirstScreen(navController: NavController){
 @Preview
 @Composable
 fun PreviewTutorialFirstScreen(){
-//    KoalaTheme {
-//        Surface(color = GrayBorder) {
-//            TutorialFirstScreen(navController = NavController)
-//        }
-//    }
+    KoalaTheme {
+        val navController = rememberNavController()
+        Surface(color = GrayBorder) {
+            TutorialFirstScreen(navController = navController)
+        }
+    }
 }

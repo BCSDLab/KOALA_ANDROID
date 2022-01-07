@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.button.KoalaCircularCheckBox
 import im.koala.bcsd.ui.theme.*
@@ -69,14 +71,14 @@ fun TutorialSecondScreen(navController: NavController){
         Box{
             Image(
                 painter = painterResource(id = R.drawable.tutorial_second_page_example),
-                contentDescription = "키워드 예시",
+                contentDescription = null,
                 modifier = Modifier
                     .size(265.dp, 185.dp)
             )
 
             Image(
-                painter = painterResource(id = R.drawable.tutorial_second_page_person),
-                contentDescription = "키워드 사람",
+                painter = painterResource(id = R.drawable.ic_tutorial_second_page_person),
+                contentDescription = null,
                 modifier = Modifier
                     .padding(start = 182.7.dp,top=133.dp)
                     .size(84.815.dp, 117.712.dp)
@@ -150,9 +152,10 @@ fun TutorialSecondScreen(navController: NavController){
 @Preview
 @Composable
 fun PreviewTutorialSecondScreen(){
-//    KoalaTheme {
-//        Surface(color = GrayBorder) {
-//            TutorialSecondScreen()
-//        }
-//    }
+    KoalaTheme {
+        val navController = rememberNavController()
+        Surface(color = GrayBorder) {
+            TutorialSecondScreen(navController = navController)
+        }
+    }
 }

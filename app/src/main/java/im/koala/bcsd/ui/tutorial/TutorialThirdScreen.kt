@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.button.KoalaCircularCheckBox
 import im.koala.bcsd.ui.theme.*
@@ -69,7 +71,7 @@ fun TutorialThirdScreen(navController: NavController){
         Box{
             Image(
                 painter = painterResource(id = R.drawable.tutorial_third_page_example),
-                contentDescription = "키워드 예시",
+                contentDescription = null,
                 modifier = Modifier
                     .padding(top = 28.dp)
                     .size(284.dp, 229.dp)
@@ -77,8 +79,8 @@ fun TutorialThirdScreen(navController: NavController){
             )
 
             Image(
-                painter = painterResource(id = R.drawable.tutorial_third_page_person),
-                contentDescription = "키워드 사람",
+                painter = painterResource(id = R.drawable.ic_tutorial_third_page_person),
+                contentDescription = null,
                 modifier = Modifier
                     .padding(start = 190.dp, top = 163.dp)
                     .size(69.663.dp, 123.806.dp)
@@ -86,8 +88,8 @@ fun TutorialThirdScreen(navController: NavController){
             )
 
             Image(
-                painter = painterResource(id = R.drawable.tutorial_third_page_pencil),
-                contentDescription = "키워드 연필",
+                painter = painterResource(id = R.drawable.ic_tutorial_third_page_pencil),
+                contentDescription = null,
                 modifier = Modifier
                     .padding(start = 24.dp)
                     .size(77.132.dp, 55.431.dp)
@@ -95,8 +97,9 @@ fun TutorialThirdScreen(navController: NavController){
             )
         }
 
+        Spacer(modifier = Modifier.padding(top = 39.2.dp))
+
         Row(modifier= Modifier
-            .padding(top = 39.2.dp)
             .width(80.dp)){
             KoalaCircularCheckBox(
                 checked = false,
@@ -161,9 +164,10 @@ fun TutorialThirdScreen(navController: NavController){
 @Preview
 @Composable
 fun PreviewTutorialThirdScreen(){
-//    KoalaTheme {
-//        Surface(color = GrayBorder) {
-//            TutorialThirdScreen()
-//        }
-//    }
+    KoalaTheme {
+        val navController = rememberNavController()
+        Surface(color = GrayBorder) {
+            TutorialThirdScreen(navController)
+        }
+    }
 }
