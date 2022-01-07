@@ -2,11 +2,13 @@ package im.koala.bcsd.ui.login
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.nhn.android.naverlogin.OAuthLogin
@@ -17,14 +19,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import im.koala.bcsd.R
 import im.koala.bcsd.state.NetworkState
 import im.koala.bcsd.ui.BaseViewModel
-import im.koala.domain.usecase.KakaoLoginUseCase
-import im.koala.domain.usecase.NaverLoginUseCase
+import im.koala.domain.constants.GOOGLE
+import im.koala.domain.constants.KAKAO
+import im.koala.domain.constants.NAVER
+import im.koala.domain.usecase.GooglePostAccessTokenUseCase
+import im.koala.domain.usecase.SnsLoginUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel@Inject constructor(
-    private val kakaoLoginUseCase: KakaoLoginUseCase,
-    private val naverLoginUseCase: NaverLoginUseCase
+    private val snsLoginUseCase: SnsLoginUseCase,
+    private val googlePostAccessTokenUseCase: GooglePostAccessTokenUseCase
 ) : BaseViewModel() {
     private val _snsLoginState = MutableLiveData<NetworkState>(NetworkState.Uninitialized)
     val snsLoginState: LiveData<NetworkState> get() = _snsLoginState
@@ -45,7 +50,8 @@ class LoginViewModel@Inject constructor(
     fun executeKakaoLogin(token: String) {
         _snsLoginState.value = NetworkState.Loading
         viewModelScope.launch {
-            kakaoLoginUseCase(
+            snsLoginUseCase(
+                snsType = KAKAO,
                 accessToken = token,
                 onSuccess = {
                     _snsLoginState.value = NetworkState.Success(it)
@@ -70,13 +76,12 @@ class LoginViewModel@Inject constructor(
                 }
             }
         }
-        Log.e("loginState", mOAuthLoginModule.getState(context).toString())
         when(mOAuthLoginModule.getState(context)){
             OAuthLoginState.NEED_INIT -> {
                 mOAuthLoginModule.init(
                     context,
                     context.applicationContext.resources.getString(R.string.naver_client_id),
-                    context.applicationContext.resources.getString(R.string.naver_clinet_secret),
+                    context.applicationContext.resources.getString(R.string.naver_client_secret),
                     context.getString(R.string.app_name)
                 )
                 mOAuthLoginModule.startOauthLoginActivity(context as Activity,mOAuthLoginHandler)
@@ -104,10 +109,49 @@ class LoginViewModel@Inject constructor(
         }
     }
     fun executeNaverLogin(token : String){
-        Log.e("loginTest","LoginTest")
         _snsLoginState.value = NetworkState.Loading
         viewModelScope.launch {
-            naverLoginUseCase(
+            snsLoginUseCase(
+                snsType = NAVER,
+                accessToken = token,
+                onSuccess = {
+                    _snsLoginState.value = NetworkState.Success(it)
+                },
+                onFail = {
+                    _snsLoginState.value = NetworkState.Fail(it)
+                }
+            )
+        }
+    }
+
+    fun getGoogleClient(context : Context) : GoogleSignInClient{
+        val googleSignInObtion =GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.applicationContext.resources.getString(R.string.google_web_client_id))
+            .requestServerAuthCode(context.applicationContext.resources.getString(R.string.google_web_client_id))
+            .requestEmail()
+            .build()
+        return GoogleSignIn.getClient(context,googleSignInObtion)
+    }
+    fun postGoogleAccessToken(context : Context, authCode : String){
+        viewModelScope.launch {
+            googlePostAccessTokenUseCase(
+                clientId = context.applicationContext.resources.getString(R.string.google_web_client_id),
+                clientSecret = context.applicationContext.resources.getString(R.string.google_web_client_secret),
+                authCode = authCode,
+                onSuccess = {
+                    executeGoogleLogin(it)
+                },
+                onFail = {
+                    Toast.makeText(context,R.string.google_login_fail,Toast.LENGTH_SHORT)
+                }
+            )
+        }
+    }
+    fun executeGoogleLogin(token : String){
+        _snsLoginState.value = NetworkState.Loading
+        viewModelScope.launch {
+            snsLoginUseCase(
+                snsType = GOOGLE,
                 accessToken = token,
                 onSuccess = {
                     _snsLoginState.value = NetworkState.Success(it)

@@ -90,6 +90,7 @@ class LoginActivity : ComponentActivity() {
             }
         }
     }
+
     private fun goToMainActivity() {
         Intent(this, MainActivity::class.java).run {
             startActivity(this)
@@ -441,6 +442,14 @@ fun SnsLoginScreen(
     viewModel: LoginViewModel
 ) {
     val snsLoginState by viewModel.snsLoginState.observeAsState(NetworkState.Uninitialized)
+    val googleLoginContract =
+        rememberLauncherForActivityResult(contract = GoogleLoginContract(), onResult = {
+            if (it != null) {
+                viewModel.postGoogleAccessToken(context = context, authCode = it)
+            } else {
+                Toast.makeText(context, R.string.google_login_fail, Toast.LENGTH_SHORT)
+            }
+        })
     ConstraintLayout(modifier = modifier) {
         val (googleButton, googleIcon, naverButton, naverIcon, kakaoButton, kakaoIcon) = createRefs()
         /*구글버튼*/
@@ -462,7 +471,9 @@ fun SnsLoginScreen(
             backgroundColor = White,
             textColor = Black,
             text = stringResource(id = R.string.google_login),
-            onClick = {}
+            onClick = {
+                googleLoginContract.launch(viewModel.getGoogleClient(context))
+            }
         )
 
         DrawImageView(
@@ -546,12 +557,14 @@ fun SnsLoginScreen(
         is NetworkState.Fail<*> -> {
             val response = (snsLoginState as NetworkState.Fail<*>).data as CommonResponse
             when (response) {
-                CommonResponse.UNKOWN -> response.errorMessage = stringResource(id = R.string.network_unkown_error)
+                CommonResponse.UNKOWN -> response.errorMessage =
+                    stringResource(id = R.string.network_unkown_error)
             }
             Toast.makeText(context, response.errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
 }
+
 @Composable
 fun DummyProgress(viewModel: LoginViewModel) {
     val snsLoginState by viewModel.snsLoginState.observeAsState(NetworkState.Uninitialized)

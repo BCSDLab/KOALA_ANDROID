@@ -4,7 +4,7 @@ import im.koala.bcsd.datasource.TestUserLocalDataSource
 import im.koala.bcsd.datasource.TestUserRemoteDataSource
 import im.koala.bcsd.ui.login.LoginViewModel
 import im.koala.data.repository.UserRepositoryImpl
-import im.koala.domain.usecase.KakaoLoginUseCase
+import im.koala.domain.usecase.SnsLoginUseCase
 
 class ViewModelTestBuilder {
     /* Repository */
@@ -12,7 +12,7 @@ class ViewModelTestBuilder {
         UserRepositoryImpl(remoteUserDataSource, localUserDataSource)
 
     /* UseCase */
-    fun provideKakaoLoginUsecase(): KakaoLoginUseCase = KakaoLoginUseCase(provideUserRepository())
+    fun provideKakaoLoginUsecase(): SnsLoginUseCase = SnsLoginUseCase(provideUserRepository())
 
     /* ViewModel */
     fun provideLoginViewModel(): LoginViewModel = LoginViewModel(provideKakaoLoginUsecase())

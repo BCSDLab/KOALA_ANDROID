@@ -173,4 +173,8 @@ ext {
     /* naver login api */
     def naver_login_version = "4.2.6"
     naverIdLogin = "com.naver.nid:naveridlogin-android-sdk:$naver_login_version"
+
+    /* Google Play Service */
+    def google_play_service_version = "20.0.0"
+    googlePlayService = "com.google.android.gms:play-services-auth:$google_play_service_version"
 }

@@ -22,8 +22,10 @@ android {
             useSupportLibrary true
         }
         resValue("string","naver_client_id",properties.getProperty("naverClientId"))
-        resValue("string","naver_clinet_secret",properties.getProperty("naverClientSecret"))
+        resValue("string","naver_client_secret",properties.getProperty("naverClientSecret"))
         resValue("string", "KAKAO_KEY", properties.getProperty("kakao_key"))
+        resValue("string","google_web_client_id",properties.getProperty("google_web_client_id"))
+        resValue("string","google_web_client_secret",properties.getProperty("google_web_client_secret"))
         manifestPlaceholders = [kakao_oauth_key: "${properties.getProperty('kakao_oauth_key')}"]
     }
 
@@ -117,4 +119,6 @@ dependencies {
     implementation project.hawk
 
     implementation project.naverIdLogin
+
+    implementation project.googlePlayService
 }
