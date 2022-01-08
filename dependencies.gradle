@@ -134,7 +134,7 @@ ext {
     hiltTest = "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptTest = "com.google.dagger:hilt-android-compiler:$hilt_version"
     hiltAndroidTest = "com.google.dagger:hilt-android-testing:$hilt_version"
-    hiltKaptAndroid = "com.google.dagger:hilt-android-compiler$hilt_version"
+    hiltKaptAndroid = "com.google.dagger:hilt-android-compiler:$hilt_version"
     androidTestAnnotation = "com.google.dagger:hilt-android-compiler$hilt_version"
 
     def hilt_compose_navigation_version = "1.0.0-alpha03"

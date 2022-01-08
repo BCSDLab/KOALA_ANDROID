@@ -1,6 +1,7 @@
 package im.koala.bcsd.ui.button
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -52,7 +53,8 @@ fun KoalaButton(
             disabledBackgroundColor = KoalaButtonColors.disabledBackgroundColor,
             disabledContentColor = KoalaButtonColors.disabledContentColor
         ),
-        content = content
+        content = content,
+        contentPadding = PaddingValues(0.dp)
     )
 }
 
