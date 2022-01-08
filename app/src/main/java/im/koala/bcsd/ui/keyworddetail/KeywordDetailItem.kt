@@ -77,7 +77,7 @@ fun KeywordDetailItem(
 
 @Preview("Keyword detail item")
 @Composable
-fun KeywordDetailItemPreview() {
+private fun KeywordDetailItemPreview() {
     val checked = rememberSaveable { mutableStateOf(false) }
 
     KoalaTheme {
@@ -96,7 +96,7 @@ fun KeywordDetailItemPreview() {
 
 @Preview("Keyword detail item(checked)")
 @Composable
-fun KeywordDetailItemCheckedPreview() {
+private fun KeywordDetailItemCheckedPreview() {
     KoalaTheme {
         Surface {
             KeywordDetailItem(
@@ -111,7 +111,7 @@ fun KeywordDetailItemCheckedPreview() {
 
 @Preview("Keyword detail item(read)")
 @Composable
-fun KeywordDetailItemReadPreview() {
+private fun KeywordDetailItemReadPreview() {
     KoalaTheme {
         Surface {
             KeywordDetailItem(
@@ -126,7 +126,7 @@ fun KeywordDetailItemReadPreview() {
 
 @Preview("Keyword detail item(read, checked)")
 @Composable
-fun KeywordDetailItemReadCheckedPreview() {
+private fun KeywordDetailItemReadCheckedPreview() {
     KoalaTheme {
         Surface {
             KeywordDetailItem(

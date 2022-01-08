@@ -32,6 +32,7 @@ ext {
     composeUiTest = "androidx.compose.ui:ui-test-junit4:$compose_version"
     composeTooling = "androidx.compose.ui:ui-tooling:$compose_version"
     composeLiveData = "androidx.compose.runtime:runtime-livedata:$compose_version"
+    composeUiTool = "androidx.compose.ui:ui-util:$compose_version"
 
     /* Dependency - ConstraintLayout Compose */
     def constraint_layout = "1.0.0-beta02"
