@@ -119,7 +119,6 @@ fun TutorialThirdScreen(navController: NavController) {
                 fontSize = 14.sp
             )
         }
-
     }
 }
 

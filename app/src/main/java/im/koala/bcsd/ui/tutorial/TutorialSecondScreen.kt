@@ -25,7 +25,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import im.koala.bcsd.R
-import im.koala.bcsd.ui.theme.*
+import im.koala.bcsd.ui.theme.Black
+import im.koala.bcsd.ui.theme.GrayBorder
+import im.koala.bcsd.ui.theme.White
+import im.koala.bcsd.ui.theme.KoalaTheme
 
 @Composable
 fun TutorialSecondScreen(navController: NavController) {
