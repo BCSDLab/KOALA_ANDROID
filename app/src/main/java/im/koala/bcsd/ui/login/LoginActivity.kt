@@ -447,7 +447,7 @@ fun SnsLoginScreen(
             if (it != null) {
                 viewModel.postGoogleAccessToken(context = context, authCode = it)
             } else {
-                Toast.makeText(context, R.string.google_login_fail, Toast.LENGTH_SHORT)
+                Toast.makeText(context, R.string.google_login_fail, Toast.LENGTH_SHORT).show()
             }
         })
     ConstraintLayout(modifier = modifier) {

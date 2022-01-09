@@ -37,7 +37,7 @@ class LoginViewModel@Inject constructor(
     val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
         } else if (token != null) {
-            executeKakaoLogin(token.accessToken)
+            executeSnsLogin(KAKAO,token.accessToken)
         }
     }
     fun kakaoLogin(context: Context) {
@@ -47,28 +47,13 @@ class LoginViewModel@Inject constructor(
             UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
         }
     }
-    fun executeKakaoLogin(token: String) {
-        _snsLoginState.value = NetworkState.Loading
-        viewModelScope.launch {
-            snsLoginUseCase(
-                snsType = KAKAO,
-                accessToken = token,
-                onSuccess = {
-                    _snsLoginState.value = NetworkState.Success(it)
-                },
-                onFail = {
-                    _snsLoginState.value = NetworkState.Fail(it)
-                }
-            )
-        }
-    }
     fun naverLogin(context : Context){
         val mOAuthLoginModule = OAuthLogin.getInstance()
         val mOAuthLoginHandler = object : OAuthLoginHandler(){
             override fun run(success: Boolean) {
                 if(success){
                     val accessToken = mOAuthLoginModule.getAccessToken(context)
-                    executeNaverLogin(accessToken)
+                    executeSnsLogin(NAVER,accessToken)
                 } else{
                     val errorCode = mOAuthLoginModule.getLastErrorCode(context).code
                     val errorDesc = mOAuthLoginModule.getLastErrorDesc(context)
@@ -92,7 +77,7 @@ class LoginViewModel@Inject constructor(
             OAuthLoginState.NEED_REFRESH_TOKEN ->{
                 val accessToken = mOAuthLoginModule.refreshAccessToken(context)
                 if(accessToken != null){
-                    executeNaverLogin(accessToken)
+                    executeSnsLogin(NAVER,accessToken)
                 } else {
                     mOAuthLoginModule.startOauthLoginActivity(context as Activity,mOAuthLoginHandler)
                 }
@@ -101,26 +86,11 @@ class LoginViewModel@Inject constructor(
                 val mOAuthLoginPreferenceManager = OAuthLoginPreferenceManager(context)
                 val accessToken = mOAuthLoginPreferenceManager.accessToken
                 if(accessToken != null){
-                    executeNaverLogin(accessToken)
+                    executeSnsLogin(NAVER,accessToken)
                 } else {
                     mOAuthLoginModule.startOauthLoginActivity(context as Activity,mOAuthLoginHandler)
                 }
             }
-        }
-    }
-    fun executeNaverLogin(token : String){
-        _snsLoginState.value = NetworkState.Loading
-        viewModelScope.launch {
-            snsLoginUseCase(
-                snsType = NAVER,
-                accessToken = token,
-                onSuccess = {
-                    _snsLoginState.value = NetworkState.Success(it)
-                },
-                onFail = {
-                    _snsLoginState.value = NetworkState.Fail(it)
-                }
-            )
         }
     }
 
@@ -139,19 +109,19 @@ class LoginViewModel@Inject constructor(
                 clientSecret = context.applicationContext.resources.getString(R.string.google_web_client_secret),
                 authCode = authCode,
                 onSuccess = {
-                    executeGoogleLogin(it)
+                    executeSnsLogin(GOOGLE,it)
                 },
                 onFail = {
-                    Toast.makeText(context,R.string.google_login_fail,Toast.LENGTH_SHORT)
+                    Toast.makeText(context,R.string.google_login_fail,Toast.LENGTH_SHORT).show()
                 }
             )
         }
     }
-    fun executeGoogleLogin(token : String){
+    fun executeSnsLogin(snsType : String, token : String){
         _snsLoginState.value = NetworkState.Loading
         viewModelScope.launch {
             snsLoginUseCase(
-                snsType = GOOGLE,
+                snsType = snsType,
                 accessToken = token,
                 onSuccess = {
                     _snsLoginState.value = NetworkState.Success(it)
