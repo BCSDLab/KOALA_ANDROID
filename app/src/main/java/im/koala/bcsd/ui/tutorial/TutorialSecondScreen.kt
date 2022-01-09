@@ -2,9 +2,7 @@ package im.koala.bcsd.ui.tutorial
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Surface
@@ -22,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import im.koala.bcsd.R
-import im.koala.bcsd.ui.button.KoalaCircularCheckBox
 import im.koala.bcsd.ui.theme.*
 
 @Composable
@@ -80,58 +77,21 @@ fun TutorialSecondScreen(navController: NavController){
                 painter = painterResource(id = R.drawable.ic_tutorial_second_page_person),
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(start = 182.7.dp,top=133.dp)
+                    .padding(start = 182.7.dp, top = 133.dp)
                     .size(84.815.dp, 117.712.dp)
 
             )
         }
 
-        Row(modifier= Modifier
-            .padding(top = 42.3.dp)
-            .width(80.dp)){
-            KoalaCircularCheckBox(
-                checked = false,
-                onCheckedChange = {},
-                modifier = Modifier
-                    .size(8.dp)
-                    .border(8.dp, color = GrayDisabled, shape = CircleShape)
-            )
+        Spacer(modifier = Modifier.padding(top = 42.3.dp))
 
-            Spacer(modifier = Modifier.padding(start = 16.dp))
-
-            KoalaCircularCheckBox(
-                checked = true,
-                onCheckedChange = {},
-                modifier = Modifier
-                    .size(8.dp)
-            )
-
-            Spacer(modifier = Modifier.padding(start = 16.dp))
-
-            KoalaCircularCheckBox(
-                checked = false,
-                onCheckedChange = {},
-                modifier = Modifier
-                    .size(8.dp)
-                    .border(8.dp, color = GrayDisabled, shape = CircleShape)
-            )
-
-            Spacer(modifier = Modifier.padding(start = 16.dp))
-
-            KoalaCircularCheckBox(
-                checked = false,
-                onCheckedChange = {},
-                modifier = Modifier
-                    .size(8.dp)
-                    .border(8.dp, color = GrayDisabled, shape = CircleShape)
-            )
-        }
+        TutorialProcessDot(pageList = listOf(false,true,false,false))
 
         Spacer(modifier = Modifier.padding(top = 24.dp))
 
         Button(
             onClick = {
-                      navController.navigate(TutorialScreen.ThirdScreen.route)
+                navController.navigate(TutorialScreen.ThirdScreen.route)
             },
             modifier = Modifier
                 .size(328.dp, 48.dp),
@@ -145,7 +105,6 @@ fun TutorialSecondScreen(navController: NavController){
                 fontSize = 14.sp
             )
         }
-
     }
 }
 

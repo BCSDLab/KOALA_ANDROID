@@ -4,9 +4,7 @@ import android.content.Intent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,10 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import im.koala.bcsd.R
-import im.koala.bcsd.ui.button.KoalaCircularCheckBox
 import im.koala.bcsd.ui.login.LoginActivity
 import im.koala.bcsd.ui.theme.*
 
@@ -118,8 +113,8 @@ fun TutorialLastScreen(){
                     ){
                         Row{
                             Image(
-                                painter = painterResource(id = R.drawable.tutorial_last_page_icon1),
-                                contentDescription = "아이콘1",
+                                painter = painterResource(id = R.drawable.ic_tutorial_profile_yellow),
+                                contentDescription = null,
                                 modifier = Modifier
                                     .padding(top = 6.dp)
                                     .size(32.dp)
@@ -128,7 +123,7 @@ fun TutorialLastScreen(){
                             Column(modifier = Modifier.padding(start = 8.dp)) {
                                 Row{
                                     Text(
-                                        text = "쭈꾸리",
+                                        text = stringResource(id = R.string.tutorial_first_chatting_name),
                                         modifier = Modifier.size(39.dp,21.dp),
                                         fontSize = 14.sp,
                                         color = colorResource(id = R.color.koala_black),
@@ -136,7 +131,7 @@ fun TutorialLastScreen(){
                                     )
 
                                     Text(
-                                        text = "18:30",
+                                        text = stringResource(id = R.string.tutorial_first_chatting_time),
                                         fontSize = 11.sp,
                                         color = Gray,
                                         modifier = Modifier.padding(start = 4.dp,top=3.dp)
@@ -144,7 +139,7 @@ fun TutorialLastScreen(){
                                 }
 
                                 Text(
-                                    text = "안녕안녕요~~반가워요!",
+                                    text = stringResource(id = R.string.tutorial_first_chatting_context),
                                     fontSize = 12.sp,
                                     color = colorResource(id = R.color.koala_black),
                                     modifier = Modifier.padding(top = 4.dp),
@@ -157,8 +152,8 @@ fun TutorialLastScreen(){
 
                         Row{
                             Image(
-                                painter = painterResource(id = R.drawable.tutorial_last_page_icon2),
-                                contentDescription = "아이콘2",
+                                painter = painterResource(id = R.drawable.ic_tutorial_profile_red),
+                                contentDescription = null,
                                 modifier = Modifier
                                     .padding(top = 6.dp)
                                     .size(32.dp)
@@ -167,15 +162,15 @@ fun TutorialLastScreen(){
                             Column(modifier = Modifier.padding(start = 8.dp)) {
                                 Row{
                                     Text(
-                                        text = "ddsndms",
+                                        text = stringResource(id = R.string.tutorial_second_chatting_name),
                                         fontSize = 14.sp,
-                                        modifier = Modifier.size(39.dp,21.dp),
+                                        modifier = Modifier.size(62.dp,21.dp),
                                         color = colorResource(id = R.color.koala_black),
                                         style = MaterialTheme.typography.h2
                                     )
 
                                     Text(
-                                        text = "18:31",
+                                        text = stringResource(id = R.string.tutorial_second_chatting_time),
                                         fontSize = 11.sp,
                                         color = Gray,
                                         modifier = Modifier.padding(start = 4.dp,top=3.dp)
@@ -183,7 +178,7 @@ fun TutorialLastScreen(){
                                 }
 
                                 Text(
-                                    text = "반갑습니다ㅋ 공지 확인 하셨죠?",
+                                    text = stringResource(id = R.string.tutorial_second_chatting_context),
                                     fontSize = 12.sp,
                                     color = colorResource(id = R.color.koala_black),
                                     modifier = Modifier.padding(top = 4.dp),
@@ -198,7 +193,7 @@ fun TutorialLastScreen(){
             Image(
                 painter = painterResource(id = R.drawable.ic_tutorial_last_page_message),
                 contentDescription = null,
-                modifier = Modifier.size(95.dp,73.152.dp)
+                modifier = Modifier.size(95.dp,73.2.dp)
             )
 
             Image(
@@ -206,51 +201,13 @@ fun TutorialLastScreen(){
                 contentDescription = null,
                 modifier = Modifier
                     .padding(start = 201.dp, top = 113.dp)
-                    .size(108.056.dp, 143.096.dp)
+                    .size(108.1.dp, 151.1.dp)
             )
         }
 
         Spacer(modifier = Modifier.padding(top = 41.6.dp))
 
-        Row(modifier= Modifier
-            .width(80.dp)){
-            KoalaCircularCheckBox(
-                checked = false,
-                onCheckedChange = {},
-                modifier = Modifier
-                    .size(8.dp)
-                    .border(8.dp, color = GrayDisabled, shape = CircleShape)
-            )
-
-            Spacer(modifier = Modifier.padding(start = 16.dp))
-
-            KoalaCircularCheckBox(
-                checked = false,
-                onCheckedChange = {},
-                modifier = Modifier
-                    .size(8.dp)
-                    .border(8.dp, color = GrayDisabled, shape = CircleShape)
-            )
-
-            Spacer(modifier = Modifier.padding(start = 16.dp))
-
-            KoalaCircularCheckBox(
-                checked = false,
-                onCheckedChange = {},
-                modifier = Modifier
-                    .size(8.dp)
-                    .border(8.dp, color = GrayDisabled, shape = CircleShape)
-            )
-
-            Spacer(modifier = Modifier.padding(start = 16.dp))
-
-            KoalaCircularCheckBox(
-                checked = true,
-                onCheckedChange = {},
-                modifier = Modifier
-                    .size(8.dp)
-            )
-        }
+        TutorialProcessDot(pageList = listOf(false,false,false,true))
 
         Spacer(modifier = Modifier.padding(top = 24.dp))
 

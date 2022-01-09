@@ -81,6 +81,12 @@
     <string name="tutorial_storage_title">보관함</string>
     <string name="tutorial_chatting_title">채팅</string>
     <string name="tutorial_start">시작하기</string>
+    <string name="tutorial_first_chatting_name">쭈꾸리</string>
+    <string name="tutorial_first_chatting_time">18:30</string>
+    <string name="tutorial_first_chatting_context">안녕안녕여~~반가워요!</string>
+    <string name="tutorial_second_chatting_name">ddsndms</string>
+    <string name="tutorial_second_chatting_time">18:31</string>
+    <string name="tutorial_second_chatting_context">반갑습니다ㅋ 공지 확인 하셨죠?</string>
 
     <!--main -->
     <string name="keyword">키워드</string>
