@@ -12,7 +12,6 @@ import androidx.navigation.compose.rememberNavController
 import im.koala.bcsd.ui.theme.GrayBorder
 import im.koala.bcsd.ui.theme.KoalaTheme
 
-
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
 class TutorialActivity : ComponentActivity() {
@@ -25,17 +24,18 @@ class TutorialActivity : ComponentActivity() {
                 Surface(color = GrayBorder) {
                     NavHost(
                         navController = navController,
-                        startDestination = TutorialScreen.FirstScreen.route){
-                        composable(route = TutorialScreen.FirstScreen.route){
+                        startDestination = TutorialScreen.FirstScreen.route
+                    ) {
+                        composable(route = TutorialScreen.FirstScreen.route) {
                             TutorialFirstScreen(navController)
                         }
-                        composable(route = TutorialScreen.SecondScreen.route){
+                        composable(route = TutorialScreen.SecondScreen.route) {
                             TutorialSecondScreen(navController)
                         }
-                        composable(route = TutorialScreen.ThirdScreen.route){
+                        composable(route = TutorialScreen.ThirdScreen.route) {
                             TutorialThirdScreen(navController)
                         }
-                        composable(route = TutorialScreen.LastScreen.route){
+                        composable(route = TutorialScreen.LastScreen.route) {
                             TutorialLastScreen()
                         }
                     }

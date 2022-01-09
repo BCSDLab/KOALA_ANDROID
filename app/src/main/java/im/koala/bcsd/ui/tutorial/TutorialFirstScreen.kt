@@ -2,7 +2,12 @@ package im.koala.bcsd.ui.tutorial
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Surface
@@ -20,10 +25,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import im.koala.bcsd.R
-import im.koala.bcsd.ui.theme.*
+import im.koala.bcsd.ui.theme.Black
+import im.koala.bcsd.ui.theme.GrayBorder
+import im.koala.bcsd.ui.theme.White
+import im.koala.bcsd.ui.theme.KoalaTheme
 
 @Composable
-fun TutorialFirstScreen(navController: NavController){
+fun TutorialFirstScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -32,11 +40,10 @@ fun TutorialFirstScreen(navController: NavController){
 
         Spacer(modifier = Modifier.padding(top = 64.dp))
 
-        Text(text = stringResource(id = R.string.keyword),
+        Text(
+            text = stringResource(id = R.string.keyword),
             modifier = Modifier
-                .height(36.dp)
-                .width(111.dp)
-            ,
+                .size(111.dp, 36.dp),
             textAlign = TextAlign.Center,
             fontSize = 24.sp,
             color = colorResource(R.color.koala_black),
@@ -46,8 +53,8 @@ fun TutorialFirstScreen(navController: NavController){
 
         Canvas(
             modifier = Modifier
-                .height(1.dp)
-                .width(27.dp)){
+                .size(27.dp, 1.dp)
+        ) {
             drawRect(color = Black)
         }
 
@@ -56,16 +63,15 @@ fun TutorialFirstScreen(navController: NavController){
         Text(
             text = stringResource(id = R.string.tutorial_keyword_content),
             modifier = Modifier
-                .width(251.dp)
-                .height(48.dp),
+                .size(251.dp, 48.dp),
             color = colorResource(id = R.color.koala_black),
             fontSize = 16.sp,
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.padding(top=24.dp))
+        Spacer(modifier = Modifier.padding(top = 24.dp))
 
-        Box{
+        Box {
             Image(
                 painter = painterResource(id = R.drawable.tutorial_first_page_example),
                 contentDescription = null,
@@ -81,13 +87,12 @@ fun TutorialFirstScreen(navController: NavController){
                     .align(Alignment.TopEnd)
                     .padding(end = 16.dp)
                     .size(90.561.dp, 136.121.dp)
-
             )
         }
 
-        Spacer(modifier = Modifier.padding(top=47.dp))
+        Spacer(modifier = Modifier.padding(top = 47.dp))
 
-        TutorialProcessDot(pageList = listOf(true,false,false,false))
+        TutorialProcessDot(pageList = listOf(true, false, false, false))
 
         Spacer(modifier = Modifier.padding(top = 24.dp))
 
@@ -107,13 +112,12 @@ fun TutorialFirstScreen(navController: NavController){
                 fontSize = 14.sp
             )
         }
-
     }
 }
 
 @Preview
 @Composable
-fun PreviewTutorialFirstScreen(){
+fun PreviewTutorialFirstScreen() {
     KoalaTheme {
         val navController = rememberNavController()
         Surface(color = GrayBorder) {
