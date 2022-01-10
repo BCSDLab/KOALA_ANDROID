@@ -26,8 +26,9 @@ import im.koala.domain.usecase.GooglePostAccessTokenUseCase
 import im.koala.domain.usecase.SnsLoginUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
-class LoginViewModel@Inject constructor(
+class LoginViewModel @Inject constructor(
     private val snsLoginUseCase: SnsLoginUseCase,
     private val googlePostAccessTokenUseCase: GooglePostAccessTokenUseCase
 ) : BaseViewModel() {
@@ -37,9 +38,10 @@ class LoginViewModel@Inject constructor(
     val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
         } else if (token != null) {
-            executeSnsLogin(KAKAO,token.accessToken)
+            executeSnsLogin(KAKAO, token.accessToken)
         }
     }
+
     fun kakaoLogin(context: Context) {
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
             UserApiClient.instance.loginWithKakaoTalk(context, callback = callback)
@@ -47,21 +49,26 @@ class LoginViewModel@Inject constructor(
             UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
         }
     }
-    fun naverLogin(context : Context){
+
+    fun naverLogin(context: Context) {
         val mOAuthLoginModule = OAuthLogin.getInstance()
-        val mOAuthLoginHandler = object : OAuthLoginHandler(){
+        val mOAuthLoginHandler = object : OAuthLoginHandler() {
             override fun run(success: Boolean) {
-                if(success){
+                if (success) {
                     val accessToken = mOAuthLoginModule.getAccessToken(context)
-                    executeSnsLogin(NAVER,accessToken)
-                } else{
+                    executeSnsLogin(NAVER, accessToken)
+                } else {
                     val errorCode = mOAuthLoginModule.getLastErrorCode(context).code
                     val errorDesc = mOAuthLoginModule.getLastErrorDesc(context)
-                    Toast.makeText(context, "errorCode = $errorCode, errorDesc = $errorDesc", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "errorCode = $errorCode, errorDesc = $errorDesc",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
-        when(mOAuthLoginModule.getState(context)){
+        when (mOAuthLoginModule.getState(context)) {
             OAuthLoginState.NEED_INIT -> {
                 mOAuthLoginModule.init(
                     context,
@@ -69,55 +76,63 @@ class LoginViewModel@Inject constructor(
                     context.applicationContext.resources.getString(R.string.naver_client_secret),
                     context.getString(R.string.app_name)
                 )
-                mOAuthLoginModule.startOauthLoginActivity(context as Activity,mOAuthLoginHandler)
+                mOAuthLoginModule.startOauthLoginActivity(context as Activity, mOAuthLoginHandler)
             }
             OAuthLoginState.NEED_LOGIN -> {
-                mOAuthLoginModule.startOauthLoginActivity(context as Activity,mOAuthLoginHandler)
+                mOAuthLoginModule.startOauthLoginActivity(context as Activity, mOAuthLoginHandler)
             }
-            OAuthLoginState.NEED_REFRESH_TOKEN ->{
+            OAuthLoginState.NEED_REFRESH_TOKEN -> {
                 val accessToken = mOAuthLoginModule.refreshAccessToken(context)
-                if(accessToken != null){
-                    executeSnsLogin(NAVER,accessToken)
+                if (accessToken != null) {
+                    executeSnsLogin(NAVER, accessToken)
                 } else {
-                    mOAuthLoginModule.startOauthLoginActivity(context as Activity,mOAuthLoginHandler)
+                    mOAuthLoginModule.startOauthLoginActivity(
+                        context as Activity,
+                        mOAuthLoginHandler
+                    )
                 }
             }
             OAuthLoginState.OK -> {
                 val mOAuthLoginPreferenceManager = OAuthLoginPreferenceManager(context)
                 val accessToken = mOAuthLoginPreferenceManager.accessToken
-                if(accessToken != null){
-                    executeSnsLogin(NAVER,accessToken)
+                if (accessToken != null) {
+                    executeSnsLogin(NAVER, accessToken)
                 } else {
-                    mOAuthLoginModule.startOauthLoginActivity(context as Activity,mOAuthLoginHandler)
+                    mOAuthLoginModule.startOauthLoginActivity(
+                        context as Activity,
+                        mOAuthLoginHandler
+                    )
                 }
             }
         }
     }
 
-    fun getGoogleClient(context : Context) : GoogleSignInClient{
-        val googleSignInObtion =GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+    fun getGoogleClient(context: Context): GoogleSignInClient {
+        val googleSignInObtion = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(context.applicationContext.resources.getString(R.string.google_web_client_id))
             .requestServerAuthCode(context.applicationContext.resources.getString(R.string.google_web_client_id))
             .requestEmail()
             .build()
-        return GoogleSignIn.getClient(context,googleSignInObtion)
+        return GoogleSignIn.getClient(context, googleSignInObtion)
     }
-    fun postGoogleAccessToken(context : Context, authCode : String){
+
+    fun postGoogleAccessToken(context: Context, authCode: String) {
         viewModelScope.launch {
             googlePostAccessTokenUseCase(
                 clientId = context.applicationContext.resources.getString(R.string.google_web_client_id),
                 clientSecret = context.applicationContext.resources.getString(R.string.google_web_client_secret),
                 authCode = authCode,
                 onSuccess = {
-                    executeSnsLogin(GOOGLE,it)
+                    executeSnsLogin(GOOGLE, it)
                 },
                 onFail = {
-                    Toast.makeText(context,R.string.google_login_fail,Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.google_login_fail, Toast.LENGTH_SHORT).show()
                 }
             )
         }
     }
-    fun executeSnsLogin(snsType : String, token : String){
+
+    fun executeSnsLogin(snsType: String, token: String) {
         _snsLoginState.value = NetworkState.Loading
         viewModelScope.launch {
             snsLoginUseCase(
@@ -132,6 +147,7 @@ class LoginViewModel@Inject constructor(
             )
         }
     }
+
     companion object {
         val TAG = this.javaClass.simpleName.toString()
     }

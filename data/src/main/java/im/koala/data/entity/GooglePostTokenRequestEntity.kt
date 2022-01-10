@@ -13,5 +13,4 @@ class GooglePostTokenRequestEntity(
     var grantType: String,
     @SerializedName("redirect_uri")
     var redirectUri: String
-) {
-}
+)

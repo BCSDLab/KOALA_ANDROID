@@ -23,11 +23,12 @@ internal class LoginViewModelTest : ViewModelTest() {
     @Before
     fun init() {
     }
+
     @Test
     fun `네트워크 통신 성공일 경우 올바른 값이 라이브데이터에 할당되는지 테스트`() {
         remoteUserDataSource.chageScenario(Scenario.SUCCESS)
         val testObservable = viewModel.snsLoginState.test()
-        viewModel.executeSnsLogin(KAKAO,"token")
+        viewModel.executeSnsLogin(KAKAO, "token")
 
         testObservable.assertValueSequence(
             listOf(
@@ -42,7 +43,7 @@ internal class LoginViewModelTest : ViewModelTest() {
     fun `네트워크 통신 실패일 경우 올바른 값이 라이브데이터에 할당되는지 테스트`() {
         remoteUserDataSource.chageScenario(Scenario.FAIL)
         val testObservable = viewModel.snsLoginState.test()
-        viewModel.executeSnsLogin(KAKAO,"token")
+        viewModel.executeSnsLogin(KAKAO, "token")
 
         testObservable.assertValueSequence(
             listOf(
@@ -57,7 +58,7 @@ internal class LoginViewModelTest : ViewModelTest() {
     fun `네트워크 통신 에러일 경우 올바른 값이 라이브데이터에 할당되는지 테스트`() {
         remoteUserDataSource.chageScenario(Scenario.ERROR)
         val testObservable = viewModel.snsLoginState.test()
-        viewModel.executeSnsLogin(KAKAO,"token")
+        viewModel.executeSnsLogin(KAKAO, "token")
 
         testObservable.assertValueSequence(
             listOf(
@@ -67,11 +68,12 @@ internal class LoginViewModelTest : ViewModelTest() {
             )
         )
     }
+
     @Test
     fun `네이버 네트워크 통신 성공일 경우 올바른 값이 라이브데이터에 할당되는지 테스트`() {
         remoteUserDataSource.chageScenario(Scenario.SUCCESS)
         val testObservable = viewModel.snsLoginState.test()
-        viewModel.executeSnsLogin(NAVER,"token")
+        viewModel.executeSnsLogin(NAVER, "token")
 
         testObservable.assertValueSequence(
             listOf(
@@ -86,7 +88,7 @@ internal class LoginViewModelTest : ViewModelTest() {
     fun `네이버 네트워크 통신 실패일 경우 올바른 값이 라이브데이터에 할당되는지 테스트`() {
         remoteUserDataSource.chageScenario(Scenario.FAIL)
         val testObservable = viewModel.snsLoginState.test()
-        viewModel.executeSnsLogin(KAKAO,"token")
+        viewModel.executeSnsLogin(KAKAO, "token")
 
         testObservable.assertValueSequence(
             listOf(
@@ -101,7 +103,7 @@ internal class LoginViewModelTest : ViewModelTest() {
     fun `네이버 네트워크 통신 에러일 경우 올바른 값이 라이브데이터에 할당되는지 테스트`() {
         remoteUserDataSource.chageScenario(Scenario.ERROR)
         val testObservable = viewModel.snsLoginState.test()
-        viewModel.executeSnsLogin(NAVER,"token")
+        viewModel.executeSnsLogin(NAVER, "token")
 
         testObservable.assertValueSequence(
             listOf(
@@ -111,11 +113,12 @@ internal class LoginViewModelTest : ViewModelTest() {
             )
         )
     }
+
     @Test
     fun `구글 네트워크 통신 성공일 경우 올바른 값이 라이브데이터에 할당되는지 테스트`() {
         remoteUserDataSource.chageScenario(Scenario.SUCCESS)
         val testObservable = viewModel.snsLoginState.test()
-        viewModel.executeSnsLogin(GOOGLE,"token")
+        viewModel.executeSnsLogin(GOOGLE, "token")
 
         testObservable.assertValueSequence(
             listOf(
@@ -130,7 +133,7 @@ internal class LoginViewModelTest : ViewModelTest() {
     fun `구글 네트워크 통신 실패일 경우 올바른 값이 라이브데이터에 할당되는지 테스트`() {
         remoteUserDataSource.chageScenario(Scenario.FAIL)
         val testObservable = viewModel.snsLoginState.test()
-        viewModel.executeSnsLogin(GOOGLE,"token")
+        viewModel.executeSnsLogin(GOOGLE, "token")
 
         testObservable.assertValueSequence(
             listOf(
@@ -145,7 +148,7 @@ internal class LoginViewModelTest : ViewModelTest() {
     fun `구글 네트워크 통신 에러일 경우 올바른 값이 라이브데이터에 할당되는지 테스트`() {
         remoteUserDataSource.chageScenario(Scenario.ERROR)
         val testObservable = viewModel.snsLoginState.test()
-        viewModel.executeSnsLogin(GOOGLE,"token")
+        viewModel.executeSnsLogin(GOOGLE, "token")
 
         testObservable.assertValueSequence(
             listOf(

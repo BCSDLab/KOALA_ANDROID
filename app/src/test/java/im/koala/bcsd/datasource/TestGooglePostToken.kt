@@ -11,17 +11,19 @@ import retrofit2.Response
 class TestGooglePostToken : GooglePostTokenApi {
     var scenario = Scenario.SUCCESS
     override suspend fun postGoogleToken(request: GooglePostTokenRequestEntity): Response<TokenEntity> {
-        when(scenario){
-            Scenario.SUCCESS->{
-                return Response.success(TokenEntity().apply{
-                    accessToken = "accessToken"
-                    refreshToken = "refreshToken"
-                })
+        when (scenario) {
+            Scenario.SUCCESS -> {
+                return Response.success(
+                    TokenEntity().apply {
+                        accessToken = "accessToken"
+                        refreshToken = "refreshToken"
+                    }
+                )
             }
-            Scenario.FAIL->{
+            Scenario.FAIL -> {
                 return Response.success(TokenEntity())
             }
-            Scenario.ERROR->{
+            Scenario.ERROR -> {
                 return Response.error(
                     400,
                     "{\"code\":[\"400\"]}".toResponseBody("application/json".toMediaTypeOrNull())
@@ -29,6 +31,7 @@ class TestGooglePostToken : GooglePostTokenApi {
             }
         }
     }
+
     fun changeScenario(scenario: Scenario) {
         this.scenario = scenario
     }

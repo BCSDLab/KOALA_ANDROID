@@ -26,9 +26,9 @@ class GooglePostTokenRepositoryImpl @Inject constructor(
         )
         if (response.isSuccessful) {
             val accessToken = response.body()?.accessToken
-            if (accessToken!=null){
+            if (accessToken != null) {
                 onSuccess(accessToken)
-            } else{
+            } else {
                 onFail
             }
         } else {
