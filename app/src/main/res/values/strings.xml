@@ -3,7 +3,7 @@
 
     <string name="back_button_content_description">Back</string>
     <string name="koala_logo_content_description">Back</string>
-
+    <string name="network_unkown_error">오류가 발생하였습니다. 네트워크 환경을 확인해주세요</string>
     <string name="login_id">아이디</string>
     <string name="login_pw">비밀번호 입력</string>
     <string name="login">로그인</string>
@@ -93,4 +93,5 @@
     <string name="history">히스토리</string>
     <string name="chatroom">채팅방</string>
     <string name="setting">설정</string>
+    <string name="sign_up_input_loading_message">잠시만 기다려 주세요.</string>
 </resources>
