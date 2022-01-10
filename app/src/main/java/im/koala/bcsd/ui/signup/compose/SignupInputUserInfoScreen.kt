@@ -176,6 +176,7 @@ private fun idErrorMessage(idCheckResult: IdCheckResult) = when (idCheckResult) 
     IdCheckResult.IdDuplicatedError -> stringResource(id = R.string.signup_input_error_id_duplicated)
     IdCheckResult.NoSuchInputError -> stringResource(id = R.string.signup_input_error_id_no_input)
     IdCheckResult.OK -> ""
+    IdCheckResult.Loading -> ""
 }
 
 @Composable
@@ -237,6 +238,7 @@ private fun emailErrorMessage(emailCheckResult: EmailCheckResult) = when (emailC
     EmailCheckResult.NoSuchInputError -> stringResource(id = R.string.signup_input_error_email_no_input)
     EmailCheckResult.NotEmailFormatError -> stringResource(id = R.string.signup_input_error_email_format_not_match)
     EmailCheckResult.OK -> ""
+    EmailCheckResult.Loading -> ""
 }
 
 @Composable
@@ -245,4 +247,5 @@ private fun nicknameErrorMessage(nicknameCheckResult: NicknameCheckResult) =
         NicknameCheckResult.NicknameDuplicatedError -> stringResource(id = R.string.signup_input_error_nickname_duplicated)
         NicknameCheckResult.NoSuchInputError -> stringResource(id = R.string.signup_input_error_nickname_no_input)
         NicknameCheckResult.OK -> ""
+        NicknameCheckResult.Loading -> ""
     }

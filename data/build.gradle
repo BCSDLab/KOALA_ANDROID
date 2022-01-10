@@ -44,6 +44,12 @@ dependencies {
     implementation project.okhttp
     implementation project.okhttpLogging
 
+    implementation project.mockito
+    implementation project.mockitoKotlin
+
+    implementation project.coroutineCore
+    testImplementation project.coroutineTest
+
     testImplementation project.junit
     androidTestImplementation project.androidJunit
     androidTestImplementation project.espresso

@@ -1,10 +1,12 @@
-package im.koala.domain.signup
+package im.koala.domain.usecase.signup
 
-import im.koala.domain.usecase.SignUpCheckPasswordUseCase
 import im.koala.domain.util.checkpassword.PasswordCheckStatus
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert
 import org.junit.Test
 
+@Suppress("NonAsciiCharacters")
+@ExperimentalCoroutinesApi
 class SignUpCheckPasswordUseCaseTest {
 
     @Test

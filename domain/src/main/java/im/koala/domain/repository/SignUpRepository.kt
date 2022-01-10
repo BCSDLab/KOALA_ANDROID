@@ -1,25 +1,27 @@
 package im.koala.domain.repository
 
+import im.koala.domain.entity.signup.SignUpResult
+
 interface SignUpRepository {
     /**
      * @return true if id is duplicated, false if id is not duplicated
      */
-    fun checkIdDuplicate(id: String): Boolean
+    suspend fun checkIdDuplicate(id: String): Boolean
 
     /**
      * @return true if email is duplicated, false if email is not duplicated
      */
-    fun checkEmailDuplicate(email: String): Boolean
+    suspend fun checkEmailDuplicate(email: String): Boolean
 
     /**
      * @return true if email is duplicated, false if email is not duplicated
      */
-    fun checkNicknameDuplicate(nickname: String): Boolean
+    suspend fun checkNicknameDuplicate(nickname: String): Boolean
 
-    fun signUp(
-        id: String,
+    suspend fun signUp(
+        accountId: String,
         password: String,
-        email: String,
-        nickname: String
-    ): Boolean
+        accountEmail: String,
+        accountNickname: String
+    ): SignUpResult
 }
