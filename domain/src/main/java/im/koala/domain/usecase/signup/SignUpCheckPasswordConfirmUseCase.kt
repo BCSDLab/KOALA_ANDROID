@@ -1,4 +1,4 @@
-package im.koala.domain.usecase
+package im.koala.domain.usecase.signup
 
 import javax.inject.Inject
 
