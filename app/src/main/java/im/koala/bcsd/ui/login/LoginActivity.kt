@@ -557,8 +557,8 @@ fun SnsLoginScreen(
         is NetworkState.Fail<*> -> {
             val response = (snsLoginState as NetworkState.Fail<*>).data as CommonResponse
             when (response) {
-                CommonResponse.UNKOWN -> response.errorMessage =
-                    stringResource(id = R.string.network_unkown_error)
+                CommonResponse.UNKOWN ->
+                    response.errorMessage = stringResource(id = R.string.network_unkown_error)
             }
             Toast.makeText(context, response.errorMessage, Toast.LENGTH_SHORT).show()
         }

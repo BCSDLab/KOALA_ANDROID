@@ -25,7 +25,7 @@ class ViewModelTestBuilder {
 
     /* ViewModel */
     fun provideLoginViewModel(): LoginViewModel =
-        LoginViewModel(provideSnsLoginUsecase(),provideGooglePostAccessTokenUsecase())
+        LoginViewModel(provideSnsLoginUsecase(), provideGooglePostAccessTokenUsecase())
 
     /* Datasource - Datasource는 Scenario값을 변경해야하기에 변수 선언 및 싱글톤으로 설계*/
     companion object {
