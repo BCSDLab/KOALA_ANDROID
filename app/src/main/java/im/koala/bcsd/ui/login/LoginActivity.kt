@@ -57,6 +57,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.kakao.sdk.user.UserApiClient
+import com.nhn.android.naverlogin.OAuthLogin
+import com.nhn.android.naverlogin.OAuthLoginHandler
+import com.nhn.android.naverlogin.data.OAuthLoginPreferenceManager
+import com.nhn.android.naverlogin.data.OAuthLoginState
 import dagger.hilt.android.AndroidEntryPoint
 import im.koala.bcsd.R
 import im.koala.bcsd.state.NetworkState
@@ -72,6 +79,8 @@ import im.koala.bcsd.ui.theme.Green
 import im.koala.bcsd.ui.theme.KoalaTheme
 import im.koala.bcsd.ui.theme.White
 import im.koala.bcsd.ui.theme.Yellow2
+import im.koala.domain.constants.GOOGLE
+import im.koala.domain.constants.NAVER
 import im.koala.domain.model.CommonResponse
 
 @ExperimentalAnimationApi
@@ -85,7 +94,7 @@ class LoginActivity : ComponentActivity() {
             KoalaTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    LoginScreen(context = this, viewModel = viewModel)
+                    LoginScreen(viewModel = viewModel)
                 }
             }
         }
@@ -96,12 +105,68 @@ class LoginActivity : ComponentActivity() {
             startActivity(this)
         }
     }
+
+    fun naverLogin() {
+        val mOAuthLoginHandler = object : OAuthLoginHandler() {
+            override fun run(success: Boolean) {
+                if (success) {
+                    val accessToken = OAuthLogin.getInstance().getAccessToken(this@LoginActivity)
+                    viewModel.executeSnsLogin(NAVER, accessToken)
+                } else {
+                    val errorCode = OAuthLogin.getInstance().getLastErrorCode(this@LoginActivity).code
+                    val errorDesc = OAuthLogin.getInstance().getLastErrorDesc(this@LoginActivity)
+                    Toast.makeText(
+                        this@LoginActivity,
+                        "errorCode = $errorCode, errorDesc = $errorDesc",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+        when (OAuthLogin.getInstance().getState(this)) {
+            OAuthLoginState.NEED_INIT -> {
+                OAuthLogin.getInstance().init(
+                    this,
+                    applicationContext.resources.getString(R.string.naver_client_id),
+                    applicationContext.resources.getString(R.string.naver_client_secret),
+                    getString(R.string.app_name)
+                )
+                OAuthLogin.getInstance().startOauthLoginActivity(this, mOAuthLoginHandler)
+            }
+            OAuthLoginState.NEED_LOGIN -> {
+                OAuthLogin.getInstance().startOauthLoginActivity(this, mOAuthLoginHandler)
+            }
+            OAuthLoginState.NEED_REFRESH_TOKEN -> {
+                val accessToken = OAuthLogin.getInstance().refreshAccessToken(this)
+                if (accessToken != null) {
+                    viewModel.executeSnsLogin(NAVER, accessToken)
+                } else {
+                    OAuthLogin.getInstance().startOauthLoginActivity(
+                        this,
+                        mOAuthLoginHandler
+                    )
+                }
+            }
+            OAuthLoginState.OK -> {
+                val mOAuthLoginPreferenceManager = OAuthLoginPreferenceManager(this)
+                val accessToken = mOAuthLoginPreferenceManager.accessToken
+                if (accessToken != null) {
+                    viewModel.executeSnsLogin(NAVER, accessToken)
+                } else {
+                    OAuthLogin.getInstance().startOauthLoginActivity(
+                        this,
+                        mOAuthLoginHandler
+                    )
+                }
+            }
+        }
+    }
 }
 
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @Composable
-fun LoginScreen(context: Context, viewModel: LoginViewModel) {
+fun LoginScreen(viewModel: LoginViewModel) {
     val context = LocalContext.current
     var isNormalLoginState = remember { mutableStateOf(true) }
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -435,17 +500,30 @@ fun NormalScreen(
     }
 }
 
+@ExperimentalComposeUiApi
+@ExperimentalAnimationApi
 @Composable
 fun SnsLoginScreen(
     context: Context,
     modifier: Modifier,
     viewModel: LoginViewModel
 ) {
+    val activity = context as LoginActivity
     val snsLoginState by viewModel.snsLoginState.observeAsState(NetworkState.Uninitialized)
     val googleLoginContract =
         rememberLauncherForActivityResult(contract = GoogleLoginContract(), onResult = {
             if (it != null) {
-                viewModel.postGoogleAccessToken(context = context, authCode = it)
+                viewModel.postGoogleAccessToken(
+                    context.applicationContext.resources.getString(R.string.google_web_client_id),
+                    context.applicationContext.resources.getString(R.string.google_web_client_secret),
+                    authCode = it,
+                    onSuccess = { token ->
+                        viewModel.executeSnsLogin(GOOGLE, token)
+                    },
+                    onFail = {
+                        Toast.makeText(context, R.string.google_login_fail, Toast.LENGTH_SHORT).show()
+                    }
+                )
             } else {
                 Toast.makeText(context, R.string.google_login_fail, Toast.LENGTH_SHORT).show()
             }
@@ -472,7 +550,16 @@ fun SnsLoginScreen(
             textColor = Black,
             text = stringResource(id = R.string.google_login),
             onClick = {
-                googleLoginContract.launch(viewModel.getGoogleClient(context))
+                googleLoginContract.launch(
+                    GoogleSignIn.getClient(
+                        context,
+                        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(context.applicationContext.resources.getString(R.string.google_web_client_id))
+                            .requestServerAuthCode(context.applicationContext.resources.getString(R.string.google_web_client_id))
+                            .requestEmail()
+                            .build()
+                    )
+                )
             }
         )
 
@@ -501,7 +588,7 @@ fun SnsLoginScreen(
             textColor = White,
             text = stringResource(id = R.string.naver_login),
             onClick = {
-                viewModel.naverLogin(context)
+                activity.naverLogin()
             }
         )
         DrawImageView(
@@ -530,7 +617,11 @@ fun SnsLoginScreen(
             textColor = Black,
             text = stringResource(id = R.string.kakao_login),
             onClick = {
-                viewModel.kakaoLogin(context)
+                if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
+                    UserApiClient.instance.loginWithKakaoTalk(context, callback = viewModel.callback)
+                } else {
+                    UserApiClient.instance.loginWithKakaoAccount(context, callback = viewModel.callback)
+                }
             }
         )
         DrawImageView(
