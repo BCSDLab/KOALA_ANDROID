@@ -10,9 +10,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Koala.NoActionBar">
+        <activity
+            android:name=".ui.tutorial.TutorialActivity"
+            android:exported="false" />
+
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="${crashlyticsCollectionEnabled}" />
+
         <activity
             android:name=".ui.findpassword.FindPasswordActivity"
             android:exported="false" />
