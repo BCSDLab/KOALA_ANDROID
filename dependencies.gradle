@@ -134,8 +134,8 @@ ext {
     hiltTest = "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptTest = "com.google.dagger:hilt-android-compiler:$hilt_version"
     hiltAndroidTest = "com.google.dagger:hilt-android-testing:$hilt_version"
-    hiltKaptAndroid = "com.google.dagger:hilt-android-compiler$hilt_version"
-    androidTestAnnotation = "com.google.dagger:hilt-android-compiler$hilt_version"
+    hiltKaptAndroid = "com.google.dagger:hilt-android-compiler:$hilt_version"
+    androidTestAnnotation = "com.google.dagger:hilt-android-compiler:$hilt_version"
 
     def hilt_compose_navigation_version = "1.0.0-alpha03"
     hiltComposeNavigation = "androidx.hilt:hilt-navigation-compose:$hilt_compose_navigation_version"
@@ -178,6 +178,12 @@ ext {
     def firebase_crashlytics_ktx_version = "18.2.6"
     firebaseCrashlyticsKtx = "com.google.firebase:firebase-crashlytics-ktx:$firebase_crashlytics_ktx_version"
 
+    /* viewPager library */
+    viewPager = "com.google.accompanist:accompanist-pager:0.22.0-rc"
+    viewPagerIndicators = "com.google.accompanist:accompanist-pager-indicators:0.22.0-rc"
+
+    /* dataStore library */
+    dataStore = "androidx.datastore:datastore-preferences:1.0.0-alpha06"
     /* naver login api */
     def naver_login_version = "4.2.6"
     naverIdLogin = "com.naver.nid:naveridlogin-android-sdk:$naver_login_version"

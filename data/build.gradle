@@ -12,8 +12,6 @@ android {
     defaultConfig {
         minSdk 21
         targetSdk 31
-        versionCode 10000
-        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -60,4 +58,6 @@ dependencies {
     implementation project.coroutineAndroid
 
     implementation project.hawk
+
+    implementation project.dataStore
 }

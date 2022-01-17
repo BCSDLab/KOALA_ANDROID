@@ -98,6 +98,21 @@
     <string name="setting">설정</string>
     <string name="sign_up_input_loading_message">잠시만 기다려 주세요.</string>
 
+    <string name="keyword_input">키워드 입력</string>
+    <string name="keyword_add">키워드 추가하기</string>
+    <string name="keyword_important_alarm">중요알림</string>
+    <string name="keyword_general_alarm">일반알림</string>
+    <string name="keyword_silent_mode_alarm">무음모드 알림</string>
+    <string name="keyword_vibration_mode_alarm">진동 알림</string>
+    <string name="keyword_alarm_cycle">알림 주기</string>
+    <string name="keyword_alarm_cycle_choice">알림주기를 선택해 주세요</string>
+    <string name="keyword_until_check_button_alarm">확인버튼누를 때 까지 알림</string>
+    <string name="search_for_notifications">알림받을 대상 검색</string>
+    <string name="search_for_notifications_input">알림받을 대상 입력</string>
+    <string name="error_search_for_notifications">알림받을 대상을 반드시 선택해 주세요.</string>
+    <string name="keyword_close">닫기</string>
+    <string name="keyword_search_fail">검색 결과가 없습니다.</string>
+
     <!-- keyword -->
     <string name="add_keyword">키워드 추가하기</string>
 </resources>

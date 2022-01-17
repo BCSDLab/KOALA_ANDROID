@@ -16,3 +16,10 @@ const val KOALA_API_URL_SIGN_UP = "$KOALA_API_URL_USER/sing-in"
 const val KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE = "존재하는 계정입니다"
 const val KOALA_API_SIGN_UP_CHECK_EMAIL_OK_MESSAGE = "사용 가능한 이메일입니다"
 const val KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE = "사용 가능한 닉네임입니다."
+
+// Keyword
+const val KOALA_API_URL_KEYWORD = "keyword"
+const val KOALA_API_KEYWORD_SEARCH = "$KOALA_API_URL_KEYWORD/search"
+const val KOALA_API_KEYWORD_RECOMMENDATION = "$KOALA_API_URL_KEYWORD/recommendation"
+const val KOALA_API_KEYWORD_SITE_RECOMMENDATION = "$KOALA_API_URL_KEYWORD/site/recommendation"
+const val KOALA_API_KEYWORD_SITE_SEARCH = "$KOALA_API_URL_KEYWORD/site/search"

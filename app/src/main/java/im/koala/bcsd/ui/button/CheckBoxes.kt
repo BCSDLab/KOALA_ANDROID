@@ -80,24 +80,23 @@ fun KoalaCircularCheckBox(
 fun KoalaToggle(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    iconModifier:Modifier = Modifier
 ) {
-
-    val paddingStart: Dp by animateDpAsState(targetValue = if (checked) 11.dp else 1.dp)
 
     Box(
         modifier = modifier
-            .width(22.dp)
-            .height(12.dp)
-            .clip(RoundedCornerShape(50))
-            .background(
-                GrayDisabled
-            )
+//            .width(22.dp)
+//            .height(12.dp)
+//            .clip(RoundedCornerShape(50))
+//            .background(
+//                GrayDisabled
+//            )
             .clickable { onCheckedChange(!checked) }
     ) {
         KoalaToggleIcon(
-            modifier = Modifier
-                .padding(start = paddingStart, top = 1.dp, bottom = 1.dp)
+            modifier = iconModifier
+//                .padding(start = paddingStart, top = 1.dp, bottom = 1.dp)
         )
     }
 }
@@ -108,9 +107,9 @@ private fun KoalaToggleIcon(
 ) {
     Box(
         modifier = modifier
-            .size(10.dp)
-            .clip(CircleShape)
-            .background(Yellow)
+//            .size(10.dp)
+//            .clip(CircleShape)
+//            .background(Yellow)
     )
 }
 
@@ -118,7 +117,12 @@ private fun KoalaToggleIcon(
 @Composable
 private fun KoalaToggleIconPreview() {
     KoalaTheme {
-        KoalaToggleIcon()
+        KoalaToggleIcon(
+            modifier = Modifier
+                .size(10.dp)
+                .clip(CircleShape)
+                .background(Yellow)
+        )
     }
 }
 
@@ -177,6 +181,8 @@ private fun KoalaCircularCheckBoxPreview() {
 fun KoalaToggleButtonPreview() {
     val isChecked1 = remember { mutableStateOf(true) }
     val isChecked2 = remember { mutableStateOf(false) }
+    val paddingStart1: Dp by animateDpAsState(targetValue = if (isChecked1.value) 11.dp else 1.dp)
+    val paddingStart2: Dp by animateDpAsState(targetValue = if (isChecked2.value) 11.dp else 1.dp)
 
     KoalaTheme {
         Row(
@@ -187,12 +193,32 @@ fun KoalaToggleButtonPreview() {
             KoalaToggle(
                 checked = isChecked1.value,
                 onCheckedChange = { isChecked1.value = !isChecked1.value },
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier
+                    .padding(16.dp)
+                    .width(22.dp)
+                    .height(12.dp)
+                    .clip(RoundedCornerShape(50))
+                    .background(GrayDisabled),
+                iconModifier = Modifier
+                    .padding(start = paddingStart1, top = 1.dp, bottom = 1.dp)
+                    .size(10.dp)
+                    .clip(CircleShape)
+                    .background(Yellow)
             )
             KoalaToggle(
                 checked = isChecked2.value,
                 onCheckedChange = { isChecked2.value = !isChecked2.value },
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier
+                    .padding(16.dp)
+                    .width(22.dp)
+                    .height(12.dp)
+                    .clip(RoundedCornerShape(50))
+                    .background(GrayDisabled),
+                iconModifier = Modifier
+                    .padding(start = paddingStart2, top = 1.dp, bottom = 1.dp)
+                    .size(10.dp)
+                    .clip(CircleShape)
+                    .background(Yellow)
             )
         }
     }

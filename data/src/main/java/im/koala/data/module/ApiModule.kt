@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import im.koala.data.BuildConfig
+import im.koala.data.api.AuthApi
 import im.koala.data.api.NoAuthApi
 import im.koala.data.constant.KOALA_API_URL
 import okhttp3.OkHttpClient
@@ -50,8 +51,21 @@ class ApiModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
 
+    private val authRetrofit:Retrofit
+        get() = Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl(KOALA_API_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+
     @Provides
     fun provideNoAuthApi(): NoAuthApi {
         return noAuthRetrofit.create(NoAuthApi::class.java)
+    }
+
+    @Provides
+    fun provideAuthApi(): AuthApi {
+        return authRetrofit.create(AuthApi::class.java)
     }
 }
