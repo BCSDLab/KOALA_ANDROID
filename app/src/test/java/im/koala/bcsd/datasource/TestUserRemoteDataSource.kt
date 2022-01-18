@@ -10,7 +10,8 @@ class TestUserRemoteDataSource : UserRemoteDataSource {
     var scenario = Scenario.SUCCESS
     override suspend fun postSnsLogin(
         snsType: String,
-        accessToken: String
+        accessToken: String,
+        deviceToken: String
     ): Response<TokenBodyEntity> {
         when (scenario) {
             Scenario.SUCCESS -> {

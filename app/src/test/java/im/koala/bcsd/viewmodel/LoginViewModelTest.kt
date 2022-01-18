@@ -19,6 +19,7 @@ internal class LoginViewModelTest : ViewModelTest() {
 
     @Before
     fun init() {
+        viewModel.deviceToken = "token"
     }
     @Test
     fun `네트워크 통신 성공일 경우 올바른 값이 라이브데이터에 할당되는지 테스트`() {
