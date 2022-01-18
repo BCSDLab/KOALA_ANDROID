@@ -441,6 +441,7 @@ fun SnsLoginScreen(
     viewModel: LoginViewModel
 ) {
     val snsLoginState by viewModel.snsLoginState.observeAsState(NetworkState.Uninitialized)
+    val deviceTokenState by viewModel.deviceTokenState.observeAsState(NetworkState.Uninitialized)
     ConstraintLayout(modifier = modifier) {
         val (googleButton, googleIcon, naverButton, naverIcon, kakaoButton, kakaoIcon) = createRefs()
         /*구글버튼*/
@@ -517,7 +518,7 @@ fun SnsLoginScreen(
             textColor = Black,
             text = stringResource(id = R.string.kakao_login),
             onClick = {
-                viewModel.kakaoLogin(context)
+                viewModel.getDeviceToken()
             }
         )
         DrawImageView(
@@ -530,6 +531,10 @@ fun SnsLoginScreen(
                 },
             drawableId = R.drawable.ic_kakao_logo
         )
+    }
+    when (deviceTokenState) {
+        is NetworkState.Success<*> -> { viewModel.kakaoLogin(context) }
+        is NetworkState.Fail<*> -> { Toast.makeText(context, stringResource(id = R.string.not_founc_device_token), Toast.LENGTH_SHORT).show() }
     }
     when (snsLoginState) {
         is NetworkState.Loading -> {

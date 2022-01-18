@@ -11,12 +11,14 @@ class KakaoLoginUseCase @Inject constructor (
 ) {
     suspend operator fun invoke(
         accessToken: String,
+        deviceToken: String,
         onSuccess: (TokenResponse) -> Unit,
         onFail: (CommonResponse) -> Unit
     ) {
         userRepository.postSnsLogin(
             snsType = KAKAO,
             accessToken = accessToken,
+            deviceToken = deviceToken,
             onSuccess = { onSuccess(it) },
             onFail = { onFail(it) }
         )

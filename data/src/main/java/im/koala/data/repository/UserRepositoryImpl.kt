@@ -14,10 +14,11 @@ class UserRepositoryImpl @Inject constructor (
     override suspend fun postSnsLogin(
         snsType: String,
         snsAccessToken: String,
+        deviceToken: String,
         onSuccess: (TokenResponse) -> Unit,
         onFail: (CommonResponse) -> Unit
     ) {
-        val response = userRemoteDataSource.postSnsLogin(snsType, snsAccessToken)
+        val response = userRemoteDataSource.postSnsLogin(snsType, snsAccessToken, deviceToken)
         if (response.isSuccessful) {
             if (response.body()?.code == 200) {
                 TokenResponse().apply {
