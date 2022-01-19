@@ -36,12 +36,16 @@ import im.koala.bcsd.ui.theme.*
 @ExperimentalMaterialApi
 @Composable
 fun KeywordAddScreen(
+    screenName:String,
     navController: NavController,
     keywordText:MutableState<String>,
     notificationSiteText:MutableState<String>,
     alarmSiteList:List<String>,
+    deleteSite:MutableState<String>,
     getAlarmSiteList:()->Unit,
-    setAlarmSiteList:(String)->Unit
+    setAlarmSiteList:(String)->Unit,
+    deleteSiteList:(String)->Unit,
+    resetSiteList:()->Unit
 ) {
     val isError: MutableState<Boolean> = remember { mutableStateOf(false) }
     val notificationDistinction: MutableState<Boolean> = remember { mutableStateOf(true) }
@@ -59,9 +63,12 @@ fun KeywordAddScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         KeywordAddScreenTopBar(
-            notificationTargetText = notificationSiteText,
+            screenName = screenName,
             isError = isError,
-            navController = navController
+            alarmSiteList = alarmSiteList,
+            navController = navController,
+            resetSiteList = { resetSiteList() },
+            getAlarmSiteList = { getAlarmSiteList() }
         )
 
         Divider(
@@ -77,8 +84,10 @@ fun KeywordAddScreen(
             isError = isError,
             navController = navController,
             alarmSiteList = alarmSiteList,
+            deleteSite = deleteSite,
             getAlarmSiteList = { getAlarmSiteList() },
-            setAlarmSiteList = { setAlarmSiteList(notificationSiteText.value) }
+            setAlarmSiteList = { setAlarmSiteList(notificationSiteText.value) },
+            deleteSiteList = { deleteSiteList(deleteSite.value) }
         )
 
         NotificationsBox(
@@ -92,7 +101,14 @@ fun KeywordAddScreen(
 }
 
 @Composable
-fun KeywordAddScreenTopBar(notificationTargetText: MutableState<String>, isError: MutableState<Boolean>,navController: NavController) {
+fun KeywordAddScreenTopBar(
+    screenName:String,
+    isError: MutableState<Boolean>,
+    alarmSiteList:List<String>,
+    navController: NavController,
+    resetSiteList: () -> Unit,
+    getAlarmSiteList: () -> Unit
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -100,7 +116,13 @@ fun KeywordAddScreenTopBar(notificationTargetText: MutableState<String>, isError
             .fillMaxWidth()
             .padding(horizontal = 8.dp)
     ) {
-        IconButton(onClick = { navController.navigateUp() }) {
+        IconButton(
+            onClick = {
+                resetSiteList()
+                getAlarmSiteList()
+                navController.navigateUp()
+            }
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_nav_back),
                 contentDescription = "",
@@ -108,12 +130,14 @@ fun KeywordAddScreenTopBar(notificationTargetText: MutableState<String>, isError
             )
         }
         Text(
-            text = stringResource(id = R.string.keyword_add),
+            text = screenName,
             color = Black,
             fontSize = 16.sp
         )
         TextButton(
-            onClick = { isError.value = notificationTargetText.value.isEmpty() },
+            onClick = {
+                isError.value = alarmSiteList.isEmpty()
+                      },
         ) {
             Text(
                 text = stringResource(id = R.string.find_password_done),
@@ -127,7 +151,7 @@ fun KeywordAddScreenTopBar(notificationTargetText: MutableState<String>, isError
 @Composable
 fun KeywordInputTextField(navController: NavController,keywordText:MutableState<String>) {
     KoalaTheme {
-        Box(Modifier.clickable { navController.navigate(NavScreen.KeywordAddInput.route) }){
+        Box(Modifier.fillMaxWidth()){
             KoalaTextField(
                 value = keywordText.value, onValueChange = { keywordText.value = it },
                 modifier = Modifier
@@ -142,8 +166,8 @@ fun KeywordInputTextField(navController: NavController,keywordText:MutableState<
                         modifier = Modifier.padding(8.dp)
                     )
                 },
-                enabled = false
             )
+            Box(modifier = Modifier.matchParentSize().clickable { navController.navigate(NavScreen.KeywordAddInput.route) })
         }
     }
 }
@@ -155,13 +179,16 @@ fun SearchForNotificationsTextField(
     text: MutableState<String>,
     isError: MutableState<Boolean>,
     alarmSiteList:List<String>,
+    deleteSite:MutableState<String>,
     getAlarmSiteList: () -> Unit,
-    setAlarmSiteList: (String) -> Unit
+    setAlarmSiteList: (String) -> Unit,
+    deleteSiteList: (String) -> Unit,
 ) {
     KoalaTheme {
         val bottomPadding: Dp = if (isError.value) 17.dp else 32.dp
+        val deleteSign = remember{ mutableStateOf(false) }
         Column(modifier = Modifier.padding(top = 16.dp, bottom = bottomPadding)) {
-            Box(Modifier.clickable { navController.navigate(NavScreen.KeywordSiteAddInput.route) }){
+            Box(Modifier.fillMaxWidth()){
                 KoalaTextField(
                     value = text.value, onValueChange = {
                         text.value = it
@@ -178,18 +205,24 @@ fun SearchForNotificationsTextField(
                             contentDescription = "",
                             modifier = Modifier.padding(8.dp)
                         )
-                    },
-                    enabled = false
+                    }
                 )
+                Box(modifier = Modifier.matchParentSize().clickable { navController.navigate(NavScreen.KeywordSiteAddInput.route) })
             }
-
+            getAlarmSiteList()
             if(text.value.isNotEmpty()){
                 setAlarmSiteList(text.value)
                 getAlarmSiteList()
                 text.value = ""
             }
 
-            SearchForNotificationsLazyColumn(alarmSiteList)
+            SearchForNotificationsLazyColumn(
+                notificationSiteList = alarmSiteList,
+                deleteSiteList = { deleteSiteList(deleteSite.value) },
+                getAlarmSiteList = { getAlarmSiteList() },
+                deleteSign = deleteSign,
+                deleteSite = deleteSite
+            )
 
             if (isError.value) {
                 Text(
@@ -205,24 +238,43 @@ fun SearchForNotificationsTextField(
 
 @ExperimentalMaterialApi
 @Composable
-fun SearchForNotificationsLazyColumn(notificationSiteList:List<String>){
+fun SearchForNotificationsLazyColumn(
+    notificationSiteList:List<String>,
+    deleteSiteList: (String) -> Unit,
+    getAlarmSiteList: () -> Unit,
+    deleteSign:MutableState<Boolean>,
+    deleteSite:MutableState<String>
+){
     LazyColumn(
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ){
         items(notificationSiteList){
-            SearchForNotificationsItem { Text(text = it) }
+            if(deleteSign.value){
+                deleteSiteList(deleteSite.value)
+                getAlarmSiteList()
+                deleteSign.value = false
+            }
+            SearchForNotificationsItem( text = it, deleteSign = deleteSign,deleteSite = deleteSite )
         }
     }
 }
 
 @ExperimentalMaterialApi
 @Composable
-fun SearchForNotificationsItem(text: @Composable () -> Unit) {
+fun SearchForNotificationsItem(text:String,deleteSign: MutableState<Boolean>,deleteSite:MutableState<String>) {
     ListItem(
-        text = text,
+        text = {
+               Text(
+                   text = text
+               )
+        },
         trailing = {
-            IconButton(onClick = { }) {
+            IconButton(onClick = {
+                deleteSite.value = text
+                deleteSign.value = true
+            })
+            {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_x),
                     contentDescription = "",

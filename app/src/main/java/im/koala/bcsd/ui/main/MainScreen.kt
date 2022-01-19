@@ -35,6 +35,7 @@ fun MainScreen() {
         rememberLazyListState(),
         rememberLazyListState()
     )
+
     val keywordViewModel = ViewModelProvider(ViewModelStore(), KeyWordViewModelFactory(KeywordAddRepository(LocalContext.current)))
         .get(KeyWordViewModel::class.java)
 
@@ -43,6 +44,7 @@ fun MainScreen() {
     val keywordRecommendationList by keywordViewModel.keywordRecommendationList.observeAsState(ResponseWrapper(mutableListOf(""),0))
     val recentKeywordSearchList by keywordViewModel.recentKeywordSearchList.observeAsState(listOf(""))
 
+    val deleteSite = remember{ mutableStateOf("") }
     val notificationSiteText = remember { mutableStateOf("") }
     val notificationSiteSearchList by keywordViewModel.keywordSiteSearchList.observeAsState(ResponseWrapper(mutableListOf(""),0))
     val notificationSiteRecommendationList by keywordViewModel.keywordSiteRecommendationList.observeAsState(ResponseWrapper(mutableListOf(""),0))
@@ -74,12 +76,16 @@ fun MainScreen() {
                 route = NavScreen.KeywordAdd.route
             ){
                 KeywordAddScreen(
+                    screenName = stringResource(id = R.string.keyword_add),
                     navController = navController,
                     keywordText = keywordSearchText,
                     notificationSiteText = notificationSiteText,
                     alarmSiteList = alarmSiteList,
+                    deleteSite = deleteSite,
                     getAlarmSiteList = { keywordViewModel.getAlarmSiteList() },
-                    setAlarmSiteList = { keywordViewModel.setAlarmSiteList(notificationSiteText.value) }
+                    setAlarmSiteList = { keywordViewModel.setAlarmSiteList(notificationSiteText.value) },
+                    deleteSiteList = { keywordViewModel.deleteSiteList(deleteSite.value) },
+                    resetSiteList = { keywordViewModel.resetSiteList() }
                 )
             }
 

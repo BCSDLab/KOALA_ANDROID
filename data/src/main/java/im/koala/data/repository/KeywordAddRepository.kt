@@ -1,6 +1,7 @@
 package im.koala.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -58,6 +59,7 @@ class KeywordAddRepository(context: Context) {
     }
 
     fun getAlarmSiteList():List<String>{
+        Log.d("test111","hi")
         return gson.fromJson(alarmSiteListToString,Array<String>::class.java).asList()
     }
 
@@ -65,6 +67,20 @@ class KeywordAddRepository(context: Context) {
         val alarmSiteStringToList:List<String> = getAlarmSiteList()
         _alarmSiteList.addAll(alarmSiteStringToList)
         if(site !in _alarmSiteList) _alarmSiteList.add(site)
+        alarmSiteListToString = gson.toJson(_alarmSiteList)
+        _alarmSiteList.clear()
+    }
+
+    fun deleteSiteList(site:String){
+        Log.d("test111",site)
+        val alarmSiteStringToList:List<String> = getAlarmSiteList()
+        _alarmSiteList.addAll(alarmSiteStringToList)
+        _alarmSiteList.remove(site)
+        alarmSiteListToString = gson.toJson(_alarmSiteList)
+        _alarmSiteList.clear()
+    }
+
+    fun resetSiteList(){
         alarmSiteListToString = gson.toJson(_alarmSiteList)
     }
 
@@ -74,5 +90,6 @@ class KeywordAddRepository(context: Context) {
         val recentKeywordSearchKey = stringPreferencesKey("site_keyword_key")
         var alarmSiteListToString = "[]"
         val _alarmSiteList = mutableListOf<String>()
+
     }
 }

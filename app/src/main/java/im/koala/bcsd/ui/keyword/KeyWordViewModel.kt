@@ -81,6 +81,14 @@ class KeyWordViewModel(private val repository: KeywordAddRepository): ViewModel(
         repository.setAlarmSiteList(site)
     }
 
+    fun deleteSiteList(site:String){
+        repository.deleteSiteList(site)
+    }
+
+    fun resetSiteList(){
+        repository.resetSiteList()
+    }
+
 }
 
 class KeyWordViewModelFactory(private val repository: KeywordAddRepository): ViewModelProvider.Factory{
