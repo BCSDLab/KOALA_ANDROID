@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="keyword_site_all">전체</string>
+    <string name="keyword_site_dorm">아우미르</string>
+    <string name="keyword_site_facebook">페이스북</string>
+    <string name="keyword_site_instagram">인스타그램</string>
+    <string name="keyword_site_portal">아우누리</string>
+    <string name="keyword_site_youtube">유튜브</string>
+</resources>

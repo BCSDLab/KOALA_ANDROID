@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import im.koala.bcsd.ui.button.KoalaCheckBox
 import im.koala.bcsd.ui.theme.KoalaTheme
-import im.koala.bcsd.util.DATE_FORMAT_KEYWORD_DETAIL_ITEMS
 import im.koala.bcsd.util.toFormattedDate
 
 @Composable
@@ -27,9 +26,9 @@ fun KeywordDetailItem(
     modifier: Modifier = Modifier,
     title: String,
     content: String,
-    date: Long,
-    checked: Boolean = false,
-    read: Boolean = false,
+    date: String,
+    isChecked: Boolean = false,
+    isRead: Boolean = false,
     onCheckedChange: (checked: Boolean) -> Unit
 ) {
     Row(
@@ -37,7 +36,7 @@ fun KeywordDetailItem(
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        KoalaCheckBox(checked = checked, onCheckedChange = onCheckedChange)
+        KoalaCheckBox(checked = isChecked, onCheckedChange = onCheckedChange)
         Column {
             Row(
                 Modifier
@@ -51,12 +50,13 @@ fun KeywordDetailItem(
                         .weight(1f)
                         .alignByBaseline(),
                     text = title,
+                    color = if(isRead) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onBackground,
                     style = MaterialTheme.typography.body1
                 )
                 Text(
                     modifier = Modifier
                         .alignByBaseline(),
-                    text = date.toFormattedDate(DATE_FORMAT_KEYWORD_DETAIL_ITEMS),
+                    text = date,
                     style = MaterialTheme.typography.caption,
                     fontSize = 11.sp,
                     color = MaterialTheme.colors.onBackground
@@ -68,6 +68,7 @@ fun KeywordDetailItem(
                     .padding(top = 8.dp, start = 8.dp, end = 8.dp),
                 text = content,
                 style = MaterialTheme.typography.body2,
+                color = if(isRead) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onBackground,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -85,8 +86,8 @@ private fun KeywordDetailItemPreview() {
             KeywordDetailItem(
                 title = "test",
                 content = "test is skybodakoreatech ibnidatest is skybodakoreatech ibnidatest is skybodakoreatech ibnida",
-                date = System.currentTimeMillis(),
-                checked = checked.value,
+                date = System.currentTimeMillis().toFormattedDate("YYYY-MM-DD"),
+                isChecked = checked.value,
                 onCheckedChange = {
                     checked.value = it
                 })
@@ -102,8 +103,8 @@ private fun KeywordDetailItemCheckedPreview() {
             KeywordDetailItem(
                 title = "test",
                 content = "test is skybodakoreatech ibnidatest is skybodakoreatech ibnidatest is skybodakoreatech ibnida",
-                date = System.currentTimeMillis(),
-                checked = true,
+                date = System.currentTimeMillis().toFormattedDate("YYYY-MM-DD"),
+                isChecked = true,
                 onCheckedChange = {})
         }
     }
@@ -117,8 +118,8 @@ private fun KeywordDetailItemReadPreview() {
             KeywordDetailItem(
                 title = "test",
                 content = "test is skybodakoreatech ibnidatest is skybodakoreatech ibnidatest is skybodakoreatech ibnida",
-                date = System.currentTimeMillis(),
-                read = true,
+                date = System.currentTimeMillis().toFormattedDate("YYYY-MM-DD"),
+                isRead = true,
                 onCheckedChange = {})
         }
     }
@@ -132,9 +133,9 @@ private fun KeywordDetailItemReadCheckedPreview() {
             KeywordDetailItem(
                 title = "test",
                 content = "test is skybodakoreatech ibnidatest is skybodakoreatech ibnidatest is skybodakoreatech ibnida",
-                date = System.currentTimeMillis(),
-                checked = true,
-                read = true,
+                date = System.currentTimeMillis().toFormattedDate("YYYY-MM-DD"),
+                isChecked = true,
+                isRead = true,
                 onCheckedChange = {})
         }
     }
