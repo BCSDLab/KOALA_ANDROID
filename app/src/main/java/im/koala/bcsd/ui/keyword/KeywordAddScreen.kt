@@ -20,13 +20,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import im.koala.bcsd.R
 import im.koala.bcsd.navigation.NavScreen
 import im.koala.bcsd.ui.button.KoalaToggle
@@ -38,37 +36,32 @@ import im.koala.bcsd.ui.theme.*
 fun KeywordAddScreen(
     screenName:String,
     navController: NavController,
-    keywordText:MutableState<String>,
+    selectAlarmCycle: MutableState<Int>,
+    alarmDistinction:MutableState<Boolean>,
+    keywordSearchText:MutableState<String>,
     notificationSiteText:MutableState<String>,
-    alarmSiteList:List<String>,
     deleteSite:MutableState<String>,
+    alarmSiteList:List<String>,
+    alarmCheckedList: List<MutableState<Boolean>>,
     getAlarmSiteList:()->Unit,
-    setAlarmSiteList:(String)->Unit,
-    deleteSiteList:(String)->Unit,
-    resetSiteList:()->Unit
+    setAlarmSiteList:()->Unit,
+    deleteSiteList:()->Unit,
+    resetSiteList:()->Unit,
+    pushKeyword: () -> Unit
 ) {
     val isError: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val notificationDistinction: MutableState<Boolean> = remember { mutableStateOf(true) }
-    val selectAlarmCycle: MutableState<Int> = remember { mutableStateOf(0) }
     val alarmCycleList = arrayOf( "5분", "10분", "15분", "30분", "1시간", "2시간", "4시간", "6시간")
-    val importantIsCheckedList: List<MutableState<Boolean>> = arrayListOf(
-        remember { mutableStateOf(true) },
-        remember { mutableStateOf(true) },
-        remember { mutableStateOf(true) }
-    )
-    val generalIsCheckedList: List<MutableState<Boolean>> = arrayListOf(
-        remember { mutableStateOf(true) },
-        remember { mutableStateOf(true) }
-    )
 
     Column(modifier = Modifier.fillMaxSize()) {
         KeywordAddScreenTopBar(
             screenName = screenName,
             isError = isError,
+            keywordSearchText = keywordSearchText,
             alarmSiteList = alarmSiteList,
             navController = navController,
             resetSiteList = { resetSiteList() },
-            getAlarmSiteList = { getAlarmSiteList() }
+            getAlarmSiteList = { getAlarmSiteList() },
+            pushKeyword = { pushKeyword() }
         )
 
         Divider(
@@ -77,7 +70,7 @@ fun KeywordAddScreen(
                 .padding(bottom = 24.dp)
         )
 
-        KeywordInputTextField(navController,keywordText)
+        KeywordInputTextField(navController,keywordSearchText)
 
         SearchForNotificationsTextField(
             text = notificationSiteText,
@@ -86,16 +79,15 @@ fun KeywordAddScreen(
             alarmSiteList = alarmSiteList,
             deleteSite = deleteSite,
             getAlarmSiteList = { getAlarmSiteList() },
-            setAlarmSiteList = { setAlarmSiteList(notificationSiteText.value) },
-            deleteSiteList = { deleteSiteList(deleteSite.value) }
+            setAlarmSiteList = { setAlarmSiteList() },
+            deleteSiteList = { deleteSiteList() }
         )
 
         NotificationsBox(
-            notificationDistinction = notificationDistinction,
+            notificationDistinction = alarmDistinction,
             selectAlarmCycle = selectAlarmCycle,
             alarmCycleList = alarmCycleList,
-            importantIsCheckedList = importantIsCheckedList,
-            generalIsCheckedList = generalIsCheckedList
+            alarmCheckedList = alarmCheckedList,
         )
     }
 }
@@ -104,10 +96,12 @@ fun KeywordAddScreen(
 fun KeywordAddScreenTopBar(
     screenName:String,
     isError: MutableState<Boolean>,
+    keywordSearchText:MutableState<String>,
     alarmSiteList:List<String>,
     navController: NavController,
     resetSiteList: () -> Unit,
-    getAlarmSiteList: () -> Unit
+    getAlarmSiteList: () -> Unit,
+    pushKeyword: () ->Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -120,6 +114,7 @@ fun KeywordAddScreenTopBar(
             onClick = {
                 resetSiteList()
                 getAlarmSiteList()
+                keywordSearchText.value = ""
                 navController.navigateUp()
             }
         ) {
@@ -137,6 +132,7 @@ fun KeywordAddScreenTopBar(
         TextButton(
             onClick = {
                 isError.value = alarmSiteList.isEmpty()
+                if(!isError.value) pushKeyword()
                       },
         ) {
             Text(
@@ -181,8 +177,8 @@ fun SearchForNotificationsTextField(
     alarmSiteList:List<String>,
     deleteSite:MutableState<String>,
     getAlarmSiteList: () -> Unit,
-    setAlarmSiteList: (String) -> Unit,
-    deleteSiteList: (String) -> Unit,
+    setAlarmSiteList: () -> Unit,
+    deleteSiteList: () -> Unit,
 ) {
     KoalaTheme {
         val bottomPadding: Dp = if (isError.value) 17.dp else 32.dp
@@ -211,14 +207,14 @@ fun SearchForNotificationsTextField(
             }
             getAlarmSiteList()
             if(text.value.isNotEmpty()){
-                setAlarmSiteList(text.value)
+                setAlarmSiteList()
                 getAlarmSiteList()
                 text.value = ""
             }
 
             SearchForNotificationsLazyColumn(
                 notificationSiteList = alarmSiteList,
-                deleteSiteList = { deleteSiteList(deleteSite.value) },
+                deleteSiteList = { deleteSiteList() },
                 getAlarmSiteList = { getAlarmSiteList() },
                 deleteSign = deleteSign,
                 deleteSite = deleteSite
@@ -240,7 +236,7 @@ fun SearchForNotificationsTextField(
 @Composable
 fun SearchForNotificationsLazyColumn(
     notificationSiteList:List<String>,
-    deleteSiteList: (String) -> Unit,
+    deleteSiteList: () -> Unit,
     getAlarmSiteList: () -> Unit,
     deleteSign:MutableState<Boolean>,
     deleteSite:MutableState<String>
@@ -251,7 +247,7 @@ fun SearchForNotificationsLazyColumn(
     ){
         items(notificationSiteList){
             if(deleteSign.value){
-                deleteSiteList(deleteSite.value)
+                deleteSiteList()
                 getAlarmSiteList()
                 deleteSign.value = false
             }
@@ -293,8 +289,7 @@ fun NotificationsBox(
     notificationDistinction: MutableState<Boolean>,
     selectAlarmCycle: MutableState<Int>,
     alarmCycleList: Array<String>,
-    importantIsCheckedList: List<MutableState<Boolean>>,
-    generalIsCheckedList: List<MutableState<Boolean>>
+    alarmCheckedList: List<MutableState<Boolean>>,
 ) {
     Column(
         modifier = Modifier
@@ -350,8 +345,8 @@ fun NotificationsBox(
         if (notificationDistinction.value) ImportantNotificationBox(
             selectAlarmCycle,
             alarmCycleList,
-            importantIsCheckedList
-        ) else GeneralNotificationBox(generalIsCheckedList)
+            alarmCheckedList
+        ) else GeneralNotificationBox(alarmCheckedList)
     }
 }
 
@@ -395,12 +390,13 @@ fun ImportantNotificationBox(
             isChecked = isCheckedList[2]
         )
         AlarmCycleLine(showDialog, selectAlarmCycle, alarmCycleList)
+
     }
 }
 
 @ExperimentalMaterialApi
 @Composable
-fun GeneralNotificationBox(isCheckedList: List<MutableState<Boolean>>) {
+fun GeneralNotificationBox(alarmCheckedList: List<MutableState<Boolean>>) {
     Column {
         NotificationLine(
             text = {
@@ -410,7 +406,7 @@ fun GeneralNotificationBox(isCheckedList: List<MutableState<Boolean>>) {
                     fontSize = 14.sp
                 )
             },
-            isChecked = isCheckedList[0]
+            isChecked = alarmCheckedList[0]
         )
         NotificationLine(
             text = {
@@ -420,7 +416,7 @@ fun GeneralNotificationBox(isCheckedList: List<MutableState<Boolean>>) {
                     fontSize = 14.sp
                 )
             },
-            isChecked = isCheckedList[1]
+            isChecked = alarmCheckedList[1]
         )
     }
 }

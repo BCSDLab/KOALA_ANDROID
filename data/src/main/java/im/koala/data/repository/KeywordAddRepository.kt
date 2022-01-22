@@ -9,9 +9,11 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.createDataStore
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import im.koala.data.api.response.KeywordResponse
 import im.koala.data.api.response.ResponseWrapper
 import im.koala.data.module.ApiModule
 import kotlinx.coroutines.flow.first
+import retrofit2.Response
 
 class KeywordAddRepository(context: Context) {
     private val dataStore: DataStore<Preferences> = context.createDataStore(name = "recent_search")
@@ -58,8 +60,11 @@ class KeywordAddRepository(context: Context) {
         return gson.fromJson(recentSiteSearchString, Array<String>::class.java).asList()
     }
 
+    suspend fun pushKeyword(keywordResponse: KeywordResponse): Response<ResponseWrapper<String>> {
+        return ApiModule().provideAuthApi().pushKeyword(keywordResponse)
+    }
+
     fun getAlarmSiteList():List<String>{
-        Log.d("test111","hi")
         return gson.fromJson(alarmSiteListToString,Array<String>::class.java).asList()
     }
 
@@ -72,7 +77,6 @@ class KeywordAddRepository(context: Context) {
     }
 
     fun deleteSiteList(site:String){
-        Log.d("test111",site)
         val alarmSiteStringToList:List<String> = getAlarmSiteList()
         _alarmSiteList.addAll(alarmSiteStringToList)
         _alarmSiteList.remove(site)
@@ -90,6 +94,5 @@ class KeywordAddRepository(context: Context) {
         val recentKeywordSearchKey = stringPreferencesKey("site_keyword_key")
         var alarmSiteListToString = "[]"
         val _alarmSiteList = mutableListOf<String>()
-
     }
 }

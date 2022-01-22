@@ -32,9 +32,9 @@ fun KeywordAddInputScreen(
     recommendationList:List<String>,
     recentSearchList:List<String>,
     searchList:List<String>,
-    searchKeyword: (String)->Unit,
+    searchKeyword: ()->Unit,
     recommendationKeyword: ()->Unit,
-    setRecentSearchList: (String)->Unit,
+    setRecentSearchList: ()->Unit,
     getRecentSearchList:()->Unit
 ){
     val pagerState = rememberPagerState()
@@ -45,7 +45,7 @@ fun KeywordAddInputScreen(
             keywordText = searchText,
             navController = navController,
             textFieldPlaceholder = textFieldPlaceholder,
-            setRecentSearchList = { setRecentSearchList(searchText.value) }
+            setRecentSearchList = { setRecentSearchList() }
         )
         if(searchText.value.isEmpty()){
             KeyWordAddInputTabBar(
@@ -62,7 +62,7 @@ fun KeywordAddInputScreen(
             )
         }
         else{
-            searchKeyword(searchText.value)
+            searchKeyword()
             KeywordAddInputSearchLazyColumn(searchList,searchText)
         }
     }
@@ -73,7 +73,7 @@ fun KeywordAddInputScreenTopBar(
     keywordText: MutableState<String>,
     navController: NavController,
     textFieldPlaceholder:String,
-    setRecentSearchList:(String)->Unit
+    setRecentSearchList:()->Unit
 ) {
     KoalaTheme{
         Row(
@@ -106,7 +106,7 @@ fun KeywordAddInputScreenTopBar(
             )
             IconButton(
                 onClick = {
-                    setRecentSearchList(keywordText.value)
+                    setRecentSearchList()
                     navController.navigateUp()
                           },
                 modifier = Modifier.size(50.dp)

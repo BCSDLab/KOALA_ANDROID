@@ -1,12 +1,12 @@
 package im.koala.data.api
 
+import im.koala.data.api.response.KeywordResponse
 import im.koala.data.api.response.ResponseWrapper
-import im.koala.data.constant.KOALA_API_KEYWORD_RECOMMENDATION
-import im.koala.data.constant.KOALA_API_KEYWORD_SEARCH
-import im.koala.data.constant.KOALA_API_KEYWORD_SITE_RECOMMENDATION
-import im.koala.data.constant.KOALA_API_KEYWORD_SITE_SEARCH
+import im.koala.data.constant.*
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface AuthApi{
@@ -33,4 +33,11 @@ import retrofit2.http.GET
 interface AuthApi {
     @GET(KEYWORD)
     suspend fun getKeyword(): Response<KeywordBodyEntity>
+}
+
+    @POST(KOALA_API_URL_KEYWORD)
+    suspend fun pushKeyword(
+        @Body keywordResponse: KeywordResponse
+    ) : Response<ResponseWrapper<String>>
+}
 }

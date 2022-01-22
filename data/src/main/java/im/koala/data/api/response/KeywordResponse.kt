@@ -4,13 +4,18 @@ import com.google.gson.annotations.SerializedName
 
 data class KeywordResponse(
     @SerializedName("alarmCycle")
-    var alarmCycle : Int = 0,
-    @SerializedName("alarmMode")
-    var alarmMode : Int = 0,
+    val alarmCycle: Int,
     @SerializedName("isImportant")
-    var isImportant : Int = 0,
+    val isImportant: Int,
     @SerializedName("name")
-    var name:String = "",
+    val name: String,
+    @SerializedName("silentMode")
+    val silentMode: Int,
     @SerializedName("siteList")
-    var siteList:List<String> = listOf()
+    val siteList: List<String>,
+    @SerializedName("untilPressOkButton")
+    val untilPressOkButton: Int,
+    @SerializedName("vibrationMode")
+    val vibrationMode: Int,
 )
+

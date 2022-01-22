@@ -38,6 +38,13 @@ fun MainScreen() {
 
     val keywordViewModel = ViewModelProvider(ViewModelStore(), KeyWordViewModelFactory(KeywordAddRepository(LocalContext.current)))
         .get(KeyWordViewModel::class.java)
+    val alarmDistinction: MutableState<Boolean> = remember { mutableStateOf(true) }
+    val selectAlarmCycle: MutableState<Int> = remember { mutableStateOf(0) }
+    val alarmCheckedList: List<MutableState<Boolean>> = arrayListOf(
+        remember { mutableStateOf(true) },
+        remember { mutableStateOf(true) },
+        remember { mutableStateOf(true) }
+    )
 
     val keywordSearchText = remember { mutableStateOf("") }
     val keywordSearchList by keywordViewModel.keywordSearchList.observeAsState(ResponseWrapper(mutableListOf(""),0))
@@ -78,15 +85,28 @@ fun MainScreen() {
                 KeywordAddScreen(
                     screenName = stringResource(id = R.string.keyword_add),
                     navController = navController,
-                    keywordText = keywordSearchText,
+                    selectAlarmCycle = selectAlarmCycle,
+                    alarmDistinction = alarmDistinction,
+                    keywordSearchText = keywordSearchText,
                     notificationSiteText = notificationSiteText,
-                    alarmSiteList = alarmSiteList,
                     deleteSite = deleteSite,
+                    alarmSiteList = alarmSiteList,
+                    alarmCheckedList = alarmCheckedList,
                     getAlarmSiteList = { keywordViewModel.getAlarmSiteList() },
                     setAlarmSiteList = { keywordViewModel.setAlarmSiteList(notificationSiteText.value) },
                     deleteSiteList = { keywordViewModel.deleteSiteList(deleteSite.value) },
                     resetSiteList = { keywordViewModel.resetSiteList() }
-                )
+                ) {
+                    keywordViewModel.pushKeyword(
+                        alarmCycle = selectAlarmCycle.value,
+                        alarmMode = alarmCheckedList[0].value,
+                        isImportant = alarmDistinction.value,
+                        name = keywordSearchText.value,
+                        siteList = alarmSiteList,
+                        untilPressOkButton = alarmCheckedList[2].value,
+                        vibrationMode = alarmCheckedList[1].value
+                    )
+                }
             }
 
             composable(
