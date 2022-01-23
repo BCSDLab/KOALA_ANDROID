@@ -5,7 +5,9 @@ import im.koala.domain.entity.keyword.Site
 
 interface KeywordRepository {
     fun getKeywordNotices(
-        keyword: String
+        keyword: String,
+        search: String? = null,
+        site: Site? = null
     ): List<KeywordNotice>
 
     fun getSiteLocalizedMessage(
@@ -13,10 +15,10 @@ interface KeywordRepository {
     ): String
 
     fun keepSelectedKeywordNotices(
-        keywordDetailItems: List<KeywordNotice>
+        keywordNotices: List<KeywordNotice>
     )
 
     fun removeSelectedKeywordNotices(
-        keywordDetailItems: List<KeywordNotice>
+        keywordNotices: List<KeywordNotice>
     )
 }

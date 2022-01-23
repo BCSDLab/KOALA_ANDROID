@@ -4,7 +4,7 @@ import im.koala.domain.entity.keyword.KeywordNotice
 import im.koala.domain.repository.KeywordRepository
 import javax.inject.Inject
 
-class KeepSelectedKeywordDetailItemUseCase @Inject constructor(
+class KeepSelectedKeywordNoticeUseCase @Inject constructor(
     private val keywordRepository: KeywordRepository
 ){
     operator fun invoke(keywordNotices: List<KeywordNotice>) {

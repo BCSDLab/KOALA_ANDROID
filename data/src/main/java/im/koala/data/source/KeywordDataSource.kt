@@ -17,5 +17,9 @@ interface KeywordDataSource {
         search: String,
         keyword: String,
         site: Site? = null
+    ): List<KeywordNotice>
+
+    fun removeKeywordNotices(
+        keywordNotices: List<KeywordNotice>
     )
 }

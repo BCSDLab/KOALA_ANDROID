@@ -3,19 +3,19 @@ package im.koala.domain.entity.keyword
 data class KeywordListItemFilter(
     val search: String,
     val site: Site,
-    val keywordItemReadFilter: KeywordItemReadFilter
+    val keywordNoticeReadFilter: KeywordNoticeReadFilter
 ) {
     companion object {
         fun default() = KeywordListItemFilter(
             search = "",
             site = Site.All,
-            keywordItemReadFilter = KeywordItemReadFilter.None
+            keywordNoticeReadFilter = KeywordNoticeReadFilter.None
         )
     }
 }
 
-sealed class KeywordItemReadFilter {
-    object None : KeywordItemReadFilter()
-    object ShowOnlyReadItem : KeywordItemReadFilter()
-    object ShowOnlyUnreadItem : KeywordItemReadFilter()
+sealed class KeywordNoticeReadFilter {
+    object None : KeywordNoticeReadFilter()
+    object ShowOnlyReadNotice : KeywordNoticeReadFilter()
+    object ShowOnlyUnreadNotice : KeywordNoticeReadFilter()
 }

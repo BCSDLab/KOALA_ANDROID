@@ -26,7 +26,15 @@ class KeywordLocalDataSource @Inject constructor(
         return siteStringMap[site] ?: throw IllegalStateException("Unknown Site: $site")
     }
 
-    override fun getKeywordNotices(keyword: String): List<KeywordNotice> {
+    override fun getKeywordNotices(keyword: String, site: Site?): List<KeywordNotice> {
+        throw IllegalAccessException(ERROR_MESSAGE_NOT_USE_LOCAL)
+    }
+
+    override fun searchKeywordNotices(search: String, keyword: String, site: Site?): List<KeywordNotice> {
+        throw IllegalAccessException(ERROR_MESSAGE_NOT_USE_LOCAL)
+    }
+
+    override fun removeKeywordNotices(keywordNotices: List<KeywordNotice>) {
         throw IllegalAccessException(ERROR_MESSAGE_NOT_USE_LOCAL)
     }
 }

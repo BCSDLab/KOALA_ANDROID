@@ -23,14 +23,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.theme.KoalaTheme
-import im.koala.domain.entity.keyword.KeywordItemReadFilter
+import im.koala.domain.entity.keyword.KeywordNoticeReadFilter
 
 @Composable
 fun KeywordDetailPopupMenu(
     expanded: Boolean = false,
-    keywordItemReadFilter: KeywordItemReadFilter = KeywordItemReadFilter.None,
+    keywordNoticeReadFilter: KeywordNoticeReadFilter = KeywordNoticeReadFilter.None,
     onDismissRequest: () -> Unit,
-    onSelectionChange: (KeywordItemReadFilter) -> Unit
+    onSelectionChange: (KeywordNoticeReadFilter) -> Unit
 ) {
     DropdownMenu(
         modifier = Modifier.padding(horizontal = 4.dp),
@@ -39,7 +39,7 @@ fun KeywordDetailPopupMenu(
     ) {
         CompositionLocalProvider(
             LocalContentColor provides
-                if (keywordItemReadFilter == KeywordItemReadFilter.ShowOnlyUnreadItem) {
+                if (keywordNoticeReadFilter == KeywordNoticeReadFilter.ShowOnlyUnreadNotice) {
                     MaterialTheme.colors.onPrimary
                 } else {
                     MaterialTheme.colors.onBackground
@@ -48,10 +48,10 @@ fun KeywordDetailPopupMenu(
             DropdownItem(
                 onClick = {
                     onSelectionChange(
-                        if (keywordItemReadFilter == KeywordItemReadFilter.ShowOnlyUnreadItem) {
-                            KeywordItemReadFilter.None
+                        if (keywordNoticeReadFilter == KeywordNoticeReadFilter.ShowOnlyUnreadNotice) {
+                            KeywordNoticeReadFilter.None
                         } else {
-                            KeywordItemReadFilter.ShowOnlyUnreadItem
+                            KeywordNoticeReadFilter.ShowOnlyUnreadNotice
                         }
                     )
                     onDismissRequest()
@@ -63,7 +63,7 @@ fun KeywordDetailPopupMenu(
 
         CompositionLocalProvider(
             LocalContentColor provides
-                if (keywordItemReadFilter == KeywordItemReadFilter.ShowOnlyReadItem) {
+                if (keywordNoticeReadFilter == KeywordNoticeReadFilter.ShowOnlyReadNotice) {
                     MaterialTheme.colors.onPrimary
                 } else {
                     MaterialTheme.colors.onBackground
@@ -72,10 +72,10 @@ fun KeywordDetailPopupMenu(
             DropdownItem(
                 onClick = {
                     onSelectionChange(
-                        if (keywordItemReadFilter == KeywordItemReadFilter.ShowOnlyReadItem) {
-                            KeywordItemReadFilter.None
+                        if (keywordNoticeReadFilter == KeywordNoticeReadFilter.ShowOnlyReadNotice) {
+                            KeywordNoticeReadFilter.None
                         } else {
-                            KeywordItemReadFilter.ShowOnlyReadItem
+                            KeywordNoticeReadFilter.ShowOnlyReadNotice
                         }
                     )
                     onDismissRequest()
@@ -119,14 +119,14 @@ private fun DropdownItem(
 @Composable
 fun KeywordDetailPopupMenuPreview() {
     KoalaTheme {
-        val keywordItemReadFilter = rememberSaveable { mutableStateOf<KeywordItemReadFilter>(KeywordItemReadFilter.None) }
+        val keywordItemReadFilter = rememberSaveable { mutableStateOf<KeywordNoticeReadFilter>(KeywordNoticeReadFilter.None) }
         KeywordDetailPopupMenu(
             expanded = true,
             onDismissRequest = {},
             onSelectionChange = {
                 keywordItemReadFilter.value = it
             },
-            keywordItemReadFilter = keywordItemReadFilter.value
+            keywordNoticeReadFilter = keywordItemReadFilter.value
         )
     }
 }

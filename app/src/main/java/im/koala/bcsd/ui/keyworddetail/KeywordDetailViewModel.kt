@@ -7,17 +7,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import im.koala.domain.entity.keyword.KeywordItemReadFilter
+import im.koala.domain.entity.keyword.KeywordNoticeReadFilter
 import im.koala.domain.entity.keyword.KeywordNotice
 import im.koala.domain.entity.keyword.KeywordListItemFilter
 import im.koala.domain.entity.keyword.Site
-import im.koala.domain.usecase.keyword.GetKeywordItemListUseCase
+import im.koala.domain.usecase.keyword.GetKeywordNoticesUseCase
 import im.koala.domain.usecase.keyword.MakeSiteTabItemUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class KeywordDetailViewModel @Inject constructor(
-    private val getKeywordItemListUseCase: GetKeywordItemListUseCase,
+    private val getKeywordNoticesUseCase: GetKeywordNoticesUseCase,
     private val makeSiteTabItemUseCase: MakeSiteTabItemUseCase
 ) : ViewModel() {
     var keyword by mutableStateOf("")
@@ -51,7 +51,7 @@ class KeywordDetailViewModel @Inject constructor(
         _keywordListItems.removeAll { true }
         _keywordTabs.clear()
 
-        _keywordListItems.addAll(getKeywordItemListUseCase(keyword, filterState))
+        _keywordListItems.addAll(getKeywordNoticesUseCase(keyword, filterState))
         _keywordTabs.putAll(makeSiteTabItemUseCase(keywordNotices))
     }
 
@@ -63,8 +63,8 @@ class KeywordDetailViewModel @Inject constructor(
         filterState = filterState.copy(site = site)
     }
 
-    fun setKeywordItemReadFilter(keywordItemReadFilter: KeywordItemReadFilter) {
-        filterState = filterState.copy(keywordItemReadFilter = keywordItemReadFilter)
+    fun setKeywordItemReadFilter(keywordNoticeReadFilter: KeywordNoticeReadFilter) {
+        filterState = filterState.copy(keywordNoticeReadFilter = keywordNoticeReadFilter)
     }
 
     fun setCheckState(item: KeywordNotice, isChecked: Boolean) {

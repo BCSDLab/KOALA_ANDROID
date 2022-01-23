@@ -16,15 +16,23 @@ class KeywordRepositoryImpl @Inject constructor(
         return keywordLocalDataSource.getSiteLocalizedMessage(site)
     }
 
-    override fun getKeywordNotices(keyword: String) : List<KeywordNotice>{
-        return keywordRemoteDataSource.getKeywordNotices(keyword)
+    override fun getKeywordNotices(
+        keyword: String,
+        search: String?,
+        site: Site?
+    ): List<KeywordNotice> {
+        return if (search == null) {
+            keywordRemoteDataSource.getKeywordNotices(keyword, site)
+        } else {
+            keywordRemoteDataSource.searchKeywordNotices(search, keyword, site)
+        }
     }
 
-    override fun keepSelectedKeywordNotices(keywordDetailItems: List<KeywordNotice>) {
+    override fun keepSelectedKeywordNotices(keywordNotices: List<KeywordNotice>) {
 
     }
 
-    override fun removeSelectedKeywordNotices(keywordDetailItems: List<KeywordNotice>) {
-
+    override fun removeSelectedKeywordNotices(keywordNotices: List<KeywordNotice>) {
+        keywordRemoteDataSource.removeKeywordNotices(keywordNotices)
     }
 }

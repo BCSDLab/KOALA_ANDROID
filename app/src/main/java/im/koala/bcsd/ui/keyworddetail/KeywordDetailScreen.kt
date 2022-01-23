@@ -35,7 +35,7 @@ import im.koala.bcsd.ui.theme.KoalaTheme
 import im.koala.domain.entity.keyword.KeywordNotice
 import im.koala.domain.entity.keyword.Site
 import im.koala.domain.repository.KeywordRepository
-import im.koala.domain.usecase.keyword.GetKeywordItemListUseCase
+import im.koala.domain.usecase.keyword.GetKeywordNoticesUseCase
 import im.koala.domain.usecase.keyword.MakeSiteTabItemUseCase
 
 @Composable
@@ -146,7 +146,7 @@ fun KeywordDetailScreen(
 
                         KeywordDetailPopupMenu(
                             expanded = popupMenuExpanded.value,
-                            keywordItemReadFilter = keywordDetailViewModel.filterState.keywordItemReadFilter,
+                            keywordNoticeReadFilter = keywordDetailViewModel.filterState.keywordNoticeReadFilter,
                             onDismissRequest = { popupMenuExpanded.value = false },
                             onSelectionChange = {
                                 keywordDetailViewModel.setKeywordItemReadFilter(it)
@@ -230,17 +230,17 @@ private fun KeywordDetailScreenPreview() {
             }
         }
 
-        override fun keepSelectedKeywordNotices(keywordDetailItems: List<KeywordNotice>) {
+        override fun keepSelectedKeywordNotices(keywordNotices: List<KeywordNotice>) {
 
         }
 
-        override fun removeSelectedKeywordNotices(keywordDetailItems: List<KeywordNotice>) {
+        override fun removeSelectedKeywordNotices(keywordNotices: List<KeywordNotice>) {
 
         }
     }
 
     val keywordDetailViewModel = KeywordDetailViewModel(
-        GetKeywordItemListUseCase(fakeRepository),
+        GetKeywordNoticesUseCase(fakeRepository),
         MakeSiteTabItemUseCase(fakeRepository)
     )
 
