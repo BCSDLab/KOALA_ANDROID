@@ -31,7 +31,7 @@ object RepositoryModule {
     }
 
     @Provides
-    fun provideuserRepository(
+    fun provideUserRepository(
         authRemoteDataSource: UserRemoteDataSource,
         noAuthLocalDataSource: UserLocalDataSource
     ): UserRepository {

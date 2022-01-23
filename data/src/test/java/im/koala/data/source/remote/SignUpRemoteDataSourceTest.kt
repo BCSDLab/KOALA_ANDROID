@@ -33,12 +33,12 @@ class SignUpRemoteDataSourceTest {
     private lateinit var noAuthApi: NoAuthApi
 
     @InjectMocks
-    private lateinit var signUpRemoteDataSource: SignUpRemoteDataSource
+    private lateinit var signUpRemoteDataSource: UserRemoteDataSource
 
     @Before
     fun init() {
         noAuthApi = mock()
-        signUpRemoteDataSource = SignUpRemoteDataSource(noAuthApi)
+        signUpRemoteDataSource = UserRemoteDataSource(noAuthApi)
     }
 
     @Test

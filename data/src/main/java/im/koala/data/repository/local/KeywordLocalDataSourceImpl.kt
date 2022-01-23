@@ -1,17 +1,14 @@
-package im.koala.data.source.local
+package im.koala.data.repository.local
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import im.koala.data.R
-import im.koala.data.constant.ERROR_MESSAGE_NOT_USE_LOCAL
-import im.koala.data.source.KeywordDataSource
-import im.koala.domain.entity.keyword.KeywordNotice
 import im.koala.domain.entity.keyword.Site
 import javax.inject.Inject
 
-class KeywordLocalDataSource @Inject constructor(
+class KeywordLocalDataSourceImpl @Inject constructor(
     @ApplicationContext private val context: Context
-) : KeywordDataSource {
+) : KeywordLocalDataSource {
 
     private val siteStringMap = mapOf(
         Site.All to context.getString(R.string.keyword_site_all),
@@ -24,17 +21,5 @@ class KeywordLocalDataSource @Inject constructor(
 
     override fun getSiteLocalizedMessage(site: Site): String {
         return siteStringMap[site] ?: throw IllegalStateException("Unknown Site: $site")
-    }
-
-    override fun getKeywordNotices(keyword: String, site: Site?): List<KeywordNotice> {
-        throw IllegalAccessException(ERROR_MESSAGE_NOT_USE_LOCAL)
-    }
-
-    override fun searchKeywordNotices(search: String, keyword: String, site: Site?): List<KeywordNotice> {
-        throw IllegalAccessException(ERROR_MESSAGE_NOT_USE_LOCAL)
-    }
-
-    override fun removeKeywordNotices(keywordNotices: List<KeywordNotice>) {
-        throw IllegalAccessException(ERROR_MESSAGE_NOT_USE_LOCAL)
     }
 }

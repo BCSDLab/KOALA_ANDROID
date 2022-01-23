@@ -1,6 +1,6 @@
 package im.koala.data.repository
 
-import im.koala.data.source.remote.SignUpRemoteDataSource
+import im.koala.data.source.remote.UserRemoteDataSource
 import im.koala.domain.entity.signup.SignUpResult
 import im.koala.domain.repository.SignUpRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,7 +19,7 @@ import org.mockito.kotlin.whenever
 class SignUpRepositoryTest {
 
     @Mock
-    private lateinit var signUpRemoteDataSource: SignUpRemoteDataSource
+    private lateinit var signUpRemoteDataSource: UserRemoteDataSource
 
     @InjectMocks
     private lateinit var signUpRepository: SignUpRepository

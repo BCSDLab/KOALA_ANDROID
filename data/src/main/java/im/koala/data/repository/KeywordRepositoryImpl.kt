@@ -1,16 +1,15 @@
 package im.koala.data.repository
 
-import im.koala.data.module.LocalDataSource
-import im.koala.data.module.RemoteDataSource
-import im.koala.data.source.KeywordDataSource
+import im.koala.data.repository.local.KeywordLocalDataSource
+import im.koala.data.repository.remote.KeywordRemoteDataSource
 import im.koala.domain.entity.keyword.KeywordNotice
 import im.koala.domain.entity.keyword.Site
 import im.koala.domain.repository.KeywordRepository
 import javax.inject.Inject
 
 class KeywordRepositoryImpl @Inject constructor(
-    @LocalDataSource private val keywordLocalDataSource: KeywordDataSource,
-    @RemoteDataSource private val keywordRemoteDataSource: KeywordDataSource
+    private val keywordLocalDataSource: KeywordLocalDataSource,
+    private val keywordRemoteDataSource: KeywordRemoteDataSource
 ) : KeywordRepository {
     override fun getSiteLocalizedMessage(site: Site): String {
         return keywordLocalDataSource.getSiteLocalizedMessage(site)

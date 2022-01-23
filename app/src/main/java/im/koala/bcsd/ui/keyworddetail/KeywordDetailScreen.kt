@@ -198,7 +198,12 @@ private fun KeywordScreenBackgroundButton(
 @Composable
 private fun KeywordDetailScreenPreview() {
     val fakeRepository = object : KeywordRepository {
-        override fun getKeywordNotices(keyword: String): List<KeywordNotice> {
+
+        override fun getKeywordNotices(
+            keyword: String,
+            search: String?,
+            site: Site?
+        ): List<KeywordNotice> {
             val list = mutableListOf<KeywordNotice>()
             val sites = arrayOf(Site.Dorm, Site.Facebook, Site.Instagram, Site.Portal, Site.Youtube)
 
@@ -216,7 +221,13 @@ private fun KeywordDetailScreenPreview() {
                 )
             }
 
-            return list.toList()
+            return list.filter {
+                if(search == null) {
+                    true
+                } else {
+                    it.title.contains(search)
+                }
+            }
         }
 
         override fun getSiteLocalizedMessage(site: Site): String {

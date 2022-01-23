@@ -2,6 +2,7 @@ package im.koala.data.repository
 
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.remote.UserRemoteDataSource
+import im.koala.domain.entity.signup.SignUpResult
 import im.koala.domain.model.CommonResponse
 import im.koala.domain.model.TokenResponse
 import im.koala.domain.repository.UserRepository
@@ -13,15 +14,15 @@ class UserRepositoryImpl @Inject constructor (
 ) : UserRepository {
     override suspend fun postSnsLogin(
         snsType: String,
-        snsAccessToken: String,
+        accessToken: String,
         onSuccess: (TokenResponse) -> Unit,
         onFail: (CommonResponse) -> Unit
     ) {
-        val response = userRemoteDataSource.postSnsLogin(snsType, snsAccessToken)
+        val response = userRemoteDataSource.postSnsLogin(snsType, accessToken)
         if (response.isSuccessful) {
             if (response.body()?.code == 200) {
                 TokenResponse().apply {
-                    accessToken = response.body()?.body?.accessToken ?: run {
+                    this.accessToken = response.body()?.body?.accessToken ?: run {
                         onFail(CommonResponse.UNKOWN); return
                     }
                     refreshToken = response.body()?.body?.refreshToken!!
@@ -36,5 +37,26 @@ class UserRepositoryImpl @Inject constructor (
         } else {
             onFail(CommonResponse.UNKOWN)
         }
+    }
+
+    override suspend fun checkIdDuplicate(id: String): Boolean {
+        return !userRemoteDataSource.checkIdIsAvailable(id)
+    }
+
+    override suspend fun checkEmailDuplicate(email: String): Boolean {
+        return !userRemoteDataSource.checkEmailIsAvailable(email)
+    }
+
+    override suspend fun checkNicknameDuplicate(nickname: String): Boolean {
+        return !userRemoteDataSource.checkNicknameIsAvailable(nickname)
+    }
+
+    override suspend fun signUp(
+        accountId: String,
+        password: String,
+        accountEmail: String,
+        accountNickname: String
+    ): SignUpResult {
+        return userRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
     }
 }

@@ -1,12 +1,9 @@
-package im.koala.data.source
+package im.koala.data.repository.remote
 
 import im.koala.domain.entity.keyword.KeywordNotice
 import im.koala.domain.entity.keyword.Site
 
-interface KeywordDataSource {
-    fun getSiteLocalizedMessage(
-        site: Site
-    ): String
+interface KeywordRemoteDataSource {
 
     fun getKeywordNotices(
         keyword: String,
