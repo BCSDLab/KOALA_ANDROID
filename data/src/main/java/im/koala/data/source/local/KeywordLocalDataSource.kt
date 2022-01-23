@@ -5,7 +5,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import im.koala.data.R
 import im.koala.data.constant.ERROR_MESSAGE_NOT_USE_LOCAL
 import im.koala.data.source.KeywordDataSource
-import im.koala.domain.entity.keyword.KeywordListItem
+import im.koala.domain.entity.keyword.KeywordNotice
 import im.koala.domain.entity.keyword.Site
 import javax.inject.Inject
 
@@ -26,7 +26,7 @@ class KeywordLocalDataSource @Inject constructor(
         return siteStringMap[site] ?: throw IllegalStateException("Unknown Site: $site")
     }
 
-    override fun getKeywordListItems(keyword: String): List<KeywordListItem> {
+    override fun getKeywordNotices(keyword: String): List<KeywordNotice> {
         throw IllegalAccessException(ERROR_MESSAGE_NOT_USE_LOCAL)
     }
 }

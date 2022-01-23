@@ -32,7 +32,7 @@ import im.koala.bcsd.ui.button.KoalaBackgroundButton
 import im.koala.bcsd.ui.button.KoalaCheckBox
 import im.koala.bcsd.ui.textfield.KoalaSearchField
 import im.koala.bcsd.ui.theme.KoalaTheme
-import im.koala.domain.entity.keyword.KeywordListItem
+import im.koala.domain.entity.keyword.KeywordNotice
 import im.koala.domain.entity.keyword.Site
 import im.koala.domain.repository.KeywordRepository
 import im.koala.domain.usecase.keyword.GetKeywordItemListUseCase
@@ -157,7 +157,7 @@ fun KeywordDetailScreen(
             }
 
             LazyColumn {
-                itemsIndexed(keywordDetailViewModel.keywordListItems) { index, keywordListItem ->
+                itemsIndexed(keywordDetailViewModel.keywordNotices) { index, keywordListItem ->
                     KeywordDetailItem(
                         title = keywordDetailViewModel.keywordTabs[keywordListItem.site] ?: "",
                         content = keywordListItem.title,
@@ -198,13 +198,13 @@ private fun KeywordScreenBackgroundButton(
 @Composable
 private fun KeywordDetailScreenPreview() {
     val fakeRepository = object : KeywordRepository {
-        override fun getKeywordItemList(keyword: String): List<KeywordListItem> {
-            val list = mutableListOf<KeywordListItem>()
+        override fun getKeywordNotices(keyword: String): List<KeywordNotice> {
+            val list = mutableListOf<KeywordNotice>()
             val sites = arrayOf(Site.Dorm, Site.Facebook, Site.Instagram, Site.Portal, Site.Youtube)
 
             (1..20).forEach {
                 list.add(
-                    KeywordListItem(
+                    KeywordNotice(
                         id = it,
                         site = sites[it % sites.size],
                         title = "Keyword #$it",
@@ -230,11 +230,11 @@ private fun KeywordDetailScreenPreview() {
             }
         }
 
-        override fun keepSelectedKeywordItems(keywordDetailItems: List<KeywordListItem>) {
+        override fun keepSelectedKeywordNotices(keywordDetailItems: List<KeywordNotice>) {
 
         }
 
-        override fun removeSelectedKeywordItems(keywordDetailItems: List<KeywordListItem>) {
+        override fun removeSelectedKeywordNotices(keywordDetailItems: List<KeywordNotice>) {
 
         }
     }

@@ -8,7 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.koala.domain.entity.keyword.KeywordItemReadFilter
-import im.koala.domain.entity.keyword.KeywordListItem
+import im.koala.domain.entity.keyword.KeywordNotice
 import im.koala.domain.entity.keyword.KeywordListItemFilter
 import im.koala.domain.entity.keyword.Site
 import im.koala.domain.usecase.keyword.GetKeywordItemListUseCase
@@ -26,8 +26,8 @@ class KeywordDetailViewModel @Inject constructor(
     var filterState by mutableStateOf(KeywordListItemFilter.default())
         private set
 
-    private var _keywordListItems = mutableStateListOf<KeywordListItem>()
-    val keywordListItems: List<KeywordListItem> get() = _keywordListItems
+    private var _keywordListItems = mutableStateListOf<KeywordNotice>()
+    val keywordNotices: List<KeywordNotice> get() = _keywordListItems
 
     private var _keywordTabs = mutableStateMapOf<Site, String>()
     val keywordTabs: Map<Site, String> get() = _keywordTabs
@@ -35,13 +35,13 @@ class KeywordDetailViewModel @Inject constructor(
     private var _selectedAll by mutableStateOf(false)
     var selectedAll: Boolean
         set(value) {
-            for (i in keywordListItems.indices) {
-                setCheckState(keywordListItems[i], value)
+            for (i in keywordNotices.indices) {
+                setCheckState(keywordNotices[i], value)
             }
         }
         get() {
             _selectedAll =
-                keywordListItems.isNotEmpty() && keywordListItems.find { !it.isChecked } == null
+                keywordNotices.isNotEmpty() && keywordNotices.find { !it.isChecked } == null
             return _selectedAll
         }
 
@@ -52,7 +52,7 @@ class KeywordDetailViewModel @Inject constructor(
         _keywordTabs.clear()
 
         _keywordListItems.addAll(getKeywordItemListUseCase(keyword, filterState))
-        _keywordTabs.putAll(makeSiteTabItemUseCase(keywordListItems))
+        _keywordTabs.putAll(makeSiteTabItemUseCase(keywordNotices))
     }
 
     fun setSearchFilter(search: String) {
@@ -67,7 +67,7 @@ class KeywordDetailViewModel @Inject constructor(
         filterState = filterState.copy(keywordItemReadFilter = keywordItemReadFilter)
     }
 
-    fun setCheckState(item: KeywordListItem, isChecked: Boolean) {
+    fun setCheckState(item: KeywordNotice, isChecked: Boolean) {
         val index = _keywordListItems.indexOf(item)
         _keywordListItems[index] = _keywordListItems[index].copy(isChecked = isChecked)
     }

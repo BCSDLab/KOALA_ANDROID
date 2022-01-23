@@ -3,7 +3,7 @@ package im.koala.data.repository
 import im.koala.data.module.LocalDataSource
 import im.koala.data.module.RemoteDataSource
 import im.koala.data.source.KeywordDataSource
-import im.koala.domain.entity.keyword.KeywordListItem
+import im.koala.domain.entity.keyword.KeywordNotice
 import im.koala.domain.entity.keyword.Site
 import im.koala.domain.repository.KeywordRepository
 import javax.inject.Inject
@@ -16,15 +16,15 @@ class KeywordRepositoryImpl @Inject constructor(
         return keywordLocalDataSource.getSiteLocalizedMessage(site)
     }
 
-    override fun getKeywordItemList(keyword: String) : List<KeywordListItem>{
-        return keywordRemoteDataSource.getKeywordListItems(keyword)
+    override fun getKeywordNotices(keyword: String) : List<KeywordNotice>{
+        return keywordRemoteDataSource.getKeywordNotices(keyword)
     }
 
-    override fun keepSelectedKeywordItems(keywordDetailItems: List<KeywordListItem>) {
+    override fun keepSelectedKeywordNotices(keywordDetailItems: List<KeywordNotice>) {
 
     }
 
-    override fun removeSelectedKeywordItems(keywordDetailItems: List<KeywordListItem>) {
+    override fun removeSelectedKeywordNotices(keywordDetailItems: List<KeywordNotice>) {
 
     }
 }

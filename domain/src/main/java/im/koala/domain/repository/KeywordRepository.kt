@@ -1,11 +1,22 @@
 package im.koala.domain.repository
 
-import im.koala.domain.entity.keyword.KeywordListItem
+import im.koala.domain.entity.keyword.KeywordNotice
 import im.koala.domain.entity.keyword.Site
 
 interface KeywordRepository {
-    fun getKeywordItemList(keyword: String): List<KeywordListItem>
-    fun getSiteLocalizedMessage(site: Site): String
-    fun keepSelectedKeywordItems(keywordDetailItems: List<KeywordListItem>)
-    fun removeSelectedKeywordItems(keywordDetailItems: List<KeywordListItem>)
+    fun getKeywordNotices(
+        keyword: String
+    ): List<KeywordNotice>
+
+    fun getSiteLocalizedMessage(
+        site: Site
+    ): String
+
+    fun keepSelectedKeywordNotices(
+        keywordDetailItems: List<KeywordNotice>
+    )
+
+    fun removeSelectedKeywordNotices(
+        keywordDetailItems: List<KeywordNotice>
+    )
 }

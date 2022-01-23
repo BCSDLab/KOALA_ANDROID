@@ -1,6 +1,6 @@
 package im.koala.domain.entity.keyword
 
-data class KeywordListItem(
+data class KeywordNotice(
     val id: Int,
     val site: Site,
     val title: String,

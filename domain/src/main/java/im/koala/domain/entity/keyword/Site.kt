@@ -14,13 +14,13 @@ sealed class Site(
     }
 
     override fun toString(): String {
-        return "Site(siteId=$siteId)"
+        return name
     }
 
-    object All: Site(0, "전체")
-    object Portal: Site(1, "아우누리")
-    object Dorm: Site(2, "아우미르")
-    object Youtube: Site(3, "유튜브")
-    object Facebook: Site(4, "페이스북")
-    object Instagram: Site(5, "인스타그램")
+    object All: Site(0, "ALL")
+    object Portal: Site(1, "PORTAL")
+    object Dorm: Site(2, "DORM")
+    object Youtube: Site(3, "YOUTUBE")
+    object Facebook: Site(4, "FACEBOOK")
+    object Instagram: Site(5, "INSTAGRAM")
 }
