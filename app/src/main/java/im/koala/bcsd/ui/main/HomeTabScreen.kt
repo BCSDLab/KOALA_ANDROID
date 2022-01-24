@@ -41,6 +41,9 @@ fun HomeTabScreen(
             ) {
 
                 tabs.forEach { tab ->
+                    when (tab) {
+                        MainScreenBottomTab.KEYWORD -> { viewModel.executeGetKeywordList() }
+                    }
                     BottomNavigationItem(
                         icon = {
                             Icon(

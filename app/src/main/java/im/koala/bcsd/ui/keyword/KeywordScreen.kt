@@ -1,7 +1,6 @@
 package im.koala.bcsd.ui.keyword
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,12 +19,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -34,12 +31,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.google.accompanist.insets.ProvideWindowInsets
 import im.koala.bcsd.R
-import im.koala.bcsd.state.NetworkState
 import im.koala.bcsd.ui.login.DrawImageView
 import im.koala.bcsd.ui.main.MainScreenBottomTab
 import im.koala.bcsd.ui.main.MainViewModel
 import im.koala.bcsd.ui.theme.Yellow
-import im.koala.domain.model.CommonResponse
 import im.koala.domain.model.KeywordResponse
 
 @Composable
@@ -49,8 +44,7 @@ fun KeywordScreen(
     viewModel: MainViewModel,
     selectKeyword: (MainScreenBottomTab, Int) -> Unit
 ) {
-    val keywordListState by viewModel.keywordState.observeAsState(NetworkState.Uninitialized)
-    viewModel.executeGetKeywordList()
+    val keywordUi = viewModel.keywordUi
 
     ProvideWindowInsets {
         ConstraintLayout(
@@ -102,36 +96,23 @@ fun KeywordScreen(
                     .height(1.dp),
                 color = MaterialTheme.colors.onBackground
             )
-            when (keywordListState) {
-                is NetworkState.Loading -> {
-                }
-                is NetworkState.Success<*> -> {
-                    val response = (keywordListState as NetworkState.Success<*>).data as MutableList<KeywordResponse>
-                    DrawLazyColumView(
-                        modifier = Modifier.constrainAs(keywordLazyColumView) {
-                            top.linkTo(divider.bottom, margin = 12.dp)
-                            start.linkTo(parent.start, margin = 24.dp)
-                            end.linkTo(parent.end, margin = 24.dp)
-                            bottom.linkTo(parent.bottom)
-                            width = Dimension.fillToConstraints
-                            height = Dimension.fillToConstraints
-                        },
-                        lazyListState = lazyListState,
-                        keywordList = response,
-                        selectKeyword = selectKeyword
-                    )
-                }
-                is NetworkState.Fail<*> -> {
-                    val response = (keywordListState as NetworkState.Fail<*>).data as CommonResponse
-                    when (response) {
-                        CommonResponse.UNKOWN -> response.errorMessage = stringResource(id = R.string.network_unkown_error)
-                    }
-                    Toast.makeText(LocalContext.current, response.errorMessage, Toast.LENGTH_SHORT).show()
-                }
-            }
+            DrawLazyColumView(
+                modifier = Modifier.constrainAs(keywordLazyColumView) {
+                    top.linkTo(divider.bottom, margin = 12.dp)
+                    start.linkTo(parent.start, margin = 24.dp)
+                    end.linkTo(parent.end, margin = 24.dp)
+                    bottom.linkTo(parent.bottom)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.fillToConstraints
+                },
+                lazyListState = lazyListState,
+                keywordList = keywordUi.value.keywordList,
+                selectKeyword = selectKeyword
+            )
         }
     }
 }
+
 @Composable
 fun DrawAddKeywordButton() {
     Row(
@@ -153,6 +134,7 @@ fun DrawAddKeywordButton() {
         )
     }
 }
+
 @Composable
 fun DrawHorizantalDivider(modifier: Modifier, color: Color) {
     Divider(

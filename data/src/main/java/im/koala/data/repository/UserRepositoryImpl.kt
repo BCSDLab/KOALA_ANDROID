@@ -37,31 +37,28 @@ class UserRepositoryImpl @Inject constructor(
         return result
     }
 
-    override suspend fun getKeyword(
-        onSuccess: (MutableList<KeywordResponse>) -> Unit,
-        onFail: (CommonResponse) -> Unit
-    ) {
+    override suspend fun getKeyword(): NetworkState {
         val response = userRemoteDataSource.getKeyword()
+        var result: NetworkState = NetworkState.Uninitialized
         if (response.isSuccessful) {
-            if (response.body()?.code == 200) {
-                val keywordList = mutableListOf<KeywordResponse>()
-                for (it in response.body()?.body!!) {
-                    keywordList.add(
-                        KeywordResponse(
-                            id = it.id,
-                            name = it.name,
-                            alarmCycle = it.alarmCycle,
-                            noticeNum = it.noticeNum
-                        )
+            val keywordList = mutableListOf<KeywordResponse>()
+            response.body()?.body?.let {
+                it.map {
+                    KeywordResponse(
+                        id = it.id,
+                        name = it.name,
+                        alarmCycle = it.alarmCycle,
+                        noticeNum = it.noticeNum
                     )
+                }.forEach {
+                    keywordList.add(it)
                 }
-                onSuccess(keywordList)
-            } else {
-                CommonResponse.FAIL.apply { errorMessage = response.body()!!.errorMessage }
-                    .run { onFail(this) }
             }
+            result = NetworkState.Success(keywordList)
         } else {
-            onFail(CommonResponse.UNKOWN)
+            CommonResponse.FAIL.apply { errorMessage = response.body()!!.errorMessage }
+                .run { result = NetworkState.Fail(this) }
         }
+        return result
     }
 }

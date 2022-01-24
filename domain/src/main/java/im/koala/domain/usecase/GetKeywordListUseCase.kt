@@ -1,20 +1,17 @@
 package im.koala.domain.usecase
 
-import im.koala.domain.model.CommonResponse
-import im.koala.domain.model.KeywordResponse
+import im.koala.bcsd.state.NetworkState
 import im.koala.domain.repository.UserRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GetKeywordListUseCase@Inject constructor (
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(
-        onSuccess: (MutableList<KeywordResponse>) -> Unit,
-        onFail: (CommonResponse) -> Unit
-    ) {
-        userRepository.getKeyword(
-            onSuccess = { onSuccess(it) },
-            onFail = { onFail(it) }
-        )
+    operator fun invoke(): Flow<NetworkState> = flow {
+        emit(NetworkState.Loading)
+        var result = userRepository.getKeyword()
+        emit(result)
     }
 }
