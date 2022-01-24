@@ -3,7 +3,6 @@ package im.koala.bcsd.viewmodel.base
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import dagger.hilt.android.testing.HiltAndroidTest
-import im.koala.bcsd.di.ViewModelTestBuilder
 import im.koala.bcsd.livedata.LiveDataTestObserver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,7 +26,6 @@ internal abstract class ViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
-    val viewModelTestBuilder: ViewModelTestBuilder = ViewModelTestBuilder()
     private val dispatcher = TestCoroutineDispatcher()
     @Before
     fun setup() {
