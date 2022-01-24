@@ -524,7 +524,9 @@ fun SnsLoginScreen(
         )
     }
     if (deviceTokenState.value.errorMesage.isNotEmpty()) {
-        Toast.makeText(context, stringResource(id = R.string.not_founc_device_token), Toast.LENGTH_SHORT).show()
+        CallToastMessage(context = context, message = deviceTokenState.value.errorMesage)
+    } else {
+        CallToastMessage(context = context, message = stringResource(id = R.string.not_founc_device_token))
     }
     if (deviceTokenState.value.goToMainActivity) {
         Intent(context, MainActivity::class.java).run {
@@ -532,54 +534,12 @@ fun SnsLoginScreen(
         }
         (context as? Activity)?.finish()
     }
-    /*
-    when (snsLoginState) {
-        is NetworkState.Loading -> {
-            DummyProgress(viewModel = viewModel)
-        }
-        is NetworkState.Success<*> -> {
-            Intent(context, MainActivity::class.java).run {
-                context.startActivity(this)
-            }
-            (context as? Activity)?.finish()
-        }
-        is NetworkState.Fail<*> -> {
-            val response = (snsLoginState as NetworkState.Fail<*>).data as CommonResponse
-            when (response) {
-                CommonResponse.UNKOWN -> response.errorMessage = stringResource(id = R.string.network_unkown_error)
-            }
-            Toast.makeText(context, response.errorMessage, Toast.LENGTH_SHORT).show()
-        }
-    }
 
-     */
 }
-/*
 @Composable
-fun DummyProgress(viewModel: LoginViewModel) {
-    //val snsLoginState by viewModel.snsLoginState.observeAsState(NetworkState.Uninitialized)
-
-    if (snsLoginState is NetworkState.Loading) {
-        Dialog(
-            onDismissRequest = { },
-            DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(100.dp)
-                    .background(White, shape = RoundedCornerShape(12.dp))
-            ) {
-                Column {
-                    CircularProgressIndicator(modifier = Modifier.padding(6.dp, 0.dp, 0.dp, 0.dp))
-                    Text(text = "Loading...", Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp))
-                }
-            }
-        }
-    }
+fun CallToastMessage(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
-
- */
 
 @Composable
 fun SnsLoginButton(
