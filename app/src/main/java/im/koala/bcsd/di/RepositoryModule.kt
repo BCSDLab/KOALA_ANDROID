@@ -14,6 +14,7 @@ import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.data.repository.remote.UserRemoteDataSourceImpl
 import im.koala.domain.repository.UserRepository
 import im.koala.domain.usecase.GetKeywordListUseCase
+import im.koala.domain.usecase.GetDeviceTokenUseCase
 import im.koala.domain.usecase.KakaoLoginUseCase
 
 @Module
@@ -55,5 +56,11 @@ object RepositoryModule {
         userRepository: UserRepository
     ): GetKeywordListUseCase {
         return GetKeywordListUseCase(userRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetDeviceTokenUseCase(): GetDeviceTokenUseCase {
+        return GetDeviceTokenUseCase()
     }
 }

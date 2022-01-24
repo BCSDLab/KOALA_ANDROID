@@ -14,6 +14,7 @@
     <string name="normal_login">일반로그인</string>
     <string name="sns_login">SNS로 로그인</string>
     <string name="login_sns">SNS로 로그인하기</string>
+    <string name="not_founc_device_token">디바이스 토큰을 가져오지 못하였습니다.</string>
     <string name="use_non_member">비회원으로 이용하기</string>
     <string name="google_login">구글 로그인</string>
     <string name="naver_login">네이버 로그인</string>
@@ -74,6 +75,19 @@
     <string name="signup_input_error_email_duplicated">중복된 이메일입니다.</string>
     <string name="signup_input_error_nickname_no_input">닉네임을 입력해주세요.</string>
     <string name="signup_password_error_not_support_character">사용할 수 없는 문자가 있습니다.</string>
+    <string name="tutorial_keyword_content">키워드와 알림을 받을 대상을 선택하여\n 원하는 알림을 받아 보세요!</string>
+    <string name="tutorial_history_content">놓친 알림은 히스토리에서 확인하고\n 중요 알림을 설정해 보세요!</string>
+    <string name="tutorial_storage_content">중요한 알림은 보관함에서 확인하고\n 메모를 추가할 수도 있어요!</string>
+    <string name="tutorial_chatting_content">코리아텍 학생만 사용할 수 있는\n 채팅방에서 학우들과 소통해 보세요!</string>
+    <string name="tutorial_storage_title">보관함</string>
+    <string name="tutorial_chatting_title">채팅</string>
+    <string name="tutorial_start">시작하기</string>
+    <string name="tutorial_first_chatting_name">쭈꾸리</string>
+    <string name="tutorial_first_chatting_time">18:30</string>
+    <string name="tutorial_first_chatting_context">안녕안녕여~~반가워요!</string>
+    <string name="tutorial_second_chatting_name">ddsndms</string>
+    <string name="tutorial_second_chatting_time">18:31</string>
+    <string name="tutorial_second_chatting_context">반갑습니다ㅋ 공지 확인 하셨죠?</string>
 
     <!--main -->
     <string name="keyword">키워드</string>

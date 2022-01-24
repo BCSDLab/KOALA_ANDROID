@@ -177,4 +177,6 @@ ext {
     /* Dependency - firebase crashlytics ktx */
     def firebase_crashlytics_ktx_version = "18.2.6"
     firebaseCrashlyticsKtx = "com.google.firebase:firebase-crashlytics-ktx:$firebase_crashlytics_ktx_version"
+
+    firebaseCloudMessage = "com.google.firebase:firebase-messaging-ktx"
 }

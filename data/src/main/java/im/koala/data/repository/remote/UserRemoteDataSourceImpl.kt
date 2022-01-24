@@ -9,8 +9,8 @@ import javax.inject.Inject
 
 class UserRemoteDataSourceImpl@Inject constructor (private val noAuth: NoAuthApi, private val auth: AuthApi) : UserRemoteDataSource {
 
-    override suspend fun postSnsLogin(snsType: String, accessToken: String): Response<TokenBodyEntity> {
-        return noAuth.postSnsLogin(snsType = snsType, accessToken = accessToken)
+    override suspend fun postSnsLogin(snsType: String, accessToken: String, deviceToken: String): Response<TokenBodyEntity> {
+        return noAuth.postSnsLogin(snsType = snsType, accessToken = accessToken, deviceToken = deviceToken)
     }
 
     override suspend fun getKeyword(): Response<KeywordBodyEntity> {

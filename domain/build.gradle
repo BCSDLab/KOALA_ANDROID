@@ -38,6 +38,9 @@ dependencies {
     testImplementation project.junit
     androidTestImplementation project.androidJunit
     androidTestImplementation project.espresso
+    implementation platform(project.firebasePlatform)
+    implementation project.firebaseAnalyticsKtx
+    implementation project.firebaseCloudMessage
 
     implementation project.coroutineCore
     testImplementation project.coroutineTest
