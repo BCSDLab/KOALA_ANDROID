@@ -14,7 +14,6 @@ import im.koala.data.repository.remote.UserRemoteDataSourceImpl
 import im.koala.domain.repository.UserRepository
 import im.koala.domain.usecase.GetDeviceTokenUseCase
 import im.koala.domain.usecase.KakaoLoginUseCase
-import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -41,7 +40,6 @@ object RepositoryModule {
     }
 
     @Provides
-    @Singleton
     @ViewModelScoped
     fun provideKakaoUseCase(
         noAuthRepository: UserRepository
@@ -50,7 +48,6 @@ object RepositoryModule {
     }
 
     @Provides
-    @Singleton
     @ViewModelScoped
     fun provideGetDeviceTokenUseCase(): GetDeviceTokenUseCase {
         return GetDeviceTokenUseCase()
