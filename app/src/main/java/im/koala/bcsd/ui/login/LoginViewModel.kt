@@ -1,6 +1,5 @@
 package im.koala.bcsd.ui.login
 
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -8,7 +7,6 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.model.OAuthToken
 import dagger.hilt.android.lifecycle.HiltViewModel
-import im.koala.bcsd.R
 import im.koala.bcsd.state.LoginState
 import im.koala.bcsd.state.NetworkState
 import im.koala.bcsd.ui.BaseViewModel
@@ -72,22 +70,26 @@ class LoginViewModel @Inject constructor(
     }
 
     fun getDeviceToken(snsType: String, accessToken: String) {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                loginFail(task.exception.toString())
-                return@OnCompleteListener
-            } else{
-                executeSnsLogin(snsType, accessToken, task.result)
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    loginFail(task.exception.toString())
+                    return@OnCompleteListener
+                } else {
+                    executeSnsLogin(snsType, accessToken, task.result)
+                }
             }
-        })
+        )
     }
 
-    fun loginSuccess(){
+    fun loginSuccess() {
         _loginState.value = LoginState.Success
     }
-    fun loginFail(errorMessage: String?){
+
+    fun loginFail(errorMessage: String?) {
         _loginState.value = LoginState.Fail(errorMessage)
     }
+
     companion object {
         val TAG = this.javaClass.simpleName.toString()
     }
