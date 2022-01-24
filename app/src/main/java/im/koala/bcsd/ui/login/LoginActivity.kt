@@ -534,7 +534,6 @@ fun SnsLoginScreen(
         }
         (context as? Activity)?.finish()
     }
-
 }
 @Composable
 fun CallToastMessage(context: Context, message: String) {
