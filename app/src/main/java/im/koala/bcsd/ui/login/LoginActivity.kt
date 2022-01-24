@@ -13,20 +13,16 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -37,8 +33,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -53,13 +47,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import dagger.hilt.android.AndroidEntryPoint
 import im.koala.bcsd.R
-import im.koala.bcsd.state.NetworkState
 import im.koala.bcsd.ui.findid.FindIdActivity
 import im.koala.bcsd.ui.findpassword.FindPasswordActivity
 import im.koala.bcsd.ui.main.MainActivity
@@ -72,7 +63,6 @@ import im.koala.bcsd.ui.theme.Green
 import im.koala.bcsd.ui.theme.KoalaTheme
 import im.koala.bcsd.ui.theme.White
 import im.koala.bcsd.ui.theme.Yellow2
-import im.koala.domain.model.CommonResponse
 
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
@@ -440,8 +430,8 @@ fun SnsLoginScreen(
     modifier: Modifier,
     viewModel: LoginViewModel
 ) {
-    val snsLoginState by viewModel.snsLoginState.observeAsState(NetworkState.Uninitialized)
-    val deviceTokenState by viewModel.deviceTokenState.observeAsState(NetworkState.Uninitialized)
+    val deviceTokenState = viewModel.uiState
+
     ConstraintLayout(modifier = modifier) {
         val (googleButton, googleIcon, naverButton, naverIcon, kakaoButton, kakaoIcon) = createRefs()
         /*구글버튼*/
@@ -518,7 +508,8 @@ fun SnsLoginScreen(
             textColor = Black,
             text = stringResource(id = R.string.kakao_login),
             onClick = {
-                viewModel.getDeviceToken()
+                viewModel.setActivityContext(context)
+                viewModel.onClickKakaoLoginButton()
             }
         )
         DrawImageView(
@@ -532,10 +523,16 @@ fun SnsLoginScreen(
             drawableId = R.drawable.ic_kakao_logo
         )
     }
-    when (deviceTokenState) {
-        is NetworkState.Success<*> -> { viewModel.kakaoLogin(context) }
-        is NetworkState.Fail<*> -> { Toast.makeText(context, stringResource(id = R.string.not_founc_device_token), Toast.LENGTH_SHORT).show() }
+    if (deviceTokenState.value.errorMesage.isNotEmpty()) {
+        Toast.makeText(context, stringResource(id = R.string.not_founc_device_token), Toast.LENGTH_SHORT).show()
     }
+    if (deviceTokenState.value.goToMainActivity) {
+        Intent(context, MainActivity::class.java).run {
+            context.startActivity(this)
+        }
+        (context as? Activity)?.finish()
+    }
+    /*
     when (snsLoginState) {
         is NetworkState.Loading -> {
             DummyProgress(viewModel = viewModel)
@@ -554,10 +551,13 @@ fun SnsLoginScreen(
             Toast.makeText(context, response.errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
+
+     */
 }
+/*
 @Composable
 fun DummyProgress(viewModel: LoginViewModel) {
-    val snsLoginState by viewModel.snsLoginState.observeAsState(NetworkState.Uninitialized)
+    //val snsLoginState by viewModel.snsLoginState.observeAsState(NetworkState.Uninitialized)
 
     if (snsLoginState is NetworkState.Loading) {
         Dialog(
@@ -578,6 +578,8 @@ fun DummyProgress(viewModel: LoginViewModel) {
         }
     }
 }
+
+ */
 
 @Composable
 fun SnsLoginButton(

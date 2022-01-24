@@ -1,8 +1,7 @@
 package im.koala.domain.usecase
 
+import im.koala.bcsd.state.NetworkState
 import im.koala.domain.constants.KAKAO
-import im.koala.domain.model.CommonResponse
-import im.koala.domain.model.TokenResponse
 import im.koala.domain.repository.UserRepository
 import javax.inject.Inject
 
@@ -12,15 +11,12 @@ class KakaoLoginUseCase @Inject constructor (
     suspend operator fun invoke(
         accessToken: String,
         deviceToken: String,
-        onSuccess: (TokenResponse) -> Unit,
-        onFail: (CommonResponse) -> Unit
-    ) {
-        userRepository.postSnsLogin(
+    ): NetworkState {
+
+        return userRepository.postSnsLogin(
             snsType = KAKAO,
             accessToken = accessToken,
             deviceToken = deviceToken,
-            onSuccess = { onSuccess(it) },
-            onFail = { onFail(it) }
         )
     }
 }
