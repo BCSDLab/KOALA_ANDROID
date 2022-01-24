@@ -11,12 +11,14 @@ class SnsLoginUseCase @Inject constructor(
     suspend operator fun invoke(
         snsType: String,
         accessToken: String,
+        deviceToken: String,
         onSuccess: (TokenResponse) -> Unit,
         onFail: (CommonResponse) -> Unit
     ) {
         userRepository.postSnsLogin(
             snsType = snsType,
             accessToken = accessToken,
+            deviceToken = deviceToken,
             onSuccess = { onSuccess(it) },
             onFail = { onFail(it) }
         )

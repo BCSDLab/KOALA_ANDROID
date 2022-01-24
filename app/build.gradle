@@ -69,6 +69,7 @@ dependencies {
     implementation platform(project.firebasePlatform)
     implementation project.firebaseAnalyticsKtx
     implementation project.firebaseCrashlyticsKtx
+    implementation project.firebaseCloudMessage
 
     implementation project.androidKtx
     implementation project.androidxAppCompat

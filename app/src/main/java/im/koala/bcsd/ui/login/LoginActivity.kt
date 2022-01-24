@@ -66,6 +66,7 @@ import com.nhn.android.naverlogin.data.OAuthLoginPreferenceManager
 import com.nhn.android.naverlogin.data.OAuthLoginState
 import dagger.hilt.android.AndroidEntryPoint
 import im.koala.bcsd.R
+import im.koala.bcsd.state.LoginState
 import im.koala.bcsd.state.NetworkState
 import im.koala.bcsd.ui.findid.FindIdActivity
 import im.koala.bcsd.ui.findpassword.FindPasswordActivity
@@ -107,11 +108,11 @@ class LoginActivity : ComponentActivity() {
     }
 
     fun naverLogin() {
-        val mOAuthLoginHandler = object : OAuthLoginHandler() {
+        val oAuthLoginHandler = object : OAuthLoginHandler() {
             override fun run(success: Boolean) {
                 if (success) {
                     val accessToken = OAuthLogin.getInstance().getAccessToken(this@LoginActivity)
-                    viewModel.executeSnsLogin(NAVER, accessToken)
+                    viewModel.getDeviceToken(NAVER, accessToken)
                 } else {
                     val errorCode = OAuthLogin.getInstance().getLastErrorCode(this@LoginActivity).code
                     val errorDesc = OAuthLogin.getInstance().getLastErrorDesc(this@LoginActivity)
@@ -131,31 +132,31 @@ class LoginActivity : ComponentActivity() {
                     applicationContext.resources.getString(R.string.naver_client_secret),
                     getString(R.string.app_name)
                 )
-                OAuthLogin.getInstance().startOauthLoginActivity(this, mOAuthLoginHandler)
+                OAuthLogin.getInstance().startOauthLoginActivity(this, oAuthLoginHandler)
             }
             OAuthLoginState.NEED_LOGIN -> {
-                OAuthLogin.getInstance().startOauthLoginActivity(this, mOAuthLoginHandler)
+                OAuthLogin.getInstance().startOauthLoginActivity(this, oAuthLoginHandler)
             }
             OAuthLoginState.NEED_REFRESH_TOKEN -> {
                 val accessToken = OAuthLogin.getInstance().refreshAccessToken(this)
                 if (accessToken != null) {
-                    viewModel.executeSnsLogin(NAVER, accessToken)
+                    viewModel.getDeviceToken(NAVER, accessToken)
                 } else {
                     OAuthLogin.getInstance().startOauthLoginActivity(
                         this,
-                        mOAuthLoginHandler
+                        oAuthLoginHandler
                     )
                 }
             }
             OAuthLoginState.OK -> {
-                val mOAuthLoginPreferenceManager = OAuthLoginPreferenceManager(this)
-                val accessToken = mOAuthLoginPreferenceManager.accessToken
+                val oAuthLoginPreferenceManager = OAuthLoginPreferenceManager(this)
+                val accessToken = oAuthLoginPreferenceManager.accessToken
                 if (accessToken != null) {
-                    viewModel.executeSnsLogin(NAVER, accessToken)
+                    viewModel.getDeviceToken(NAVER, accessToken)
                 } else {
                     OAuthLogin.getInstance().startOauthLoginActivity(
                         this,
-                        mOAuthLoginHandler
+                        oAuthLoginHandler
                     )
                 }
             }
@@ -510,6 +511,7 @@ fun SnsLoginScreen(
 ) {
     val activity = context as LoginActivity
     val snsLoginState by viewModel.snsLoginState.observeAsState(NetworkState.Uninitialized)
+    val loginState by viewModel.loginState.observeAsState(LoginState.NeedLogin)
     val googleLoginContract =
         rememberLauncherForActivityResult(contract = GoogleLoginContract(), onResult = {
             if (it != null) {
@@ -518,7 +520,7 @@ fun SnsLoginScreen(
                     context.applicationContext.resources.getString(R.string.google_web_client_secret),
                     authCode = it,
                     onSuccess = { token ->
-                        viewModel.executeSnsLogin(GOOGLE, token)
+                        viewModel.getDeviceToken(GOOGLE, token)
                     },
                     onFail = {
                         Toast.makeText(context, R.string.google_login_fail, Toast.LENGTH_SHORT).show()
@@ -640,10 +642,7 @@ fun SnsLoginScreen(
             DummyProgress(viewModel = viewModel)
         }
         is NetworkState.Success<*> -> {
-            Intent(context, MainActivity::class.java).run {
-                context.startActivity(this)
-            }
-            (context as? Activity)?.finish()
+            viewModel.loginSuccess()
         }
         is NetworkState.Fail<*> -> {
             val response = (snsLoginState as NetworkState.Fail<*>).data as CommonResponse
@@ -651,7 +650,18 @@ fun SnsLoginScreen(
                 CommonResponse.UNKOWN ->
                     response.errorMessage = stringResource(id = R.string.network_unkown_error)
             }
-            Toast.makeText(context, response.errorMessage, Toast.LENGTH_SHORT).show()
+            viewModel.loginFail(response.errorMessage)
+        }
+    }
+    when (loginState) {
+        is LoginState.Success -> {
+            Intent(context, MainActivity::class.java).run {
+                context.startActivity(this)
+            }
+            activity.finish()
+        }
+        is LoginState.Fail -> {
+            Toast.makeText(context, (loginState as LoginState.Fail).errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
 }

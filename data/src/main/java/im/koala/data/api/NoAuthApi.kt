@@ -41,6 +41,7 @@ interface NoAuthApi {
     @POST(SNSLOGIN)
     suspend fun postSnsLogin(
         @Header("Authorization") accessToken: String,
-        @Path("snsType") snsType: String
+        @Path("snsType") snsType: String,
+        @Query("device_token") deviceToken: String
     ): Response<TokenBodyEntity>
 }
