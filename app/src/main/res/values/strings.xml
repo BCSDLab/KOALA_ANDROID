@@ -14,6 +14,7 @@
     <string name="normal_login">일반로그인</string>
     <string name="sns_login">SNS로 로그인</string>
     <string name="login_sns">SNS로 로그인하기</string>
+    <string name="not_founc_device_token">디바이스 토큰을 가져오지 못하였습니다.</string>
     <string name="use_non_member">비회원으로 이용하기</string>
     <string name="google_login">구글 로그인</string>
     <string name="naver_login">네이버 로그인</string>

@@ -59,6 +59,5 @@ dependencies {
 
     implementation project.coroutineAndroid
 
-
     implementation project.hawk
 }
