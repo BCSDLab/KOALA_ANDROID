@@ -13,8 +13,16 @@ class GoogleLoginContract : ActivityResultContract<GoogleSignInClient, String?>(
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): String? {
-        val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
-        val account = task.getResult(ApiException::class.java)
-        return account.serverAuthCode
+        return if (intent != null) {
+            try {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
+                val account = task.getResult(ApiException::class.java)
+                account.serverAuthCode
+            } catch (e: ApiException) {
+                null
+            }
+        } else {
+            null
+        }
     }
 }

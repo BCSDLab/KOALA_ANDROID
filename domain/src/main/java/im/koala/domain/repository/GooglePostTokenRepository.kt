@@ -4,8 +4,6 @@ interface GooglePostTokenRepository {
     suspend fun postGoogleToken(
         clientId: String,
         clientSecret: String,
-        authCode: String,
-        onSuccess: (String) -> Unit,
-        onFail: (Unit) -> Unit
-    )
+        authCode: String
+    ): String?
 }

@@ -15,6 +15,7 @@ import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.data.repository.remote.UserRemoteDataSourceImpl
 import im.koala.domain.repository.GooglePostTokenRepository
 import im.koala.domain.repository.UserRepository
+import im.koala.domain.usecase.GetDeviceTokenUseCase
 import im.koala.domain.usecase.GooglePostAccessTokenUseCase
 import im.koala.domain.usecase.SnsLoginUseCase
 
@@ -63,5 +64,11 @@ object RepositoryModule {
         googlePostTokenRepository: GooglePostTokenRepository
     ): GooglePostAccessTokenUseCase {
         return GooglePostAccessTokenUseCase(googlePostTokenRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetDeviceTokenUseCase(): GetDeviceTokenUseCase {
+        return GetDeviceTokenUseCase()
     }
 }

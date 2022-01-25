@@ -9,16 +9,12 @@ class GooglePostAccessTokenUseCase @Inject constructor(
     suspend operator fun invoke(
         clientId: String,
         clientSecret: String,
-        authCode: String,
-        onSuccess: (String) -> Unit,
-        onFail: (Unit) -> Unit
-    ) {
-        googlePostTokenRepository.postGoogleToken(
+        authCode: String
+    ): String? {
+        return googlePostTokenRepository.postGoogleToken(
             clientId = clientId,
             clientSecret = clientSecret,
-            authCode = authCode,
-            onSuccess = onSuccess,
-            onFail = onFail
+            authCode = authCode
         )
     }
 }

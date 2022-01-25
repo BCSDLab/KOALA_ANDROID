@@ -14,6 +14,9 @@
     <string name="normal_login">일반로그인</string>
     <string name="sns_login">SNS로 로그인</string>
     <string name="login_sns">SNS로 로그인하기</string>
+    <string name="not_founc_device_token">디바이스 토큰을 가져오지 못하였습니다.</string>
+    <string name="google_login_fail">구글 로그인에 실패하였습니다.</string>
+    <string name="naver_login_fail">네이버 로그인에 실패하였습니다.</string>
     <string name="use_non_member">비회원으로 이용하기</string>
     <string name="google_login">구글 로그인</string>
     <string name="naver_login">네이버 로그인</string>
@@ -87,8 +90,6 @@
     <string name="tutorial_second_chatting_name">ddsndms</string>
     <string name="tutorial_second_chatting_time">18:31</string>
     <string name="tutorial_second_chatting_context">반갑습니다ㅋ 공지 확인 하셨죠?</string>
-    <string name="google_login_fail">구글 로그인에 실패하였습니다.</string>
-    <string name="device_token_error">디바이스 토큰을 가져오는데 실패하였습니다.</string>
 
     <!--main -->
     <string name="keyword">키워드</string>

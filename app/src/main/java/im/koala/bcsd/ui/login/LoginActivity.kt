@@ -1,5 +1,6 @@
 package im.koala.bcsd.ui.login
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -12,20 +13,16 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -36,10 +33,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -52,21 +48,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.kakao.sdk.user.UserApiClient
-import com.nhn.android.naverlogin.OAuthLogin
-import com.nhn.android.naverlogin.OAuthLoginHandler
-import com.nhn.android.naverlogin.data.OAuthLoginPreferenceManager
-import com.nhn.android.naverlogin.data.OAuthLoginState
 import dagger.hilt.android.AndroidEntryPoint
 import im.koala.bcsd.R
-import im.koala.bcsd.state.LoginState
-import im.koala.bcsd.state.NetworkState
 import im.koala.bcsd.ui.findid.FindIdActivity
 import im.koala.bcsd.ui.findpassword.FindPasswordActivity
 import im.koala.bcsd.ui.main.MainActivity
@@ -79,9 +66,6 @@ import im.koala.bcsd.ui.theme.Green
 import im.koala.bcsd.ui.theme.KoalaTheme
 import im.koala.bcsd.ui.theme.White
 import im.koala.bcsd.ui.theme.Yellow2
-import im.koala.domain.constants.GOOGLE
-import im.koala.domain.constants.NAVER
-import im.koala.domain.model.CommonResponse
 
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
@@ -94,71 +78,14 @@ class LoginActivity : ComponentActivity() {
             KoalaTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    LoginScreen(viewModel = viewModel)
+                    LoginScreen(context = this, viewModel = viewModel)
                 }
             }
         }
     }
-
     private fun goToMainActivity() {
         Intent(this, MainActivity::class.java).run {
             startActivity(this)
-        }
-    }
-
-    fun naverLogin() {
-        val oAuthLoginHandler = object : OAuthLoginHandler() {
-            override fun run(success: Boolean) {
-                if (success) {
-                    val accessToken = OAuthLogin.getInstance().getAccessToken(this@LoginActivity)
-                    viewModel.getDeviceToken(NAVER, accessToken)
-                } else {
-                    val errorCode = OAuthLogin.getInstance().getLastErrorCode(this@LoginActivity).code
-                    val errorDesc = OAuthLogin.getInstance().getLastErrorDesc(this@LoginActivity)
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "errorCode = $errorCode, errorDesc = $errorDesc",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
-        when (OAuthLogin.getInstance().getState(this)) {
-            OAuthLoginState.NEED_INIT -> {
-                OAuthLogin.getInstance().init(
-                    this,
-                    applicationContext.resources.getString(R.string.naver_client_id),
-                    applicationContext.resources.getString(R.string.naver_client_secret),
-                    getString(R.string.app_name)
-                )
-                OAuthLogin.getInstance().startOauthLoginActivity(this, oAuthLoginHandler)
-            }
-            OAuthLoginState.NEED_LOGIN -> {
-                OAuthLogin.getInstance().startOauthLoginActivity(this, oAuthLoginHandler)
-            }
-            OAuthLoginState.NEED_REFRESH_TOKEN -> {
-                val accessToken = OAuthLogin.getInstance().refreshAccessToken(this)
-                if (accessToken != null) {
-                    viewModel.getDeviceToken(NAVER, accessToken)
-                } else {
-                    OAuthLogin.getInstance().startOauthLoginActivity(
-                        this,
-                        oAuthLoginHandler
-                    )
-                }
-            }
-            OAuthLoginState.OK -> {
-                val oAuthLoginPreferenceManager = OAuthLoginPreferenceManager(this)
-                val accessToken = oAuthLoginPreferenceManager.accessToken
-                if (accessToken != null) {
-                    viewModel.getDeviceToken(NAVER, accessToken)
-                } else {
-                    OAuthLogin.getInstance().startOauthLoginActivity(
-                        this,
-                        oAuthLoginHandler
-                    )
-                }
-            }
         }
     }
 }
@@ -166,9 +93,9 @@ class LoginActivity : ComponentActivity() {
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @Composable
-fun LoginScreen(viewModel: LoginViewModel) {
+fun LoginScreen(context: Context, viewModel: LoginViewModel) {
     val context = LocalContext.current
-    var isNormalLoginState = remember { mutableStateOf(true) }
+    var isNormalLoginState = rememberSaveable { mutableStateOf(true) }
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (logoImageView, loginRowLayout, normalLoginConstraintLyaout) = createRefs()
 
@@ -500,35 +427,16 @@ fun NormalScreen(
     }
 }
 
-@ExperimentalComposeUiApi
-@ExperimentalAnimationApi
 @Composable
 fun SnsLoginScreen(
     context: Context,
     modifier: Modifier,
     viewModel: LoginViewModel
 ) {
-    val activity = context as LoginActivity
-    val snsLoginState by viewModel.snsLoginState.observeAsState(NetworkState.Uninitialized)
-    val loginState by viewModel.loginState.observeAsState(LoginState.NeedLogin)
-    val googleLoginContract =
-        rememberLauncherForActivityResult(contract = GoogleLoginContract(), onResult = {
-            if (it != null) {
-                viewModel.postGoogleAccessToken(
-                    context.applicationContext.resources.getString(R.string.google_web_client_id),
-                    context.applicationContext.resources.getString(R.string.google_web_client_secret),
-                    authCode = it,
-                    onSuccess = { token ->
-                        viewModel.getDeviceToken(GOOGLE, token)
-                    },
-                    onFail = {
-                        Toast.makeText(context, R.string.google_login_fail, Toast.LENGTH_SHORT).show()
-                    }
-                )
-            } else {
-                Toast.makeText(context, R.string.google_login_fail, Toast.LENGTH_SHORT).show()
-            }
-        })
+    val deviceTokenState = viewModel.uiState
+    val googleLoginContract = rememberLauncherForActivityResult(contract = GoogleLoginContract(), onResult = {
+        viewModel.googleLogin(it)
+    })
     ConstraintLayout(modifier = modifier) {
         val (googleButton, googleIcon, naverButton, naverIcon, kakaoButton, kakaoIcon) = createRefs()
         /*구글버튼*/
@@ -551,11 +459,11 @@ fun SnsLoginScreen(
             textColor = Black,
             text = stringResource(id = R.string.google_login),
             onClick = {
+                viewModel.setActivityContext(context)
                 googleLoginContract.launch(
                     GoogleSignIn.getClient(
                         context,
                         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                            .requestIdToken(context.applicationContext.resources.getString(R.string.google_web_client_id))
                             .requestServerAuthCode(context.applicationContext.resources.getString(R.string.google_web_client_id))
                             .requestEmail()
                             .build()
@@ -589,7 +497,8 @@ fun SnsLoginScreen(
             textColor = White,
             text = stringResource(id = R.string.naver_login),
             onClick = {
-                activity.naverLogin()
+                viewModel.setActivityContext(context)
+                viewModel.onClickNaverLoginButton()
             }
         )
         DrawImageView(
@@ -618,11 +527,8 @@ fun SnsLoginScreen(
             textColor = Black,
             text = stringResource(id = R.string.kakao_login),
             onClick = {
-                if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
-                    UserApiClient.instance.loginWithKakaoTalk(context, callback = viewModel.callback)
-                } else {
-                    UserApiClient.instance.loginWithKakaoAccount(context, callback = viewModel.callback)
-                }
+                viewModel.setActivityContext(context)
+                viewModel.onClickKakaoLoginButton()
             }
         )
         DrawImageView(
@@ -636,57 +542,20 @@ fun SnsLoginScreen(
             drawableId = R.drawable.ic_kakao_logo
         )
     }
-    when (snsLoginState) {
-        is NetworkState.Loading -> {
-            DummyProgress(viewModel = viewModel)
+    if (deviceTokenState.value.goToMainActivity) {
+        Intent(context, MainActivity::class.java).run {
+            context.startActivity(this)
         }
-        is NetworkState.Success<*> -> {
-            viewModel.loginSuccess()
-        }
-        is NetworkState.Fail<*> -> {
-            val response = (snsLoginState as NetworkState.Fail<*>).data as CommonResponse
-            when (response) {
-                CommonResponse.UNKOWN ->
-                    response.errorMessage = stringResource(id = R.string.network_unkown_error)
-            }
-            viewModel.loginFail(response.errorMessage)
-        }
-    }
-    when (loginState) {
-        is LoginState.Success -> {
-            Intent(context, MainActivity::class.java).run {
-                context.startActivity(this)
-            }
-            activity.finish()
-        }
-        is LoginState.Fail -> {
-            Toast.makeText(context, (loginState as LoginState.Fail).errorMessage, Toast.LENGTH_SHORT).show()
+        (context as? Activity)?.finish()
+    } else {
+        if (deviceTokenState.value.errorMesage.isNotEmpty()) {
+            CallToastMessage(context = context, message = deviceTokenState.value.errorMesage)
         }
     }
 }
-
 @Composable
-fun DummyProgress(viewModel: LoginViewModel) {
-    val snsLoginState by viewModel.snsLoginState.observeAsState(NetworkState.Uninitialized)
-
-    if (snsLoginState is NetworkState.Loading) {
-        Dialog(
-            onDismissRequest = { },
-            DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(100.dp)
-                    .background(White, shape = RoundedCornerShape(12.dp))
-            ) {
-                Column {
-                    CircularProgressIndicator(modifier = Modifier.padding(6.dp, 0.dp, 0.dp, 0.dp))
-                    Text(text = "Loading...", Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp))
-                }
-            }
-        }
-    }
+fun CallToastMessage(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
 @Composable

@@ -11,10 +11,8 @@ class GooglePostTokenRepositoryImpl @Inject constructor(
     override suspend fun postGoogleToken(
         clientId: String,
         clientSecret: String,
-        authCode: String,
-        onSuccess: (String) -> Unit,
-        onFail: (Unit) -> Unit
-    ) {
+        authCode: String
+    ): String? {
         val response = googlePostTokenApi.postGoogleToken(
             GooglePostTokenRequestEntity(
                 clientId = clientId,
@@ -27,12 +25,9 @@ class GooglePostTokenRepositoryImpl @Inject constructor(
         if (response.isSuccessful) {
             val accessToken = response.body()?.accessToken
             if (accessToken != null) {
-                onSuccess(accessToken)
-            } else {
-                onFail
+                return accessToken
             }
-        } else {
-            onFail
         }
+        return null
     }
 }
