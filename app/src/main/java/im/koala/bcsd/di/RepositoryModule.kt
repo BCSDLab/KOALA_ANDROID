@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import im.koala.data.api.AuthApi
 import im.koala.data.api.GooglePostTokenApi
 import im.koala.data.api.NoAuthApi
 import im.koala.data.repository.GooglePostTokenRepositoryImpl
@@ -15,6 +16,7 @@ import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.data.repository.remote.UserRemoteDataSourceImpl
 import im.koala.domain.repository.GooglePostTokenRepository
 import im.koala.domain.repository.UserRepository
+import im.koala.domain.usecase.GetKeywordListUseCase
 import im.koala.domain.usecase.GetDeviceTokenUseCase
 import im.koala.domain.usecase.GooglePostAccessTokenUseCase
 import im.koala.domain.usecase.SnsLoginUseCase
@@ -25,9 +27,10 @@ object RepositoryModule {
 
     @Provides
     fun provideUserRemoteDataSource(
-        @NOAUTH noAuthApi: NoAuthApi
+        @NOAUTH noAuthApi: NoAuthApi,
+        @AUTH authApi: AuthApi
     ): UserRemoteDataSource {
-        return UserRemoteDataSourceImpl(noAuthApi)
+        return UserRemoteDataSourceImpl(noAuthApi, authApi)
     }
 
     @Provides
@@ -44,18 +47,32 @@ object RepositoryModule {
     }
 
     @Provides
-    @ViewModelScoped
-    fun provideSnsUseCase(
-        noAuthRepository: UserRepository
-    ): SnsLoginUseCase {
-        return SnsLoginUseCase(noAuthRepository)
-    }
-
-    @Provides
-    fun providerGooglePostAccessTokenRepository(
+    fun provideGooglePostAccessTokenRepository(
         @GOOGLE googlePostTokenApi: GooglePostTokenApi
     ): GooglePostTokenRepository {
         return GooglePostTokenRepositoryImpl(googlePostTokenApi)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideSnsUseCase(
+        userRepository: UserRepository
+    ): SnsLoginUseCase {
+        return SnsLoginUseCase(userRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetKeywordListUseCase(
+        userRepository: UserRepository
+    ): GetKeywordListUseCase {
+        return GetKeywordListUseCase(userRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetDeviceTokenUseCase(): GetDeviceTokenUseCase {
+        return GetDeviceTokenUseCase()
     }
 
     @Provides
@@ -64,11 +81,5 @@ object RepositoryModule {
         googlePostTokenRepository: GooglePostTokenRepository
     ): GooglePostAccessTokenUseCase {
         return GooglePostAccessTokenUseCase(googlePostTokenRepository)
-    }
-
-    @Provides
-    @ViewModelScoped
-    fun provideGetDeviceTokenUseCase(): GetDeviceTokenUseCase {
-        return GetDeviceTokenUseCase()
     }
 }

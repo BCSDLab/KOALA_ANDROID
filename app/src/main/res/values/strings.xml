@@ -97,4 +97,7 @@
     <string name="chatroom">채팅방</string>
     <string name="setting">설정</string>
     <string name="sign_up_input_loading_message">잠시만 기다려 주세요.</string>
+
+    <!-- keyword -->
+    <string name="add_keyword">키워드 추가하기</string>
 </resources>

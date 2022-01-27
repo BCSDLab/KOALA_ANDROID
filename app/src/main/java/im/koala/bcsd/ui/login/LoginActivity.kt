@@ -35,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -50,8 +49,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import dagger.hilt.android.AndroidEntryPoint
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.findid.FindIdActivity
@@ -95,7 +92,7 @@ class LoginActivity : ComponentActivity() {
 @Composable
 fun LoginScreen(context: Context, viewModel: LoginViewModel) {
     val context = LocalContext.current
-    var isNormalLoginState = rememberSaveable { mutableStateOf(true) }
+    var isNormalLoginState = remember { mutableStateOf(true) }
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (logoImageView, loginRowLayout, normalLoginConstraintLyaout) = createRefs()
 
@@ -434,9 +431,7 @@ fun SnsLoginScreen(
     viewModel: LoginViewModel
 ) {
     val deviceTokenState = viewModel.uiState
-    val googleLoginContract = rememberLauncherForActivityResult(contract = GoogleLoginContract(), onResult = {
-        viewModel.googleLogin(it)
-    })
+
     ConstraintLayout(modifier = modifier) {
         val (googleButton, googleIcon, naverButton, naverIcon, kakaoButton, kakaoIcon) = createRefs()
         /*구글버튼*/
@@ -458,18 +453,7 @@ fun SnsLoginScreen(
             backgroundColor = White,
             textColor = Black,
             text = stringResource(id = R.string.google_login),
-            onClick = {
-                viewModel.setActivityContext(context)
-                googleLoginContract.launch(
-                    GoogleSignIn.getClient(
-                        context,
-                        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                            .requestServerAuthCode(context.applicationContext.resources.getString(R.string.google_web_client_id))
-                            .requestEmail()
-                            .build()
-                    )
-                )
-            }
+            onClick = {}
         )
 
         DrawImageView(
@@ -496,10 +480,7 @@ fun SnsLoginScreen(
             backgroundColor = Green,
             textColor = White,
             text = stringResource(id = R.string.naver_login),
-            onClick = {
-                viewModel.setActivityContext(context)
-                viewModel.onClickNaverLoginButton()
-            }
+            onClick = {}
         )
         DrawImageView(
             modifier = Modifier
@@ -542,15 +523,14 @@ fun SnsLoginScreen(
             drawableId = R.drawable.ic_kakao_logo
         )
     }
+    if (deviceTokenState.value.errorMesage.isNotEmpty()) {
+        CallToastMessage(context = context, message = deviceTokenState.value.errorMesage)
+    }
     if (deviceTokenState.value.goToMainActivity) {
         Intent(context, MainActivity::class.java).run {
             context.startActivity(this)
         }
         (context as? Activity)?.finish()
-    } else {
-        if (deviceTokenState.value.errorMesage.isNotEmpty()) {
-            CallToastMessage(context = context, message = deviceTokenState.value.errorMesage)
-        }
     }
 }
 @Composable

@@ -4,6 +4,7 @@ import im.koala.bcsd.state.NetworkState
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.domain.model.CommonResponse
+import im.koala.domain.model.KeywordResponse
 import im.koala.domain.model.TokenResponse
 import im.koala.domain.repository.UserRepository
 import javax.inject.Inject
@@ -29,6 +30,31 @@ class UserRepositoryImpl @Inject constructor(
                 userLocalDataSource.saveToken(this)
                 result = NetworkState.Success(this)
             }
+        } else {
+            CommonResponse.FAIL.apply { errorMessage = response.body()!!.errorMessage }
+                .run { result = NetworkState.Fail(this) }
+        }
+        return result
+    }
+
+    override suspend fun getKeyword(): NetworkState {
+        val response = userRemoteDataSource.getKeyword()
+        var result: NetworkState = NetworkState.Uninitialized
+        if (response.isSuccessful) {
+            val keywordList = mutableListOf<KeywordResponse>()
+            response.body()?.body?.let {
+                it.map {
+                    KeywordResponse(
+                        id = it.id,
+                        name = it.name,
+                        alarmCycle = it.alarmCycle,
+                        noticeNum = it.noticeNum
+                    )
+                }.forEach {
+                    keywordList.add(it)
+                }
+            }
+            result = NetworkState.Success(keywordList)
         } else {
             CommonResponse.FAIL.apply { errorMessage = response.body()!!.errorMessage }
                 .run { result = NetworkState.Fail(this) }

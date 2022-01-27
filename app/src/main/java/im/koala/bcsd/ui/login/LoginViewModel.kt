@@ -71,7 +71,7 @@ class LoginViewModel@Inject constructor(
                         _uiState.value = _uiState.value.copy(goToMainActivity = true)
                     }
                     is NetworkState.Fail<*> -> {
-                        val response = (snsLoginState as NetworkState.Fail<*>).data as CommonResponse
+                        val response = it.data as CommonResponse
                         _uiState.value = _uiState.value.copy(errorMesage = response.errorMessage!!)
                     }
                 }
