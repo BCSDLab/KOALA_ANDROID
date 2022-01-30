@@ -96,7 +96,8 @@ fun KeywordNotices(
     LazyColumn {
         items(
             items = keywordNotices,
-            key = { it.id }) { keywordNotice ->
+            key = { it.id }
+        ) { keywordNotice ->
             KeywordDetailItem(
                 keywordNotice = keywordNotice,
                 onCheckedChange = { isChecked ->
@@ -106,7 +107,6 @@ fun KeywordNotices(
         }
     }
 }
-
 
 @Composable
 private fun KeywordScreenBackgroundButton(

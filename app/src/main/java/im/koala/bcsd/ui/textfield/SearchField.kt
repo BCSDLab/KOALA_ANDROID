@@ -74,7 +74,8 @@ fun KoalaSearchField(
             modifier = Modifier
                 .height(this.maxHeight)
                 .width(this.maxHeight),
-            onClick = { onSearch(text) }) {
+            onClick = { onSearch(text) }
+        ) {
             Icon(
                 modifier = Modifier.size(20.dp),
                 painter = painterResource(id = R.drawable.ic_search_field_search),
@@ -97,7 +98,8 @@ private fun KoalaSearchFieldWithNoInput() {
             text = text.value,
             hint = "알림 대상 / 알림 내용 / 키워드 입력",
             onValueChange = { text.value = it },
-            onSearch = {})
+            onSearch = {}
+        )
     }
 }
 
@@ -114,6 +116,7 @@ private fun KoalaSearchFieldWithInput() {
             text = text.value,
             hint = "알림 대상 / 알림 내용 / 키워드 입력",
             onValueChange = { text.value = it },
-            onSearch = {})
+            onSearch = {}
+        )
     }
 }

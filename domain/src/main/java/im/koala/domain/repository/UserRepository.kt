@@ -2,8 +2,6 @@ package im.koala.domain.repository
 
 import im.koala.bcsd.state.NetworkState
 import im.koala.domain.entity.signup.SignUpResult
-import im.koala.domain.model.CommonResponse
-import im.koala.domain.model.TokenResponse
 
 interface UserRepository {
     suspend fun getKeyword(): NetworkState

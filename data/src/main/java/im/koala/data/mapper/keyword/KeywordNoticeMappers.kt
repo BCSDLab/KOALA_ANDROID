@@ -4,7 +4,7 @@ import im.koala.data.api.response.keyword.KeywordNoticeResponse
 import im.koala.data.mapper.site.toSite
 import im.koala.domain.entity.keyword.KeywordNotice
 
-fun KeywordNoticeResponse.toKeywordNotice() : KeywordNotice {
+fun KeywordNoticeResponse.toKeywordNotice(): KeywordNotice {
     return KeywordNotice(
         id = this.id,
         site = this.site.toSite(),

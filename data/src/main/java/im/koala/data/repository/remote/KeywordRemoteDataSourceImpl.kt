@@ -13,7 +13,7 @@ class KeywordRemoteDataSourceImpl @Inject constructor(
     override suspend fun getKeywordNotices(keyword: String, site: Site?): List<KeywordNotice> {
         return authApi.getKeywordList(
             keywordName = keyword,
-            site = if(site == Site.All) null else site.toString()
+            site = if (site == Site.All) null else site.toString()
         ).map {
             it.toKeywordNotice()
         }

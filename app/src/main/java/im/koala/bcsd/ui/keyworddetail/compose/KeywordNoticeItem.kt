@@ -90,7 +90,8 @@ private fun KeywordDetailItemPreview() {
         Surface {
             KeywordDetailItem(
                 keywordNotice = keywordNotice,
-                onCheckedChange = {})
+                onCheckedChange = {}
+            )
         }
     }
 }
@@ -112,7 +113,8 @@ private fun KeywordDetailItemCheckedPreview() {
         Surface {
             KeywordDetailItem(
                 keywordNotice = keywordNotice,
-                onCheckedChange = {})
+                onCheckedChange = {}
+            )
         }
     }
 }
@@ -134,7 +136,8 @@ private fun KeywordDetailItemReadPreview() {
         Surface {
             KeywordDetailItem(
                 keywordNotice = keywordNotice,
-                onCheckedChange = {})
+                onCheckedChange = {}
+            )
         }
     }
 }
@@ -156,7 +159,8 @@ private fun KeywordDetailItemReadCheckedPreview() {
         Surface {
             KeywordDetailItem(
                 keywordNotice = keywordNotice,
-                onCheckedChange = {})
+                onCheckedChange = {}
+            )
         }
     }
 }

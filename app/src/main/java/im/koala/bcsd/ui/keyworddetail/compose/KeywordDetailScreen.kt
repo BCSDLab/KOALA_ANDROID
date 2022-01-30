@@ -145,11 +145,9 @@ private val fakeRepository = object : KeywordRepository {
     }
 
     override suspend fun keepSelectedKeywordNotices(keywordNotices: List<KeywordNotice>) {
-
     }
 
     override suspend fun removeSelectedKeywordNotices(keywordNotices: List<KeywordNotice>) {
-
     }
 }
 

@@ -28,7 +28,6 @@ class KeywordRepositoryImpl @Inject constructor(
     }
 
     override suspend fun keepSelectedKeywordNotices(keywordNotices: List<KeywordNotice>) {
-
     }
 
     override suspend fun removeSelectedKeywordNotices(keywordNotices: List<KeywordNotice>) {

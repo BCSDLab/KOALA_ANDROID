@@ -119,8 +119,11 @@ private fun DropdownItem(
 @Composable
 fun KeywordDetailPopupMenuPreview() {
     KoalaTheme {
-        val keywordItemReadFilter = rememberSaveable { mutableStateOf<KeywordNoticeReadFilter>(
-            KeywordNoticeReadFilter.None) }
+        val keywordItemReadFilter = rememberSaveable {
+            mutableStateOf<KeywordNoticeReadFilter>(
+                KeywordNoticeReadFilter.None
+            )
+        }
         KeywordDetailPopupMenu(
             expanded = true,
             onDismissRequest = {},

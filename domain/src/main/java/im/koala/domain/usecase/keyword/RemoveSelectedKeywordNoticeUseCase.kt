@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class RemoveSelectedKeywordNoticeUseCase @Inject constructor(
     private val keywordRepository: KeywordRepository
-){
+) {
     suspend operator fun invoke(keywordNotices: List<KeywordNotice>) {
         keywordRepository.removeSelectedKeywordNotices(keywordNotices)
     }

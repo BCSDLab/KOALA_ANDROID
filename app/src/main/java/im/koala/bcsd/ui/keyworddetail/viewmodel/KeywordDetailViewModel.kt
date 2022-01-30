@@ -1,6 +1,5 @@
 package im.koala.bcsd.ui.keyworddetail.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -101,7 +100,7 @@ class KeywordDetailViewModel @Inject constructor(
     fun setCheckState(items: List<KeywordNotice>, isChecked: Boolean) {
         keywordDetailUiState = keywordDetailUiState.copy(
             keywordNotices = keywordDetailUiState.keywordNotices.map {
-                if(items.contains(it)) {
+                if (items.contains(it)) {
                     it.copy(isChecked = isChecked)
                 } else {
                     it

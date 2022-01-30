@@ -48,7 +48,8 @@ fun KeywordDetailTab(
             sitePair.forEach { (site, siteName) ->
                 Tab(
                     selected = site == selectedSite,
-                    onClick = { onTabItemSelected(site) }) {
+                    onClick = { onTabItemSelected(site) }
+                ) {
 
                     Text(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),

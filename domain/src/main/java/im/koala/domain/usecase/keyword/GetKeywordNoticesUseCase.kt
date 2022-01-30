@@ -17,8 +17,8 @@ class GetKeywordNoticesUseCase @Inject constructor(
     ): List<KeywordNotice> {
         val keywordNotices = keywordRepository.getKeywordNotices(
             keyword = keyword,
-            search = if(search.isBlank()) null else search,
-            site = if(site == Site.All) null else site
+            search = if (search.isBlank()) null else search,
+            site = if (site == Site.All) null else site
         ).filter {
             when (keywordNoticeReadFilter) {
                 KeywordNoticeReadFilter.None -> true

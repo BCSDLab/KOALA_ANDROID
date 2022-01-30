@@ -1,7 +1,7 @@
 package im.koala.bcsd.util
 
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 const val DATE_FORMAT_KEYWORD_DETAIL_ITEMS = "M/d - HH:mm"
 
