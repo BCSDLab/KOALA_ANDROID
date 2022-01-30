@@ -1,6 +1,8 @@
 package im.koala.data.repository.remote
 
+import im.koala.data.api.AuthApi
 import im.koala.data.api.NoAuthApi
+
 import im.koala.data.api.request.signup.SignUpRequest
 import im.koala.data.api.response.toErrorResponse
 import im.koala.data.constant.KOALA_API_ERROR_CODE_DUPLICATED_EMAIL
@@ -9,6 +11,7 @@ import im.koala.data.constant.KOALA_API_ERROR_CODE_DUPLICATED_NICKNAME
 import im.koala.data.constant.KOALA_API_SIGN_UP_CHECK_EMAIL_OK_MESSAGE
 import im.koala.data.constant.KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE
 import im.koala.data.constant.KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE
+import im.koala.data.entity.KeywordBodyEntity
 import im.koala.data.entity.TokenBodyEntity
 import im.koala.data.mapper.signup.toSignUpResult
 import im.koala.domain.entity.signup.SignUpResult
@@ -18,14 +21,24 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class UserRemoteDataSourceImpl @Inject constructor(
-    private val noAuthApi: NoAuthApi
+    private val noAuthApi: NoAuthApi,
+    private val authApi: AuthApi
 ) : UserRemoteDataSource {
 
     override suspend fun postSnsLogin(
         snsType: String,
-        accessToken: String
+        accessToken: String,
+        deviceToken: String
     ): Response<TokenBodyEntity> {
-        return noAuthApi.postSnsLogin(snsType = snsType, accessToken = accessToken)
+        return noAuthApi.postSnsLogin(
+            snsType = snsType,
+            accessToken = accessToken,
+            deviceToken = deviceToken
+        )
+    }
+
+    override suspend fun getKeyword(): Response<KeywordBodyEntity> {
+        return authApi.getKeyword()
     }
 
     override suspend fun checkIdIsAvailable(id: String): Boolean {

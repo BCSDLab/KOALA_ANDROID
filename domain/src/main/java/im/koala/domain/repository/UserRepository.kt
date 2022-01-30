@@ -1,11 +1,13 @@
 package im.koala.domain.repository
 
+import im.koala.bcsd.state.NetworkState
 import im.koala.domain.entity.signup.SignUpResult
 import im.koala.domain.model.CommonResponse
 import im.koala.domain.model.TokenResponse
 
 interface UserRepository {
-    suspend fun postSnsLogin(snsType: String, accessToken: String, onSuccess: (TokenResponse) -> Unit, onFail: (CommonResponse) -> Unit)
+    suspend fun getKeyword(): NetworkState
+    suspend fun postSnsLogin(snsType: String, accessToken: String, deviceToken: String): NetworkState
 
     /**
      * @return true if id is duplicated, false if id is not duplicated

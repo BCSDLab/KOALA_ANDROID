@@ -1,18 +1,3 @@
-/*
- * Designed and developed by 2021 skydoves (Jaewoong Eum)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package im.koala.bcsd.ui.main
 import androidx.compose.foundation.layout.padding
@@ -31,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsPadding
-import im.koala.bcsd.ui.appbar.KoalaAppBar
 import im.koala.bcsd.ui.chatroom.ChatRoomScreen
 import im.koala.bcsd.ui.history.HistoryScreen
 import im.koala.bcsd.ui.keyword.KeywordScreen
@@ -41,14 +25,13 @@ import androidx.compose.animation.Crossfade
 fun HomeTabScreen(
     viewModel: MainViewModel,
     tabStateHolder: HomeTabStateHolder,
-    selectItem: (MainScreenBottomTab, Long) -> Unit
+    selectItem: (MainScreenBottomTab, Int) -> Unit
 ) {
     val selectedTab by viewModel.selectedTab
     val tabs = MainScreenBottomTab.values()
 
     Scaffold(
         backgroundColor = MaterialTheme.colors.primarySurface,
-        topBar = { KoalaAppBar() },
         bottomBar = {
 
             BottomNavigation(
@@ -58,6 +41,9 @@ fun HomeTabScreen(
             ) {
 
                 tabs.forEach { tab ->
+                    when (tab) {
+                        MainScreenBottomTab.KEYWORD -> { viewModel.executeGetKeywordList() }
+                    }
                     BottomNavigationItem(
                         icon = {
                             Icon(
@@ -81,7 +67,7 @@ fun HomeTabScreen(
         Crossfade(selectedTab) { destination ->
             when (destination) {
                 MainScreenBottomTab.KEYWORD -> KeywordScreen(
-                    modifier
+                    modifier, tabStateHolder.keywordLazyListState, viewModel, selectItem
                 )
                 MainScreenBottomTab.HISTORY -> HistoryScreen(
                     modifier

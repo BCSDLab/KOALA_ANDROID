@@ -5,12 +5,18 @@ import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE_READING_CHECK
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_SEARCH
+import im.koala.data.constants.KEYWORD
 import im.koala.data.entity.CommonEntity
+import im.koala.data.entity.KeywordBodyEntity
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.Query
 
 interface AuthApi {
+    @GET(KEYWORD)
+    suspend fun getKeyword(): Response<KeywordBodyEntity>
+
     @GET(KOALA_API_URL_KEYWORD_LIST)
     suspend fun getKeywordList(
         @Query("keyword-name") keywordName: String,
