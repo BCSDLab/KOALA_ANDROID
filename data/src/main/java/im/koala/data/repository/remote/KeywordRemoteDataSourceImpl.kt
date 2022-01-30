@@ -10,16 +10,20 @@ class KeywordRemoteDataSourceImpl @Inject constructor(
     private val authApi: AuthApi
 ) : KeywordRemoteDataSource {
 
-    override fun getKeywordNotices(keyword: String, site: Site?): List<KeywordNotice> {
+    override suspend fun getKeywordNotices(keyword: String, site: Site?): List<KeywordNotice> {
         return authApi.getKeywordList(
             keywordName = keyword,
-            site = site.toString()
+            site = if(site == Site.All) null else site.toString()
         ).map {
             it.toKeywordNotice()
         }
     }
 
-    override fun searchKeywordNotices(search: String, keyword: String, site: Site?): List<KeywordNotice> {
+    override suspend fun searchKeywordNotices(
+        search: String,
+        keyword: String,
+        site: Site?
+    ): List<KeywordNotice> {
         return authApi.searchKeywordList(
             search = search,
             keywordName = keyword,
@@ -29,7 +33,7 @@ class KeywordRemoteDataSourceImpl @Inject constructor(
         }
     }
 
-    override fun removeKeywordNotices(keywordNotices: List<KeywordNotice>) {
+    override suspend fun removeKeywordNotices(keywordNotices: List<KeywordNotice>) {
         authApi.removeKeywordNotice(keywordNotices.map { it.id })
     }
 }

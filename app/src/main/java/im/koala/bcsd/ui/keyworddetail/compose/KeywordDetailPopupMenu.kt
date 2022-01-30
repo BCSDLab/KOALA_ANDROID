@@ -1,4 +1,4 @@
-package im.koala.bcsd.ui.keyworddetail
+package im.koala.bcsd.ui.keyworddetail.compose
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -119,7 +119,8 @@ private fun DropdownItem(
 @Composable
 fun KeywordDetailPopupMenuPreview() {
     KoalaTheme {
-        val keywordItemReadFilter = rememberSaveable { mutableStateOf<KeywordNoticeReadFilter>(KeywordNoticeReadFilter.None) }
+        val keywordItemReadFilter = rememberSaveable { mutableStateOf<KeywordNoticeReadFilter>(
+            KeywordNoticeReadFilter.None) }
         KeywordDetailPopupMenu(
             expanded = true,
             onDismissRequest = {},

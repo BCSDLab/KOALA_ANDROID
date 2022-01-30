@@ -7,5 +7,5 @@ data class KeywordNotice(
     val url: String,
     val createdAt: String,
     val isRead: Boolean,
-    val isChecked: Boolean = false
+    val isChecked: Boolean
 )

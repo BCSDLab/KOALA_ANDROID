@@ -1,32 +1,31 @@
-package im.koala.bcsd.ui.keyworddetail
+package im.koala.bcsd.ui.keyworddetail.compose
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import im.koala.bcsd.ui.theme.GrayBorder
-import im.koala.bcsd.ui.theme.KoalaTheme
+import im.koala.domain.entity.keyword.Site
 
 @Composable
 fun KeywordDetailTab(
     modifier: Modifier = Modifier,
-    tabItem: Collection<String>,
-    selectedTabIndex: Int = 0,
-    onTabItemSelected: (index: Int, item: String) -> Unit
+    sitePair: List<Pair<Site, String>>,
+    selectedSite: Site = Site.All,
+    onTabItemSelected: (item: Site) -> Unit
 ) {
+    val sites = sitePair.map { it.first }
+    val siteNames = sitePair.map { it.second }
+
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.BottomStart
@@ -39,49 +38,27 @@ fun KeywordDetailTab(
 
         ScrollableTabRowWithMinTabWidth(
             modifier = modifier.fillMaxWidth(),
-            selectedTabIndex = selectedTabIndex,
+            selectedTabIndex = sites.indexOf(selectedSite),
             edgePadding = 8.dp,
             backgroundColor = Color.Transparent,
             divider = {
                 TabRowDefaults.Divider(thickness = 0.dp)
             }
         ) {
-            tabItem.forEachIndexed { index, string ->
+            sitePair.forEach { (site, siteName) ->
                 Tab(
-                    selected = index == selectedTabIndex,
-                    onClick = { onTabItemSelected(index, string) }) {
+                    selected = site == selectedSite,
+                    onClick = { onTabItemSelected(site) }) {
 
                     Text(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
-                        text = string,
+                        text = siteName,
                         style = MaterialTheme.typography.body1,
                         color = MaterialTheme.colors.onPrimary,
-                        fontWeight = if (index == selectedTabIndex) FontWeight.Bold else FontWeight.Normal
+                        fontWeight = if (site == selectedSite) FontWeight.Bold else FontWeight.Normal
                     )
                 }
             }
-        }
-
-    }
-}
-
-
-@Preview
-@Composable
-private fun KeywordDetailTabPreview() {
-    val tabs = listOf("전체", "아우누리", "아우미르", "대신 전해드립니다-Koratech")
-    val selectedTabPosition = rememberSaveable { mutableStateOf(0) }
-
-    KoalaTheme {
-        Surface {
-            KeywordDetailTab(
-                modifier = Modifier.fillMaxWidth(),
-                tabItem = tabs,
-                selectedTabIndex = selectedTabPosition.value,
-                onTabItemSelected = { index, item ->
-                    selectedTabPosition.value = index
-                }
-            )
         }
     }
 }

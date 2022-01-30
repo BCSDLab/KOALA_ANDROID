@@ -1,4 +1,4 @@
-package im.koala.bcsd.ui.keyworddetail
+package im.koala.bcsd.ui.keyworddetail.compose
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,8 +9,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -19,16 +17,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import im.koala.bcsd.ui.button.KoalaCheckBox
 import im.koala.bcsd.ui.theme.KoalaTheme
+import im.koala.bcsd.util.compose.LocalizedMessage
 import im.koala.bcsd.util.toFormattedDate
+import im.koala.domain.entity.keyword.KeywordNotice
+import im.koala.domain.entity.keyword.Site
 
 @Composable
 fun KeywordDetailItem(
     modifier: Modifier = Modifier,
-    title: String,
-    content: String,
-    date: String,
-    isChecked: Boolean = false,
-    isRead: Boolean = false,
+    keywordNotice: KeywordNotice,
     onCheckedChange: (checked: Boolean) -> Unit
 ) {
     Row(
@@ -36,7 +33,7 @@ fun KeywordDetailItem(
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        KoalaCheckBox(checked = isChecked, onCheckedChange = onCheckedChange)
+        KoalaCheckBox(checked = keywordNotice.isChecked, onCheckedChange = onCheckedChange)
         Column {
             Row(
                 Modifier
@@ -49,14 +46,14 @@ fun KeywordDetailItem(
                     modifier = Modifier
                         .weight(1f)
                         .alignByBaseline(),
-                    text = title,
-                    color = if(isRead) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onBackground,
+                    text = keywordNotice.site.LocalizedMessage(),
+                    color = if (keywordNotice.isRead) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onBackground,
                     style = MaterialTheme.typography.body1
                 )
                 Text(
                     modifier = Modifier
                         .alignByBaseline(),
-                    text = date,
+                    text = keywordNotice.createdAt,
                     style = MaterialTheme.typography.caption,
                     fontSize = 11.sp,
                     color = MaterialTheme.colors.onBackground
@@ -66,9 +63,9 @@ fun KeywordDetailItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, start = 8.dp, end = 8.dp),
-                text = content,
+                text = keywordNotice.title,
                 style = MaterialTheme.typography.body2,
-                color = if(isRead) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onBackground,
+                color = if (keywordNotice.isRead) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onBackground,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -79,18 +76,21 @@ fun KeywordDetailItem(
 @Preview("Keyword detail item")
 @Composable
 private fun KeywordDetailItemPreview() {
-    val checked = rememberSaveable { mutableStateOf(false) }
+    val keywordNotice = KeywordNotice(
+        id = 1,
+        site = Site.Portal,
+        title = "test is skybodakoreatech ibnidatest is skybodakoreatech ibnidatest is skybodakoreatech ibnida",
+        createdAt = System.currentTimeMillis().toFormattedDate("YYYY-MM-DD"),
+        url = "",
+        isChecked = false,
+        isRead = false
+    )
 
     KoalaTheme {
         Surface {
             KeywordDetailItem(
-                title = "test",
-                content = "test is skybodakoreatech ibnidatest is skybodakoreatech ibnidatest is skybodakoreatech ibnida",
-                date = System.currentTimeMillis().toFormattedDate("YYYY-MM-DD"),
-                isChecked = checked.value,
-                onCheckedChange = {
-                    checked.value = it
-                })
+                keywordNotice = keywordNotice,
+                onCheckedChange = {})
         }
     }
 }
@@ -98,13 +98,20 @@ private fun KeywordDetailItemPreview() {
 @Preview("Keyword detail item(checked)")
 @Composable
 private fun KeywordDetailItemCheckedPreview() {
+    val keywordNotice = KeywordNotice(
+        id = 1,
+        site = Site.Portal,
+        title = "test is skybodakoreatech ibnidatest is skybodakoreatech ibnidatest is skybodakoreatech ibnida",
+        createdAt = System.currentTimeMillis().toFormattedDate("YYYY-MM-DD"),
+        url = "",
+        isChecked = false,
+        isRead = false
+    )
+
     KoalaTheme {
         Surface {
             KeywordDetailItem(
-                title = "test",
-                content = "test is skybodakoreatech ibnidatest is skybodakoreatech ibnidatest is skybodakoreatech ibnida",
-                date = System.currentTimeMillis().toFormattedDate("YYYY-MM-DD"),
-                isChecked = true,
+                keywordNotice = keywordNotice,
                 onCheckedChange = {})
         }
     }
@@ -113,13 +120,20 @@ private fun KeywordDetailItemCheckedPreview() {
 @Preview("Keyword detail item(read)")
 @Composable
 private fun KeywordDetailItemReadPreview() {
+    val keywordNotice = KeywordNotice(
+        id = 1,
+        site = Site.Portal,
+        title = "test is skybodakoreatech ibnidatest is skybodakoreatech ibnidatest is skybodakoreatech ibnida",
+        createdAt = System.currentTimeMillis().toFormattedDate("YYYY-MM-DD"),
+        url = "",
+        isRead = true,
+        isChecked = false
+    )
+
     KoalaTheme {
         Surface {
             KeywordDetailItem(
-                title = "test",
-                content = "test is skybodakoreatech ibnidatest is skybodakoreatech ibnidatest is skybodakoreatech ibnida",
-                date = System.currentTimeMillis().toFormattedDate("YYYY-MM-DD"),
-                isRead = true,
+                keywordNotice = keywordNotice,
                 onCheckedChange = {})
         }
     }
@@ -128,14 +142,20 @@ private fun KeywordDetailItemReadPreview() {
 @Preview("Keyword detail item(read, checked)")
 @Composable
 private fun KeywordDetailItemReadCheckedPreview() {
+    val keywordNotice = KeywordNotice(
+        id = 1,
+        site = Site.Portal,
+        title = "test is skybodakoreatech ibnidatest is skybodakoreatech ibnidatest is skybodakoreatech ibnida",
+        createdAt = System.currentTimeMillis().toFormattedDate("YYYY-MM-DD"),
+        url = "",
+        isChecked = false,
+        isRead = true
+    )
+
     KoalaTheme {
         Surface {
             KeywordDetailItem(
-                title = "test",
-                content = "test is skybodakoreatech ibnidatest is skybodakoreatech ibnidatest is skybodakoreatech ibnida",
-                date = System.currentTimeMillis().toFormattedDate("YYYY-MM-DD"),
-                isChecked = true,
-                isRead = true,
+                keywordNotice = keywordNotice,
                 onCheckedChange = {})
         }
     }

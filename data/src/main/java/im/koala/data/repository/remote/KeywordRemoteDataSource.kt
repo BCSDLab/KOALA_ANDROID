@@ -5,18 +5,18 @@ import im.koala.domain.entity.keyword.Site
 
 interface KeywordRemoteDataSource {
 
-    fun getKeywordNotices(
+    suspend fun getKeywordNotices(
         keyword: String,
         site: Site? = null
     ): List<KeywordNotice>
 
-    fun searchKeywordNotices(
+    suspend fun searchKeywordNotices(
         search: String,
         keyword: String,
         site: Site? = null
     ): List<KeywordNotice>
 
-    fun removeKeywordNotices(
+    suspend fun removeKeywordNotices(
         keywordNotices: List<KeywordNotice>
     )
 }

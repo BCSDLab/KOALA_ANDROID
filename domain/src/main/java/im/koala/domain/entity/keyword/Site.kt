@@ -1,8 +1,8 @@
 package im.koala.domain.entity.keyword
 
 sealed class Site(
-    private val siteId: Int,
-    private val name: String
+    val siteId: Int,
+    val name: String
 ) {
     override fun equals(other: Any?): Boolean {
         if(other !is Site) return false

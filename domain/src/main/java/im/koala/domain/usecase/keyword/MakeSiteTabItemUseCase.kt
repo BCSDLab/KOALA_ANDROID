@@ -8,11 +8,14 @@ import javax.inject.Inject
 class MakeSiteTabItemUseCase @Inject constructor(
     private val keywordRepository: KeywordRepository
 ) {
-    operator fun invoke(keywordNotices: List<KeywordNotice>): Map<Site, String> {
-        return keywordNotices
-            .map { it.site }
-            .toSet()
-            .map { it to keywordRepository.getSiteLocalizedMessage(it) }
-            .toMap()
+    operator fun invoke(keywordNotices: List<KeywordNotice>): List<Pair<Site, String>> {
+        return listOf(
+            Site.All,
+            Site.Portal,
+            Site.Dorm,
+            Site.Youtube,
+            Site.Facebook,
+            Site.Instagram
+        ).map { it to keywordRepository.getSiteLocalizedMessage(it) }
     }
 }

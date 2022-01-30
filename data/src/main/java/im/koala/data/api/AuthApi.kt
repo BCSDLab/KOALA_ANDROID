@@ -12,25 +12,25 @@ import retrofit2.http.Query
 
 interface AuthApi {
     @GET(KOALA_API_URL_KEYWORD_LIST)
-    fun getKeywordList(
+    suspend fun getKeywordList(
         @Query("keyword-name") keywordName: String,
         @Query("site") site: String? = null
     ): List<KeywordNoticeResponse>
 
     @GET(KOALA_API_URL_KEYWORD_LIST_SEARCH)
-    fun searchKeywordList(
+    suspend fun searchKeywordList(
         @Query("word") search: String,
         @Query("keyword-name") keywordName: String,
         @Query("site") site: String? = null
     ): List<KeywordNoticeResponse>
 
     @PATCH(KOALA_API_URL_KEYWORD_LIST_NOTICE)
-    fun removeKeywordNotice(
+    suspend fun removeKeywordNotice(
         @Query("notice-id") noticeIds: List<Int>
     ): CommonEntity
 
     @PATCH(KOALA_API_URL_KEYWORD_LIST_NOTICE_READING_CHECK)
-    fun markAsReadKeywordNotice(
+    suspend fun markAsReadKeywordNotice(
         @Query("notice-id") noticeId: Int
     ): CommonEntity
 }

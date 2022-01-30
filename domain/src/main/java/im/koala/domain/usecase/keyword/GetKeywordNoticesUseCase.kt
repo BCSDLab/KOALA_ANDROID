@@ -9,21 +9,24 @@ import javax.inject.Inject
 class GetKeywordNoticesUseCase @Inject constructor(
     private val keywordRepository: KeywordRepository
 ) {
-    operator fun invoke(
+    suspend operator fun invoke(
         keyword: String,
         search: String = "",
         site: Site = Site.All,
         keywordNoticeReadFilter: KeywordNoticeReadFilter = KeywordNoticeReadFilter.None
     ): List<KeywordNotice> {
-        val searchWord = if(search.isBlank()) null else search
-        val keywordNotices = keywordRepository.getKeywordNotices(keyword, searchWord, site)
-
-        return keywordNotices.filter {
+        val keywordNotices = keywordRepository.getKeywordNotices(
+            keyword = keyword,
+            search = if(search.isBlank()) null else search,
+            site = if(site == Site.All) null else site
+        ).filter {
             when (keywordNoticeReadFilter) {
                 KeywordNoticeReadFilter.None -> true
                 KeywordNoticeReadFilter.ShowOnlyReadNotice -> it.isRead
                 KeywordNoticeReadFilter.ShowOnlyUnreadNotice -> !it.isRead
             }
         }
+
+        return keywordNotices
     }
 }

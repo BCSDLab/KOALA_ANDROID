@@ -1,6 +1,6 @@
 package im.koala.domain.usecase.signup
 
-import im.koala.domain.repository.SignUpRepository
+import im.koala.domain.repository.UserRepository
 import im.koala.domain.util.checknickname.NicknameCheckResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -18,7 +18,7 @@ import org.mockito.kotlin.whenever
 class SignUpCheckNicknameUseCaseTest {
 
     @Mock
-    private lateinit var signUpRepository: SignUpRepository
+    private lateinit var signUpRepository: UserRepository
 
     @InjectMocks
     private lateinit var signUpCheckNicknameUseCase: SignUpCheckNicknameUseCase

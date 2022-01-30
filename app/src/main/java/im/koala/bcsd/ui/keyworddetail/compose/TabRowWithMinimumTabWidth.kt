@@ -1,4 +1,4 @@
-package im.koala.bcsd.ui.keyworddetail
+package im.koala.bcsd.ui.keyworddetail.compose
 
 /*
  * Copyright 2020 The Android Open Source Project
@@ -53,7 +53,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMap
-import im.koala.bcsd.ui.keyworddetail.TabRowDefaults.tabIndicatorOffset
+import im.koala.bcsd.ui.keyworddetail.compose.TabRowDefaults.tabIndicatorOffset
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

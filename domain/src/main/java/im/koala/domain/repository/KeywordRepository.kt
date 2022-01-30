@@ -4,7 +4,7 @@ import im.koala.domain.entity.keyword.KeywordNotice
 import im.koala.domain.entity.keyword.Site
 
 interface KeywordRepository {
-    fun getKeywordNotices(
+    suspend fun getKeywordNotices(
         keyword: String,
         search: String? = null,
         site: Site? = null
@@ -14,11 +14,11 @@ interface KeywordRepository {
         site: Site
     ): String
 
-    fun keepSelectedKeywordNotices(
+    suspend fun keepSelectedKeywordNotices(
         keywordNotices: List<KeywordNotice>
     )
 
-    fun removeSelectedKeywordNotices(
+    suspend fun removeSelectedKeywordNotices(
         keywordNotices: List<KeywordNotice>
     )
 }
