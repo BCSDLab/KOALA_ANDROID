@@ -36,4 +36,8 @@ class KeywordRemoteDataSourceImpl @Inject constructor(
     override suspend fun removeKeywordNotices(keywordNotices: List<KeywordNotice>) {
         authApi.removeKeywordNotice(keywordNotices.map { it.id })
     }
+
+    override suspend fun markAsReadKeywordNotice(keywordNotice: KeywordNotice) {
+        authApi.markAsReadKeywordNotice(keywordNotice.id)
+    }
 }

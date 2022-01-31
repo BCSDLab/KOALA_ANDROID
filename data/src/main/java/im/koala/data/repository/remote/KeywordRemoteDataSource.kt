@@ -19,4 +19,8 @@ interface KeywordRemoteDataSource {
     suspend fun removeKeywordNotices(
         keywordNotices: List<KeywordNotice>
     )
+
+    suspend fun markAsReadKeywordNotice(
+        keywordNotice: KeywordNotice
+    )
 }

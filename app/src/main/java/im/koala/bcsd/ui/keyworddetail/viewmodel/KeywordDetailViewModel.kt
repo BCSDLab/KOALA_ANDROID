@@ -13,6 +13,7 @@ import im.koala.domain.entity.keyword.Site
 import im.koala.domain.usecase.keyword.GetKeywordNoticesUseCase
 import im.koala.domain.usecase.keyword.KeepSelectedKeywordNoticeUseCase
 import im.koala.domain.usecase.keyword.MakeSiteTabItemUseCase
+import im.koala.domain.usecase.keyword.MarkAsReadKeywordNoticeUseCase
 import im.koala.domain.usecase.keyword.RemoveSelectedKeywordNoticeUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -23,7 +24,8 @@ class KeywordDetailViewModel @Inject constructor(
     private val getKeywordNoticesUseCase: GetKeywordNoticesUseCase,
     private val makeSiteTabItemUseCase: MakeSiteTabItemUseCase,
     private val keepSelectedKeywordNoticeUseCase: KeepSelectedKeywordNoticeUseCase,
-    private val removeSelectedKeywordNoticeUseCase: RemoveSelectedKeywordNoticeUseCase
+    private val removeSelectedKeywordNoticeUseCase: RemoveSelectedKeywordNoticeUseCase,
+    private val markAsReadKeywordNoticeUseCase: MarkAsReadKeywordNoticeUseCase
 ) : BaseViewModel() {
     var job: Job? = null
 
@@ -128,6 +130,19 @@ class KeywordDetailViewModel @Inject constructor(
             withLoading {
                 removeSelectedKeywordNoticeUseCase(
                     keywordNotices
+                )
+                fetchKeywordNotices(keyword = keywordDetailUiState.keyword)
+            }
+        }
+    }
+
+    fun markAsReadKeywordNotice(keywordNotice: KeywordNotice) {
+
+        job?.cancel()
+        job = viewModelScope.launch(vmExceptionHandler) {
+            withLoading {
+                markAsReadKeywordNoticeUseCase(
+                    keywordNotice
                 )
                 fetchKeywordNotices(keyword = keywordDetailUiState.keyword)
             }

@@ -21,4 +21,8 @@ interface KeywordRepository {
     suspend fun removeSelectedKeywordNotices(
         keywordNotices: List<KeywordNotice>
     )
+
+    suspend fun markAsReadKeywordNotice(
+        keywordNotice: KeywordNotice
+    )
 }

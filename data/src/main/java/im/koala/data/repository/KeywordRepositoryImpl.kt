@@ -33,4 +33,8 @@ class KeywordRepositoryImpl @Inject constructor(
     override suspend fun removeSelectedKeywordNotices(keywordNotices: List<KeywordNotice>) {
         keywordRemoteDataSource.removeKeywordNotices(keywordNotices)
     }
+
+    override suspend fun markAsReadKeywordNotice(keywordNotice: KeywordNotice) {
+        keywordRemoteDataSource.markAsReadKeywordNotice(keywordNotice)
+    }
 }

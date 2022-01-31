@@ -26,6 +26,7 @@ import im.koala.domain.repository.KeywordRepository
 import im.koala.domain.usecase.keyword.GetKeywordNoticesUseCase
 import im.koala.domain.usecase.keyword.KeepSelectedKeywordNoticeUseCase
 import im.koala.domain.usecase.keyword.MakeSiteTabItemUseCase
+import im.koala.domain.usecase.keyword.MarkAsReadKeywordNoticeUseCase
 import im.koala.domain.usecase.keyword.RemoveSelectedKeywordNoticeUseCase
 
 @Composable
@@ -89,6 +90,9 @@ fun KeywordDetailScreen(
                 keywordNotices = keywordDetailViewModel.keywordDetailUiState.keywordNotices,
                 keywordNoticeReadFilter = keywordDetailViewModel.keywordDetailUiState.keywordNoticeReadFilter,
                 onKeywordNoticeReadFilterChanged = keywordDetailViewModel::setKeywordNoticeReadFilter,
+                onKeywordNoticeClicked = { keywordNotice ->
+                    keywordDetailViewModel.markAsReadKeywordNotice(keywordNotice)
+                },
                 onCheckedChange = keywordDetailViewModel::setCheckState,
                 onKeepButtonClicked = keywordDetailViewModel::keepSelectedKeywordDetailItem,
                 onRemoveButtonClicked = keywordDetailViewModel::removeSelectedKeywordDetailItem
@@ -99,28 +103,24 @@ fun KeywordDetailScreen(
 
 private val fakeRepository = object : KeywordRepository {
 
+    private val sites = arrayOf(Site.Dorm, Site.Facebook, Site.Instagram, Site.Portal, Site.Youtube)
+    val list: MutableList<KeywordNotice> = (1..20).map {
+        KeywordNotice(
+            id = it,
+            site = sites[it % sites.size],
+            title = "Keyword #$it",
+            url = "",
+            createdAt = "2022-01-${String.format("%02d", it)}",
+            isRead = it % 2 == 0,
+            isChecked = false
+        )
+    }.toMutableList()
+
     override suspend fun getKeywordNotices(
         keyword: String,
         search: String?,
         site: Site?
     ): List<KeywordNotice> {
-        val list = mutableListOf<KeywordNotice>()
-        val sites = arrayOf(Site.Dorm, Site.Facebook, Site.Instagram, Site.Portal, Site.Youtube)
-
-        (1..20).forEach {
-            list.add(
-                KeywordNotice(
-                    id = it,
-                    site = sites[it % sites.size],
-                    title = "Keyword #$it",
-                    url = "",
-                    createdAt = "2022-01-${String.format("%02d", it)}",
-                    isRead = it % 2 == 0,
-                    isChecked = false
-                )
-            )
-        }
-
         return list.filter {
             if (search == null) {
                 true
@@ -148,6 +148,17 @@ private val fakeRepository = object : KeywordRepository {
     }
 
     override suspend fun removeSelectedKeywordNotices(keywordNotices: List<KeywordNotice>) {
+        val ids = keywordNotices.map { it.id }
+        val newList = list.filter {
+            !ids.contains(it.id)
+        }
+
+        list.clear()
+        list.addAll(newList)
+    }
+
+    override suspend fun markAsReadKeywordNotice(keywordNotice: KeywordNotice) {
+        list[list.indexOf(keywordNotice)] = keywordNotice.copy(isRead = true)
     }
 }
 
@@ -155,7 +166,8 @@ private val keywordDetailViewModel = KeywordDetailViewModel(
     GetKeywordNoticesUseCase(fakeRepository),
     MakeSiteTabItemUseCase(fakeRepository),
     KeepSelectedKeywordNoticeUseCase(fakeRepository),
-    RemoveSelectedKeywordNoticeUseCase(fakeRepository)
+    RemoveSelectedKeywordNoticeUseCase(fakeRepository),
+    MarkAsReadKeywordNoticeUseCase(fakeRepository)
 ).apply {
     updateKeywordNotices("test")
 }

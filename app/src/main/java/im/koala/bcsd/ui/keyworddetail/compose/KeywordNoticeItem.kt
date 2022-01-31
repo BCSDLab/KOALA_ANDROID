@@ -1,5 +1,6 @@
 package im.koala.bcsd.ui.keyworddetail.compose
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,11 +27,15 @@ import im.koala.domain.entity.keyword.Site
 fun KeywordDetailItem(
     modifier: Modifier = Modifier,
     keywordNotice: KeywordNotice,
-    onCheckedChange: (checked: Boolean) -> Unit
+    onCheckedChange: (checked: Boolean) -> Unit,
+    onItemClick: (KeywordNotice) -> Unit
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable {
+                onItemClick(keywordNotice)
+            }
             .padding(16.dp)
     ) {
         KoalaCheckBox(checked = keywordNotice.isChecked, onCheckedChange = onCheckedChange)
@@ -90,7 +95,8 @@ private fun KeywordDetailItemPreview() {
         Surface {
             KeywordDetailItem(
                 keywordNotice = keywordNotice,
-                onCheckedChange = {}
+                onCheckedChange = {},
+                onItemClick = {}
             )
         }
     }
@@ -113,7 +119,8 @@ private fun KeywordDetailItemCheckedPreview() {
         Surface {
             KeywordDetailItem(
                 keywordNotice = keywordNotice,
-                onCheckedChange = {}
+                onCheckedChange = {},
+                onItemClick = {}
             )
         }
     }
@@ -136,7 +143,8 @@ private fun KeywordDetailItemReadPreview() {
         Surface {
             KeywordDetailItem(
                 keywordNotice = keywordNotice,
-                onCheckedChange = {}
+                onCheckedChange = {},
+                onItemClick = {}
             )
         }
     }
@@ -159,7 +167,8 @@ private fun KeywordDetailItemReadCheckedPreview() {
         Surface {
             KeywordDetailItem(
                 keywordNotice = keywordNotice,
-                onCheckedChange = {}
+                onCheckedChange = {},
+                onItemClick = {}
             )
         }
     }

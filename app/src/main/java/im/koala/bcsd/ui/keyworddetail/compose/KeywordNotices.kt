@@ -30,6 +30,7 @@ fun KeywordNotices(
     keywordNotices: List<KeywordNotice>,
     keywordNoticeReadFilter: KeywordNoticeReadFilter,
     onKeywordNoticeReadFilterChanged: (KeywordNoticeReadFilter) -> Unit,
+    onKeywordNoticeClicked: (KeywordNotice) -> Unit,
     onCheckedChange: (List<KeywordNotice>, Boolean) -> Unit,
     onKeepButtonClicked: (List<KeywordNotice>) -> Unit,
     onRemoveButtonClicked: (List<KeywordNotice>) -> Unit
@@ -102,7 +103,8 @@ fun KeywordNotices(
                 keywordNotice = keywordNotice,
                 onCheckedChange = { isChecked ->
                     onCheckedChange(listOf(keywordNotice), isChecked)
-                }
+                },
+                onItemClick = onKeywordNoticeClicked
             )
         }
     }
