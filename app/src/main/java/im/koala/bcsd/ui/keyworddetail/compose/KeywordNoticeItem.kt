@@ -47,7 +47,7 @@ fun KeywordDetailItem(
                         .weight(1f)
                         .alignByBaseline(),
                     text = keywordNotice.site.LocalizedMessage(),
-                    color = if (keywordNotice.isRead) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onBackground,
+                    color = if (!keywordNotice.isRead) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onBackground,
                     style = MaterialTheme.typography.body1
                 )
                 Text(
@@ -65,7 +65,7 @@ fun KeywordDetailItem(
                     .padding(top = 8.dp, start = 8.dp, end = 8.dp),
                 text = keywordNotice.title,
                 style = MaterialTheme.typography.body2,
-                color = if (keywordNotice.isRead) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onBackground,
+                color = if (!keywordNotice.isRead) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onBackground,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
