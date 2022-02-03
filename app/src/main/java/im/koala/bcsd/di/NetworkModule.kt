@@ -62,8 +62,6 @@ object NetworkModule {
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
     annotation class REFRESH_AUTH
-
-
      */
 
     @AUTH

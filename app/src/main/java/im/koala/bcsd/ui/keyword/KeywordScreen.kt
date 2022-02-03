@@ -43,16 +43,10 @@ import im.koala.domain.model.KeywordResponse
 
 @Composable
 fun KeywordScreen(
-    modifier: Modifier = Modifier,
-    navController: NavController
-) {
-    Box(
-        Modifier.clickable { navController.navigate(NavScreen.KeywordAdd.route) }
-    ){
-        Text(text = "keyword")
     lazyListState: LazyListState,
     viewModel: MainViewModel,
-    selectKeyword: (MainScreenBottomTab, Int) -> Unit
+    selectKeyword: (MainScreenBottomTab, Int) -> Unit,
+    navController: NavController
 ) {
     val keywordUi = viewModel.keywordUi
 
@@ -80,7 +74,7 @@ fun KeywordScreen(
                 style = MaterialTheme.typography.body1
             )
             TextButton(
-                onClick = { /*TODO*/ },
+                onClick = {  },
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Transparent
                 ),
@@ -117,21 +111,22 @@ fun KeywordScreen(
                 },
                 lazyListState = lazyListState,
                 keywordList = keywordUi.value.keywordList,
-                selectKeyword = selectKeyword
+                selectKeyword = selectKeyword,
+                navController = navController
             )
         }
     }
 }
 
 @Composable
-fun DrawAddKeywordButton() {
+fun DrawAddKeywordButton(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(65.dp)
             // .padding(horizontal = 24.dp)
             .clickable(
-                onClick = { Log.e("asdfasdf", "addKeyword") }
+                onClick = { navController.navigate(NavScreen.KeywordAdd.route) }
             ),
         verticalAlignment = Alignment.CenterVertically
 
@@ -158,7 +153,8 @@ fun DrawLazyColumView(
     modifier: Modifier,
     lazyListState: LazyListState,
     keywordList: MutableList<KeywordResponse>,
-    selectKeyword: (MainScreenBottomTab, Int) -> Unit
+    selectKeyword: (MainScreenBottomTab, Int) -> Unit,
+    navController: NavController
 ) {
 
     LazyColumn(
@@ -170,7 +166,7 @@ fun DrawLazyColumView(
             DrawKeywordItem(keyword = it, selectKeyword)
         }
         item {
-            DrawAddKeywordButton()
+            DrawAddKeywordButton(navController)
         }
     }
 }

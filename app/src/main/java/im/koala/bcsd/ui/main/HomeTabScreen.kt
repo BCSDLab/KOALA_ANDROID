@@ -27,8 +27,7 @@ import androidx.navigation.NavController
 fun HomeTabScreen(
     viewModel: MainViewModel,
     tabStateHolder: HomeTabStateHolder,
-    selectItem: (MainScreenBottomTab, Int) -> Unit
-    selectItem: (MainScreenBottomTab, Long) -> Unit,
+    selectItem: (MainScreenBottomTab, Int) -> Unit,
     navController: NavController
 ) {
     val selectedTab by viewModel.selectedTab
@@ -71,9 +70,7 @@ fun HomeTabScreen(
         Crossfade(selectedTab) { destination ->
             when (destination) {
                 MainScreenBottomTab.KEYWORD -> KeywordScreen(
-                    modifier, tabStateHolder.keywordLazyListState, viewModel, selectItem
-                    modifier,
-                    navController
+                    tabStateHolder.keywordLazyListState, viewModel, selectItem,navController
                 )
                 MainScreenBottomTab.HISTORY -> HistoryScreen(
                     modifier

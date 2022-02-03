@@ -2,6 +2,8 @@ package im.koala.data.repository.remote
 
 import im.koala.data.api.AuthApi
 import im.koala.data.api.NoAuthApi
+import im.koala.data.api.response.KeywordResponse
+import im.koala.data.api.response.ResponseWrapper
 import im.koala.data.entity.KeywordBodyEntity
 import im.koala.data.entity.TokenBodyEntity
 import retrofit2.Response
@@ -16,4 +18,5 @@ class UserRemoteDataSourceImpl@Inject constructor (private val noAuth: NoAuthApi
     override suspend fun getKeyword(): Response<KeywordBodyEntity> {
         return auth.getKeyword()
     }
+
 }
