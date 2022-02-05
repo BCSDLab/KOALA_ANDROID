@@ -43,6 +43,7 @@ class SignUpRemoteDataSourceTest {
     @Before
     fun init() {
         noAuthApi = mock()
+        authApi = mock()
         userRemoteDataSource = UserRemoteDataSourceImpl(noAuthApi, authApi)
     }
 
