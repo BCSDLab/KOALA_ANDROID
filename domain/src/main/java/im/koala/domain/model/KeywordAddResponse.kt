@@ -1,8 +1,8 @@
-package im.koala.data.api.response
+package im.koala.domain.model
 
 import com.google.gson.annotations.SerializedName
 
-data class KeywordResponse(
+data class KeywordAddResponse(
     @SerializedName("alarmCycle")
     val alarmCycle: Int,
     @SerializedName("isImportant")
@@ -18,4 +18,3 @@ data class KeywordResponse(
     @SerializedName("vibrationMode")
     val vibrationMode: Int,
 )
-

@@ -23,7 +23,7 @@ import im.koala.bcsd.navigation.NavScreen
 import im.koala.bcsd.ui.keyword.KeywordDetailScreen
 import im.koala.bcsd.ui.keyword.*
 import im.koala.data.api.response.ResponseWrapper
-import im.koala.data.repository.KeywordAddRepository
+import im.koala.data.repository.KeywordAddRepository111
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
@@ -36,8 +36,8 @@ fun MainScreen() {
         rememberLazyListState()
     )
 
-    val keywordViewModel = ViewModelProvider(ViewModelStore(), KeyWordViewModelFactory(KeywordAddRepository(LocalContext.current)))
-        .get(KeyWordViewModel::class.java)
+    val keywordViewModel = ViewModelProvider(ViewModelStore(), KeyWordViewModelFactory(KeywordAddRepository111(LocalContext.current)))
+        .get(KeywordViewModel::class.java)
     val alarmDistinction: MutableState<Boolean> = remember { mutableStateOf(true) }
     val selectAlarmCycle: MutableState<Int> = remember { mutableStateOf(0) }
     val alarmCheckedList: List<MutableState<Boolean>> = arrayListOf(
@@ -139,7 +139,7 @@ fun MainScreen() {
                     searchList = notificationSiteSearchList.body,
                     recentSearchList = recentSiteSearchList,
                     searchKeyword = { keywordViewModel.getKeywordSiteSearch(notificationSiteText.value) },
-                    recommendationKeyword = { keywordViewModel.getKeywordSiteRecommendation() },
+                    recommendationKeyword = { keywordViewModel.getSiteRecommendation() },
                     setRecentSearchList = { keywordViewModel.setRecentSiteSearchList(notificationSiteText.value) },
                     getRecentSearchList = { keywordViewModel.getRecentSiteSearchList() }
                 )
