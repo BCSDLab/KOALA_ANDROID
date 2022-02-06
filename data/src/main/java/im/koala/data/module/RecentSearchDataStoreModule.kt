@@ -4,9 +4,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
-import im.koala.data.source.RecentSearchDataSource
-import im.koala.data.source.local.RecentKeywordSearchDataSource
-import im.koala.data.source.local.RecentSiteSearchDataStore
 
 @Module
 @InstallIn(ActivityComponent::class)

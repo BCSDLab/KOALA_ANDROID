@@ -1,17 +1,17 @@
 package im.koala.domain.usecase.keyword
 
-import im.koala.bcsd.state.NetworkState
-import im.koala.domain.repository.UserRepository
+import im.koala.domain.state.NetworkState
+import im.koala.domain.repository.KeywordAddRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GetSiteSearchUseCase @Inject constructor (
-    private val userRepository: UserRepository
+    private val keywordAddRepository: KeywordAddRepository
 ) {
     operator fun invoke(site:String): Flow<NetworkState> = flow {
         emit(NetworkState.Loading)
-        var result = userRepository.getKeywordSiteSearch(site)
+        var result = keywordAddRepository.getKeywordSiteSearch(site)
         emit(result)
     }
 }

@@ -9,12 +9,14 @@ import im.koala.data.api.AuthApi
 import im.koala.data.api.GooglePostTokenApi
 import im.koala.data.api.NoAuthApi
 import im.koala.data.repository.GooglePostTokenRepositoryImpl
+import im.koala.data.repository.KeywordAddRepositoryImpl
 import im.koala.data.repository.UserRepositoryImpl
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.local.UserLocalDataSourceImpl
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.data.repository.remote.UserRemoteDataSourceImpl
 import im.koala.domain.repository.GooglePostTokenRepository
+import im.koala.domain.repository.KeywordAddRepository
 import im.koala.domain.repository.UserRepository
 import im.koala.domain.usecase.GetKeywordListUseCase
 import im.koala.domain.usecase.GetDeviceTokenUseCase
@@ -44,6 +46,14 @@ object RepositoryModule {
         noAuthLocalDataSource: UserLocalDataSource
     ): UserRepository {
         return UserRepositoryImpl(authRemoteDataSource, noAuthLocalDataSource)
+    }
+
+    @Provides
+    fun provideKeywordAddRepository(
+        authRemoteDataSource: UserRemoteDataSource,
+        authLocalDataSource: UserLocalDataSource
+    ): KeywordAddRepository {
+        return KeywordAddRepositoryImpl(authRemoteDataSource,authLocalDataSource)
     }
 
     @Provides

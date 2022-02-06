@@ -1,7 +1,8 @@
 package im.koala.domain.usecase.keywordAdd
 
+import im.koala.domain.repository.KeywordAddRepository
 import im.koala.domain.usecase.keyword.GetSiteRecommendationUseCase
-import im.koala.bcsd.state.NetworkState
+import im.koala.domain.state.NetworkState
 import im.koala.domain.repository.UserRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.test.runBlockingTest
@@ -15,15 +16,15 @@ import org.mockito.kotlin.whenever
 
 class GetSiteRecommendationUseCaseTest {
     @Mock
-    private lateinit var userRepository: UserRepository
+    private lateinit var keywordAddRepository: KeywordAddRepository
 
     @InjectMocks
     private lateinit var getSiteRecommendationUseCase: GetSiteRecommendationUseCase
 
     @Before
     fun init(){
-        userRepository = mock()
-        getSiteRecommendationUseCase = GetSiteRecommendationUseCase(userRepository)
+        keywordAddRepository = mock()
+        getSiteRecommendationUseCase = GetSiteRecommendationUseCase(keywordAddRepository)
     }
 
     @Test
@@ -36,7 +37,7 @@ class GetSiteRecommendationUseCaseTest {
             "인스타그램"
         )
         lateinit var result:Any
-        whenever(userRepository.getKeywordSiteRecommendation()).thenReturn(NetworkState.Success(list))
+        whenever(keywordAddRepository.getKeywordSiteRecommendation()).thenReturn(NetworkState.Success(list))
         getSiteRecommendationUseCase().collectLatest {
             result = when(it){
                 is NetworkState.Success<*> -> {

@@ -1,6 +1,7 @@
 package im.koala.domain.usecase.keywordAdd
 
-import im.koala.bcsd.state.NetworkState
+import im.koala.domain.repository.KeywordAddRepository
+import im.koala.domain.state.NetworkState
 import im.koala.domain.repository.UserRepository
 import im.koala.domain.usecase.keyword.GetKeywordSearchUseCase
 import kotlinx.coroutines.flow.collectLatest
@@ -15,15 +16,15 @@ import org.mockito.kotlin.whenever
 
 class GetKeywordSearchUseCaseTest {
     @Mock
-    private lateinit var userRepository: UserRepository
+    private lateinit var keywordAddRepository: KeywordAddRepository
 
     @InjectMocks
     private lateinit var getKeywordSearchUseCase: GetKeywordSearchUseCase
 
     @Before
     fun init(){
-        userRepository = mock()
-        getKeywordSearchUseCase = GetKeywordSearchUseCase(userRepository)
+        keywordAddRepository = mock()
+        getKeywordSearchUseCase = GetKeywordSearchUseCase(keywordAddRepository)
     }
 
     @Test
@@ -46,7 +47,7 @@ class GetKeywordSearchUseCaseTest {
             "키워드3"
         )
         lateinit var result:Any
-        whenever(userRepository.getKeywordSearch("키")).thenReturn(NetworkState.Success(list))
+        whenever(keywordAddRepository.getKeywordSearch("키")).thenReturn(NetworkState.Success(list))
         getKeywordSearchUseCase("키").collectLatest {
             result = when(it){
                 is NetworkState.Success<*> -> {

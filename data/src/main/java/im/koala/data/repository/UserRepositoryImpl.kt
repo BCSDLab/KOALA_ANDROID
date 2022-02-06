@@ -1,10 +1,9 @@
 package im.koala.data.repository
 
-import im.koala.bcsd.state.NetworkState
+import im.koala.domain.state.NetworkState
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.domain.model.CommonResponse
-import im.koala.domain.model.KeywordAddResponse
 import im.koala.domain.model.KeywordResponse
 import im.koala.domain.model.TokenResponse
 import im.koala.domain.repository.UserRepository

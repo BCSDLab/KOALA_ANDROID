@@ -1,7 +1,8 @@
 package im.koala.domain.usecase.keywordAdd
 
-import im.koala.bcsd.state.NetworkState
+import im.koala.domain.state.NetworkState
 import im.koala.domain.model.KeywordAddResponse
+import im.koala.domain.repository.KeywordAddRepository
 import im.koala.domain.repository.UserRepository
 import im.koala.domain.usecase.keyword.PushKeywordUseCase
 import kotlinx.coroutines.flow.collectLatest
@@ -11,20 +12,19 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Spy
 import org.mockito.kotlin.mock
 
 class PushKeywordUseCaseTest {
     @Mock
-    private lateinit var userRepository: UserRepository
+    private lateinit var keywordAddRepository: KeywordAddRepository
 
     @InjectMocks
     private lateinit var pushKeywordUseCase: PushKeywordUseCase
 
     @Before
     fun init(){
-        userRepository = mock()
-        pushKeywordUseCase = PushKeywordUseCase(userRepository)
+        keywordAddRepository = mock()
+        pushKeywordUseCase = PushKeywordUseCase(keywordAddRepository)
     }
 
     @Test

@@ -4,8 +4,10 @@ import androidx.compose.runtime.State
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.*
-import im.koala.bcsd.state.NetworkState
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import im.koala.domain.state.NetworkState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.koala.data.api.response.ResponseWrapper
 import im.koala.data.repository.KeywordAddRepository111
@@ -25,8 +27,10 @@ class KeywordViewModel @Inject constructor(
     private val getKeywordSearchUseCase: GetKeywordSearchUseCase,
     private val getSiteRecommendationUseCase: GetSiteRecommendationUseCase,
     private val getSiteSearchUseCase: GetSiteSearchUseCase,
+    private val getRecentSearchListUseCase: GetRecentSearchListUseCase,
+    private val setRecentSearchListUseCase: SetRecentSearchListUseCase
 ): ViewModel(){
-    val pushKeywordResponse:MutableLiveData<Response<ResponseWrapper<String>>> = MutableLiveData()
+    val pushKeywordResponse: MutableLiveData<Response<ResponseWrapper<String>>> = MutableLiveData()
 
     private val _keywordRecommendationList: MutableState<ListUi> = mutableStateOf(ListUi())
     val keywordRecommendationList: State<ListUi> get() = _keywordRecommendationList
@@ -55,7 +59,8 @@ class KeywordViewModel @Inject constructor(
 
         val onGetKeywordListUseCase = domainKeywordSharedFlow.shareIn(
             viewModelScope,
-            SharingStarted.Eagerly, 0
+            SharingStarted.Eagerly,
+            0
         )
         keywordState = onGetKeywordListUseCase.stateIn(viewModelScope, SharingStarted.Eagerly, NetworkState.Uninitialized)
 
@@ -103,13 +108,16 @@ class KeywordViewModel @Inject constructor(
             domainKeywordSharedFlow.emit(it)
         }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
     }
-
+    // keyword : keyword_search_key
+    // site : site_search_key
     fun setRecentKeywordSearchList(keywordSearch:String){
-
+        viewModelScope.launch{
+//            setRecentSearchListUseCase("keyword_search_key")
+        }
     }
 
     fun getRecentKeywordSearchList(){
-
+        getRecentSearchListUseCase("keyword_search_key")
     }
 
     fun setRecentSiteSearchList(siteSearch:String){
@@ -117,7 +125,7 @@ class KeywordViewModel @Inject constructor(
     }
 
     fun getRecentSiteSearchList(){
-
+        getRecentSearchListUseCase("site_search_key")
     }
 
     fun pushKeyword(

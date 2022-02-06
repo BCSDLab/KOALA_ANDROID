@@ -1,6 +1,6 @@
 package im.koala.domain.usecase
 
-import im.koala.bcsd.state.NetworkState
+import im.koala.domain.state.NetworkState
 import im.koala.domain.repository.UserRepository
 import javax.inject.Inject
 

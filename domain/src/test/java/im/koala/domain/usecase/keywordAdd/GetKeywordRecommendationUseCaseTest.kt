@@ -1,10 +1,10 @@
 package im.koala.domain.usecase.keywordAdd
 
-import im.koala.bcsd.state.NetworkState
+import im.koala.domain.repository.KeywordAddRepository
+import im.koala.domain.state.NetworkState
 import im.koala.domain.repository.UserRepository
 import im.koala.domain.usecase.keyword.GetKeywordRecommendationUseCase
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert
 import org.junit.Before
@@ -15,15 +15,15 @@ import org.mockito.kotlin.mock
 
 class GetKeywordRecommendationUseCaseTest {
     @Mock
-    private lateinit var userRepository: UserRepository
+    private lateinit var keywordAddRepository: KeywordAddRepository
 
     @InjectMocks
     private lateinit var getKeywordRecommendationUseCase: GetKeywordRecommendationUseCase
 
     @Before
     fun init(){
-        userRepository = mock()
-        getKeywordRecommendationUseCase = GetKeywordRecommendationUseCase(userRepository)
+        keywordAddRepository = mock()
+        getKeywordRecommendationUseCase = GetKeywordRecommendationUseCase(keywordAddRepository)
     }
 
     @Test

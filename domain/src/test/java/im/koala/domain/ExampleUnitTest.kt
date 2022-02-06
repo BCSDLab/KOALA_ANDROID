@@ -1,5 +1,6 @@
 package im.koala.domain
 
+import kotlinx.coroutines.flow.flow
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -12,5 +13,14 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
+    }
+
+    @Test
+    fun foo(){
+        var a = 0
+        flow<String> {
+            a = 2
+        }
+        assertEquals(2,a)
     }
 }

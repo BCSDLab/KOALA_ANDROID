@@ -1,11 +1,8 @@
 package im.koala.data.repository
 
-import im.koala.bcsd.state.NetworkState
-import im.koala.data.module.RecentKeywordSearch
-import im.koala.data.module.RecentSiteSearch
 import im.koala.data.repository.local.UserLocalDataSource
+import im.koala.domain.state.NetworkState
 import im.koala.data.repository.remote.UserRemoteDataSource
-import im.koala.data.source.RecentSearchDataSource
 import im.koala.domain.model.CommonResponse
 import im.koala.domain.model.KeywordAddResponse
 import im.koala.domain.repository.KeywordAddRepository
@@ -13,8 +10,7 @@ import javax.inject.Inject
 
 class KeywordAddRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
-    @RecentKeywordSearch private val recentKeywordSearch: RecentSearchDataSource,
-    @RecentSiteSearch private val recentSiteSearch: RecentSearchDataSource
+    private val userLocalDataSource: UserLocalDataSource
 ):KeywordAddRepository {
 
     override suspend fun getKeywordRecommendation(): NetworkState {
@@ -100,5 +96,13 @@ class KeywordAddRepositoryImpl @Inject constructor(
                 .run { result = NetworkState.Fail(this) }
         }
         return result
+    }
+
+    override suspend fun getRecentSearchList(key: String): List<String> {
+        return userLocalDataSource.getRecentSearchList(key)
+    }
+
+    override suspend fun setRecentSearchList(key: String, recentSearchList: List<String>) {
+        userLocalDataSource.setRecentSearchList(key,recentSearchList)
     }
 }

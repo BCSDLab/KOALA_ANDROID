@@ -1,7 +1,6 @@
 package im.koala.domain.repository
 
-import im.koala.bcsd.state.NetworkState
-import im.koala.domain.model.KeywordAddResponse
+import im.koala.domain.state.NetworkState
 
 interface UserRepository {
     suspend fun getKeyword(): NetworkState

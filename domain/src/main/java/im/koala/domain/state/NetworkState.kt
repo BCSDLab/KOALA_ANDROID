@@ -1,4 +1,4 @@
-package im.koala.bcsd.state
+package im.koala.domain.state
 
 sealed class NetworkState {
     object Uninitialized : NetworkState()

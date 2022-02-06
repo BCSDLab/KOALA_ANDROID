@@ -9,11 +9,3 @@ annotation class RemoteDataSource
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class LocalDataSource
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class RecentKeywordSearch
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class RecentSiteSearch
