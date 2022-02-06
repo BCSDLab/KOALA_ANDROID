@@ -1,5 +1,6 @@
 package im.koala.domain.repository
 
+import android.content.Context
 import im.koala.domain.state.NetworkState
 import im.koala.domain.model.KeywordAddResponse
 

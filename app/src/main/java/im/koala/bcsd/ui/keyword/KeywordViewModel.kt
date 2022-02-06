@@ -1,20 +1,14 @@
 package im.koala.bcsd.ui.keyword
 
-import androidx.compose.runtime.State
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import im.koala.domain.state.NetworkState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.koala.data.api.response.ResponseWrapper
-import im.koala.data.repository.KeywordAddRepository111
-import im.koala.domain.model.CommonResponse
 import im.koala.domain.model.KeywordAddResponse
 import im.koala.domain.usecase.keyword.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import retrofit2.Response
@@ -22,7 +16,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class KeywordViewModel @Inject constructor(
-    private val repository111: KeywordAddRepository111,
     private val getKeywordRecommendationUseCase: GetKeywordRecommendationUseCase,
     private val getKeywordSearchUseCase: GetKeywordSearchUseCase,
     private val getSiteRecommendationUseCase: GetSiteRecommendationUseCase,
@@ -32,100 +25,108 @@ class KeywordViewModel @Inject constructor(
 ): ViewModel(){
     val pushKeywordResponse: MutableLiveData<Response<ResponseWrapper<String>>> = MutableLiveData()
 
-    private val _keywordRecommendationList: MutableState<ListUi> = mutableStateOf(ListUi())
-    val keywordRecommendationList: State<ListUi> get() = _keywordRecommendationList
+    val keywordSearchList: MutableLiveData<List<String>> = MutableLiveData()
+    val keywordSiteSearchList: MutableLiveData<List<String>> = MutableLiveData()
+    val keywordSiteRecommendationList: MutableLiveData<List<String>> = MutableLiveData()
+    val keywordRecommendationList: MutableLiveData<List<String>> = MutableLiveData()
 
-    private val _keywordSearchList: MutableState<ListUi> = mutableStateOf(ListUi())
-    val keywordSearchList: State<ListUi> get() = _keywordSearchList
-
-    private val _siteSearchList: MutableState<ListUi> = mutableStateOf(ListUi())
-    val siteSearchList: State<ListUi> get() = _siteSearchList
-
-    private val _siteRecommendationList: MutableState<ListUi> = mutableStateOf(ListUi())
-    val siteRecommendationList: State<ListUi> get() = _siteRecommendationList
-
-    private val _recentKeywordSearchList: MutableState<ListUi> = mutableStateOf(ListUi())
-    val recentKeywordSearchList:State<ListUi> get() = _recentKeywordSearchList
-
-    private val _recentSiteSearchList: MutableState<ListUi> = mutableStateOf(ListUi())
-    val recentSiteSearchList:State<ListUi> get() = _recentSiteSearchList
+    val recentKeywordSearchList:MutableLiveData<List<String>> = MutableLiveData(listOf(""))
+    val recentSiteSearchList:MutableLiveData<List<String>> = MutableLiveData(listOf(""))
 
     val alarmSiteList:MutableLiveData<List<String>> = MutableLiveData(listOf(""))
 
-    val keywordState: StateFlow<NetworkState>
-    val domainKeywordSharedFlow = MutableSharedFlow<NetworkState>()
-
-    init {
-
-        val onGetKeywordListUseCase = domainKeywordSharedFlow.shareIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            0
-        )
-        keywordState = onGetKeywordListUseCase.stateIn(viewModelScope, SharingStarted.Eagerly, NetworkState.Uninitialized)
-
-        viewModelScope.launch(Dispatchers.IO) {
-            keywordState.collectLatest {
-                when (it) {
-                    is NetworkState.Success<*> -> {
-                        _keywordRecommendationList.value = _keywordRecommendationList.value.copy(list = (it.data as MutableList<String>))
-                        _keywordSearchList.value = _keywordSearchList.value.copy(list = it.data as MutableList<String>)
-                        _siteSearchList.value = _siteSearchList.value.copy(list = it.data as MutableList<String>)
-                        _siteRecommendationList.value = _siteRecommendationList.value.copy(list = it.data as MutableList<String>)
-                    }
+    fun getKeywordSearchList(keyword:String){
+        viewModelScope.launch {
+            getKeywordSearchUseCase(keyword).collectLatest {
+                when(it){
+                    is NetworkState.Success<*> -> keywordSearchList.value = it.data as List<String>
                     is NetworkState.Fail<*> -> {
-                        val response = it.data as CommonResponse
-                        _keywordRecommendationList.value = _keywordRecommendationList.value.copy(errorMessage = response.errorMessage!!)
-                        _keywordSearchList.value = _keywordSearchList.value.copy(errorMessage = response.errorMessage!!)
-                        _siteSearchList.value = _siteSearchList.value.copy(errorMessage = response.errorMessage!!)
-                        _siteRecommendationList.value = _siteRecommendationList.value.copy(errorMessage = response.errorMessage!!)
+                        Log.d("ttt3333",it.data.toString())
+                        keywordSearchList.value = mutableListOf()
                     }
+                    else -> keywordSearchList.value = mutableListOf()
                 }
             }
         }
     }
 
-    fun getKeywordSearchList(keyword:String){
-        getKeywordSearchUseCase(keyword).onEach {
-            domainKeywordSharedFlow.emit(it)
-        }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
-    }
-
     fun getKeywordSiteSearch(site:String){
-        getSiteSearchUseCase(site).onEach {
-            domainKeywordSharedFlow.emit(it)
-        }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
+        viewModelScope.launch {
+            getSiteSearchUseCase(site).collectLatest {
+                when(it){
+                    is NetworkState.Success<*> -> keywordSiteSearchList.value = it.data as List<String>
+                    is NetworkState.Fail<*> -> {
+                        Log.d("ttt3333",it.data.toString())
+                        keywordSiteSearchList.value = mutableListOf()
+                    }
+                    else -> keywordSiteSearchList.value = mutableListOf()
+                }
+            }
+        }
     }
 
     fun getSiteRecommendation(){
-        getSiteRecommendationUseCase().onEach {
-            domainKeywordSharedFlow.emit(it)
-        }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
+        viewModelScope.launch {
+            getSiteRecommendationUseCase().collectLatest {
+                when(it){
+                    is NetworkState.Success<*> -> keywordSiteRecommendationList.value = it.data as List<String>
+                    is NetworkState.Fail<*> -> {
+                        Log.d("ttt3333",it.data.toString())
+                        keywordSiteRecommendationList.value = mutableListOf()
+                    }
+                    else -> keywordSiteRecommendationList.value = mutableListOf()
+                }
+            }
+        }
     }
 
     fun getKeywordRecommendation(){
-        getKeywordRecommendationUseCase().onEach {
-            domainKeywordSharedFlow.emit(it)
-        }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
+        viewModelScope.launch {
+            getKeywordRecommendationUseCase().collectLatest {
+                when(it){
+                    is NetworkState.Success<*> -> keywordRecommendationList.value = it.data as List<String>
+                    is NetworkState.Fail<*> -> {
+                        Log.d("ttt3333",it.data.toString())
+                        keywordRecommendationList.value = mutableListOf()
+                    }
+                    else -> keywordRecommendationList.value = mutableListOf()
+                }
+            }
+        }
     }
-    // keyword : keyword_search_key
-    // site : site_search_key
+
     fun setRecentKeywordSearchList(keywordSearch:String){
-        viewModelScope.launch{
-//            setRecentSearchListUseCase("keyword_search_key")
+        val setRecentKeywordSearchList = mutableListOf<String>()
+        viewModelScope.launch {
+            setRecentKeywordSearchList.addAll(recentKeywordSearchList.value!!)
+            if(keywordSearch !in setRecentKeywordSearchList) setRecentKeywordSearchList.add(keywordSearch)
+            setRecentSearchListUseCase("keyword_search_key",setRecentKeywordSearchList)
         }
     }
 
     fun getRecentKeywordSearchList(){
-        getRecentSearchListUseCase("keyword_search_key")
+        viewModelScope.launch {
+            getRecentSearchListUseCase("keyword_search_key").collectLatest { value ->
+                recentKeywordSearchList.value = value
+            }
+        }
     }
 
     fun setRecentSiteSearchList(siteSearch:String){
-
+        val setRecentSiteSearchList = mutableListOf<String>()
+        viewModelScope.launch {
+            setRecentSiteSearchList.addAll(recentSiteSearchList.value!!)
+            if(siteSearch !in setRecentSiteSearchList) setRecentSiteSearchList.add(siteSearch)
+            setRecentSearchListUseCase("site_search_key",setRecentSiteSearchList)
+        }
     }
 
     fun getRecentSiteSearchList(){
-        getRecentSearchListUseCase("site_search_key")
+        viewModelScope.launch {
+            getRecentSearchListUseCase("site_search_key").collectLatest { value ->
+                recentSiteSearchList.value = value
+            }
+        }
     }
 
     fun pushKeyword(
@@ -167,7 +168,6 @@ class KeywordViewModel @Inject constructor(
         )
         Log.d("test111",keywordResponse.toString())
         viewModelScope.launch {
-            pushKeywordResponse.value = repository111.pushKeyword(keywordResponse)
             Log.d("test111","isSuccessful : ${pushKeywordResponse.value?.isSuccessful.toString()}")
             Log.d("test111","body.body : ${pushKeywordResponse.value?.body()?.body.toString()}")
             Log.d("test111","body.code : ${pushKeywordResponse.value?.body()?.code.toString()}")
@@ -178,25 +178,4 @@ class KeywordViewModel @Inject constructor(
         }
     }
 
-    fun getAlarmSiteList(){
-        alarmSiteList.value = repository111.getAlarmSiteList()
-    }
-
-    fun setAlarmSiteList(site:String){
-        repository111.setAlarmSiteList(site)
-    }
-
-    fun deleteSiteList(site:String){
-        repository111.deleteSiteList(site)
-    }
-
-    fun resetSiteList(){
-        repository111.resetSiteList()
-    }
-
 }
-
-data class ListUi(
-    val list: MutableList<String> = mutableListOf(),
-    var errorMessage: String = ""
-)

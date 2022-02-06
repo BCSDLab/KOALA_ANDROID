@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.accompanist.pager.*
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.textfield.KoalaTextField
 import im.koala.bcsd.ui.theme.*
@@ -239,6 +241,12 @@ fun KeywordAddItem(text: String, searchText:MutableState<String>) {
         )
     }
 }
+
+
+
+
+
+
 
 //@ExperimentalPagerApi
 //@ExperimentalMaterialApi

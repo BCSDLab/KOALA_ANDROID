@@ -1,7 +1,6 @@
 package im.koala.domain.usecase.keyword
 
 import im.koala.domain.repository.KeywordAddRepository
-import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class SetRecentSearchListUseCase @Inject constructor(

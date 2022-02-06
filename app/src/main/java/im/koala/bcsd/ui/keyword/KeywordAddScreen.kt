@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import im.koala.bcsd.R
 import im.koala.bcsd.navigation.NavScreen
 import im.koala.bcsd.ui.button.KoalaToggle
@@ -43,10 +45,7 @@ fun KeywordAddScreen(
     deleteSite:MutableState<String>,
     alarmSiteList:List<String>,
     alarmCheckedList: List<MutableState<Boolean>>,
-    getAlarmSiteList:()->Unit,
-    setAlarmSiteList:()->Unit,
-    deleteSiteList:()->Unit,
-    resetSiteList:()->Unit,
+    alarmSiteListToString:MutableState<String>,
     pushKeyword: () -> Unit
 ) {
     val isError: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -59,9 +58,8 @@ fun KeywordAddScreen(
             keywordSearchText = keywordSearchText,
             alarmSiteList = alarmSiteList,
             navController = navController,
-            resetSiteList = { resetSiteList() },
-            getAlarmSiteList = { getAlarmSiteList() },
-            pushKeyword = { pushKeyword() }
+            pushKeyword = { pushKeyword() },
+            alarmSiteListToString
         )
 
         Divider(
@@ -78,9 +76,7 @@ fun KeywordAddScreen(
             navController = navController,
             alarmSiteList = alarmSiteList,
             deleteSite = deleteSite,
-            getAlarmSiteList = { getAlarmSiteList() },
-            setAlarmSiteList = { setAlarmSiteList() },
-            deleteSiteList = { deleteSiteList() }
+            alarmSiteListToString = alarmSiteListToString
         )
 
         NotificationsBox(
@@ -99,9 +95,8 @@ fun KeywordAddScreenTopBar(
     keywordSearchText:MutableState<String>,
     alarmSiteList:List<String>,
     navController: NavController,
-    resetSiteList: () -> Unit,
-    getAlarmSiteList: () -> Unit,
-    pushKeyword: () ->Unit
+    pushKeyword: () ->Unit,
+    alarmSiteListToString:MutableState<String>
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -112,8 +107,7 @@ fun KeywordAddScreenTopBar(
     ) {
         IconButton(
             onClick = {
-                resetSiteList()
-                getAlarmSiteList()
+                getAlarmSiteList(alarmSiteListToString)
                 keywordSearchText.value = ""
                 navController.navigateUp()
             }
@@ -176,9 +170,7 @@ fun SearchForNotificationsTextField(
     isError: MutableState<Boolean>,
     alarmSiteList:List<String>,
     deleteSite:MutableState<String>,
-    getAlarmSiteList: () -> Unit,
-    setAlarmSiteList: () -> Unit,
-    deleteSiteList: () -> Unit,
+    alarmSiteListToString:MutableState<String>
 ) {
     KoalaTheme {
         val bottomPadding: Dp = if (isError.value) 17.dp else 32.dp
@@ -205,19 +197,18 @@ fun SearchForNotificationsTextField(
                 )
                 Box(modifier = Modifier.matchParentSize().clickable { navController.navigate(NavScreen.KeywordSiteAddInput.route) })
             }
-            getAlarmSiteList()
+            getAlarmSiteList(alarmSiteListToString)
             if(text.value.isNotEmpty()){
-                setAlarmSiteList()
-                getAlarmSiteList()
+                setAlarmSiteList(alarmSiteListToString,text.value)
+                getAlarmSiteList(alarmSiteListToString)
                 text.value = ""
             }
 
             SearchForNotificationsLazyColumn(
                 notificationSiteList = alarmSiteList,
-                deleteSiteList = { deleteSiteList() },
-                getAlarmSiteList = { getAlarmSiteList() },
                 deleteSign = deleteSign,
-                deleteSite = deleteSite
+                deleteSite = deleteSite,
+                alarmSiteListToString
             )
 
             if (isError.value) {
@@ -236,10 +227,9 @@ fun SearchForNotificationsTextField(
 @Composable
 fun SearchForNotificationsLazyColumn(
     notificationSiteList:List<String>,
-    deleteSiteList: () -> Unit,
-    getAlarmSiteList: () -> Unit,
     deleteSign:MutableState<Boolean>,
-    deleteSite:MutableState<String>
+    deleteSite:MutableState<String>,
+    alarmSiteListToString:MutableState<String>
 ){
     LazyColumn(
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp),
@@ -247,8 +237,8 @@ fun SearchForNotificationsLazyColumn(
     ){
         items(notificationSiteList){
             if(deleteSign.value){
-                deleteSiteList()
-                getAlarmSiteList()
+                deleteSiteList(alarmSiteListToString,deleteSite.value)
+                getAlarmSiteList(alarmSiteListToString)
                 deleteSign.value = false
             }
             SearchForNotificationsItem( text = it, deleteSign = deleteSign,deleteSite = deleteSite )
@@ -552,6 +542,32 @@ fun AlarmCycleDialog(
         )
     }
 }
+
+private val gson: Gson = GsonBuilder().create()
+
+fun getAlarmSiteList(alarmSiteListToString:MutableState<String>):List<String>{
+    return gson.fromJson(alarmSiteListToString.value,Array<String>::class.java).asList()
+}
+
+fun setAlarmSiteList(alarmSiteListToString:MutableState<String>,site:String){
+    val alarmSiteStringToList:List<String> = getAlarmSiteList(alarmSiteListToString)
+    val _alarmSiteList = mutableListOf<String>()
+    _alarmSiteList.addAll(alarmSiteStringToList)
+    if(site !in _alarmSiteList) _alarmSiteList.add(site)
+    alarmSiteListToString.value = gson.toJson(_alarmSiteList)
+}
+
+fun deleteSiteList(alarmSiteListToString:MutableState<String>,site:String){
+    val alarmSiteStringToList:List<String> = getAlarmSiteList(alarmSiteListToString)
+    val _alarmSiteList = mutableListOf<String>()
+    _alarmSiteList.addAll(alarmSiteStringToList)
+    _alarmSiteList.remove(site)
+    alarmSiteListToString.value = gson.toJson(_alarmSiteList)
+}
+
+//fun resetSiteList(){
+//    alarmSiteListToString = gson.toJson(_alarmSiteList)
+//}
 
 //@ExperimentalMaterialApi
 //@Preview(name = "키워드 레이아웃", showBackground = true)
