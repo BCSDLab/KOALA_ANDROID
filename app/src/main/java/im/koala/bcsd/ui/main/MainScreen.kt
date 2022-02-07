@@ -53,7 +53,6 @@ fun MainScreen(
     val notificationSiteRecommendationList by keywordViewModel.keywordSiteRecommendationList.observeAsState(listOf(""))
     val recentSiteSearchList by keywordViewModel.recentSiteSearchList.observeAsState(listOf(""))
     val alarmSiteList by keywordViewModel.alarmSiteList.observeAsState(listOf(""))
-    val alarmSiteListToString:MutableState<String> = remember{ mutableStateOf("[]") }
 
     ProvideWindowInsets {
         NavHost(navController = navController, startDestination = NavScreen.Keyword.route) {
@@ -89,7 +88,10 @@ fun MainScreen(
                     deleteSite = deleteSite,
                     alarmSiteList = alarmSiteList,
                     alarmCheckedList = alarmCheckedList,
-                    alarmSiteListToString = alarmSiteListToString
+                    getAlarmSiteList = { keywordViewModel.getAlarmSiteList() },
+                    addAlarmSiteList = { keywordViewModel.addAlarmSiteList(notificationSiteText.value) },
+                    deleteAlarmSite = { keywordViewModel.deleteAlarmSite(deleteSite.value) },
+                    deleteAllAlarmSiteList = { keywordViewModel.deleteAllSiteList() },
                 ) {
                     keywordViewModel.pushKeyword(
                         alarmCycle = selectAlarmCycle.value,

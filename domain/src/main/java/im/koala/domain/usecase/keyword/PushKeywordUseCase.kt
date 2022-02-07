@@ -10,9 +10,5 @@ import javax.inject.Inject
 class PushKeywordUseCase @Inject constructor (
     private val keywordAddRepository: KeywordAddRepository
 ) {
-    operator fun invoke(keywordResponse: KeywordAddResponse): Flow<NetworkState> = flow {
-        emit(NetworkState.Loading)
-        var result = keywordAddRepository.pushKeyword(keywordResponse)
-        emit(result)
-    }
+    suspend operator fun invoke(keywordResponse: KeywordAddResponse): NetworkState = keywordAddRepository.pushKeyword(keywordResponse)
 }

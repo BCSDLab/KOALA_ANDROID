@@ -1,5 +1,6 @@
 package im.koala.bcsd.ui.keyword
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -40,6 +41,8 @@ fun KeywordAddInputScreen(
     getRecentSearchList:()->Unit
 ){
     val pagerState = rememberPagerState()
+    recommendationKeyword()
+    getRecentSearchList()
     Column(
         modifier = Modifier.padding(horizontal = 16.dp)
     ){
@@ -54,8 +57,6 @@ fun KeywordAddInputScreen(
                 pagerState = pagerState,
                 tabDataList = tabDataList
             )
-            recommendationKeyword()
-            getRecentSearchList()
             KeyWordAddInputPager(
                 keywordText = searchText,
                 pagerState = pagerState,

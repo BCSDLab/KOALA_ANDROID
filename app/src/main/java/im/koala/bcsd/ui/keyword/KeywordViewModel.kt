@@ -1,12 +1,15 @@
 package im.koala.bcsd.ui.keyword
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import im.koala.domain.state.NetworkState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.koala.data.api.response.ResponseWrapper
+import im.koala.data.repository.local.AlarmSiteDataSource
+import im.koala.data.repository.local.Site
 import im.koala.domain.model.KeywordAddResponse
 import im.koala.domain.usecase.keyword.*
 import kotlinx.coroutines.flow.*
@@ -21,7 +24,9 @@ class KeywordViewModel @Inject constructor(
     private val getSiteRecommendationUseCase: GetSiteRecommendationUseCase,
     private val getSiteSearchUseCase: GetSiteSearchUseCase,
     private val getRecentSearchListUseCase: GetRecentSearchListUseCase,
-    private val setRecentSearchListUseCase: SetRecentSearchListUseCase
+    private val setRecentSearchListUseCase: SetRecentSearchListUseCase,
+    private val pushKeywordUseCase:PushKeywordUseCase,
+    private val alarmSiteData:AlarmSiteDataSource
 ): ViewModel(){
     val pushKeywordResponse: MutableLiveData<Response<ResponseWrapper<String>>> = MutableLiveData()
 
@@ -37,60 +42,36 @@ class KeywordViewModel @Inject constructor(
 
     fun getKeywordSearchList(keyword:String){
         viewModelScope.launch {
-            getKeywordSearchUseCase(keyword).collectLatest {
-                when(it){
-                    is NetworkState.Success<*> -> keywordSearchList.value = it.data as List<String>
-                    is NetworkState.Fail<*> -> {
-                        Log.d("ttt3333",it.data.toString())
-                        keywordSearchList.value = mutableListOf()
-                    }
-                    else -> keywordSearchList.value = mutableListOf()
-                }
+            when(val _keywordSearchList = getKeywordSearchUseCase(keyword)){
+                is NetworkState.Success<*> -> keywordSearchList.value = _keywordSearchList.data as List<String>
+                is NetworkState.Fail<*> -> Log.d("KeywordAddViewModel",_keywordSearchList.data.toString())
             }
         }
     }
 
     fun getKeywordSiteSearch(site:String){
         viewModelScope.launch {
-            getSiteSearchUseCase(site).collectLatest {
-                when(it){
-                    is NetworkState.Success<*> -> keywordSiteSearchList.value = it.data as List<String>
-                    is NetworkState.Fail<*> -> {
-                        Log.d("ttt3333",it.data.toString())
-                        keywordSiteSearchList.value = mutableListOf()
-                    }
-                    else -> keywordSiteSearchList.value = mutableListOf()
-                }
+            when(val _keywordSiteSearchList = getSiteSearchUseCase(site)){
+                is NetworkState.Success<*> -> keywordSiteSearchList.value = _keywordSiteSearchList.data as List<String>
+                is NetworkState.Fail<*> -> Log.d("KeywordAddViewModel",_keywordSiteSearchList.data.toString())
             }
         }
     }
 
     fun getSiteRecommendation(){
         viewModelScope.launch {
-            getSiteRecommendationUseCase().collectLatest {
-                when(it){
-                    is NetworkState.Success<*> -> keywordSiteRecommendationList.value = it.data as List<String>
-                    is NetworkState.Fail<*> -> {
-                        Log.d("ttt3333",it.data.toString())
-                        keywordSiteRecommendationList.value = mutableListOf()
-                    }
-                    else -> keywordSiteRecommendationList.value = mutableListOf()
-                }
+            when(val _keywordSiteRecommendationList = getSiteRecommendationUseCase()){
+                is NetworkState.Success<*> -> keywordSiteRecommendationList.value = _keywordSiteRecommendationList.data as List<String>
+                is NetworkState.Fail<*> -> Log.d("KeywordAddViewModel",_keywordSiteRecommendationList.data.toString())
             }
         }
     }
 
     fun getKeywordRecommendation(){
         viewModelScope.launch {
-            getKeywordRecommendationUseCase().collectLatest {
-                when(it){
-                    is NetworkState.Success<*> -> keywordRecommendationList.value = it.data as List<String>
-                    is NetworkState.Fail<*> -> {
-                        Log.d("ttt3333",it.data.toString())
-                        keywordRecommendationList.value = mutableListOf()
-                    }
-                    else -> keywordRecommendationList.value = mutableListOf()
-                }
+            when(val _keywordRecommendationList = getKeywordRecommendationUseCase()){
+                is NetworkState.Success<*> -> keywordRecommendationList.value = _keywordRecommendationList.data as List<String>
+                is NetworkState.Fail<*> -> Log.d("KeywordAddViewModel",_keywordRecommendationList.data.toString())
             }
         }
     }
@@ -98,7 +79,7 @@ class KeywordViewModel @Inject constructor(
     fun setRecentKeywordSearchList(keywordSearch:String){
         val setRecentKeywordSearchList = mutableListOf<String>()
         viewModelScope.launch {
-            setRecentKeywordSearchList.addAll(recentKeywordSearchList.value!!)
+            recentKeywordSearchList.value?.let { setRecentKeywordSearchList.addAll(it) }
             if(keywordSearch !in setRecentKeywordSearchList) setRecentKeywordSearchList.add(keywordSearch)
             setRecentSearchListUseCase("keyword_search_key",setRecentKeywordSearchList)
         }
@@ -115,7 +96,7 @@ class KeywordViewModel @Inject constructor(
     fun setRecentSiteSearchList(siteSearch:String){
         val setRecentSiteSearchList = mutableListOf<String>()
         viewModelScope.launch {
-            setRecentSiteSearchList.addAll(recentSiteSearchList.value!!)
+            recentSiteSearchList.value?.let { setRecentSiteSearchList.addAll(it) }
             if(siteSearch !in setRecentSiteSearchList) setRecentSiteSearchList.add(siteSearch)
             setRecentSearchListUseCase("site_search_key",setRecentSiteSearchList)
         }
@@ -127,6 +108,32 @@ class KeywordViewModel @Inject constructor(
                 recentSiteSearchList.value = value
             }
         }
+    }
+
+    fun getAlarmSiteList(){
+        Log.d("keywordaddscreen111","getalarmsitelist")
+        val _alarmSiteList = mutableListOf<String>()
+        alarmSiteData.getAllList { list: List<Site> ->
+            list.onEach { site ->
+                _alarmSiteList.add(site.site!!)
+            }
+        }
+        alarmSiteList.value = _alarmSiteList
+    }
+
+    fun addAlarmSiteList(site:String){
+        alarmSiteData.addSite(site)
+        getAlarmSiteList()
+    }
+
+    fun deleteAlarmSite(site:String){
+        alarmSiteData.deleteSite(site)
+        getAlarmSiteList()
+    }
+
+    fun deleteAllSiteList(){
+        alarmSiteData.deleteAllList()
+        getAlarmSiteList()
     }
 
     fun pushKeyword(
@@ -166,15 +173,11 @@ class KeywordViewModel @Inject constructor(
             untilPressOkButton = untilPressOkButtonData,
             vibrationMode = vibrationModeData
         )
-        Log.d("test111",keywordResponse.toString())
         viewModelScope.launch {
-            Log.d("test111","isSuccessful : ${pushKeywordResponse.value?.isSuccessful.toString()}")
-            Log.d("test111","body.body : ${pushKeywordResponse.value?.body()?.body.toString()}")
-            Log.d("test111","body.code : ${pushKeywordResponse.value?.body()?.code.toString()}")
-            Log.d("test111","code : ${pushKeywordResponse.value?.code().toString()}")
-            Log.d("test111","message : ${pushKeywordResponse.value?.message().toString()}")
-            Log.d("test111","errorBody : ${pushKeywordResponse.value?.errorBody()?.string()!!}")
-            Log.d("test111","headers : ${pushKeywordResponse.value?.headers().toString()}")
+            when(val pushKeywordResponse = pushKeywordUseCase(keywordResponse)){
+                is NetworkState.Success<*> -> Log.d("KeywordAddViewModel",pushKeywordResponse.data.toString())
+                is NetworkState.Fail<*> -> Log.d("KeywordAddViewModel",pushKeywordResponse.data.toString())
+            }
         }
     }
 

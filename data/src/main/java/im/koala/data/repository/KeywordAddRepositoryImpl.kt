@@ -17,17 +17,11 @@ class KeywordAddRepositoryImpl @Inject constructor(
     override suspend fun getKeywordRecommendation(): NetworkState {
         val response = userRemoteDataSource.getKeywordRecommendation()
         var result: NetworkState = NetworkState.Uninitialized
-        if(response.isSuccessful){
-            val keywordRecommendationList = mutableListOf<String>()
-            response.body()?.body?.let{ it ->
-                it.forEach{
-                    keywordRecommendationList.add(it)
-                }
-            }
-            result = NetworkState.Success(keywordRecommendationList)
+        result = if(response.isSuccessful){
+            NetworkState.Success(response.body()?.body)
         } else {
-            CommonResponse.FAIL.apply { errorMessage = response.body()!!.code.toString() }
-                .run { result = NetworkState.Fail(this) }
+            val errorMsg = "code: ${response.code()}, msg: ${response.errorBody()?.string()}"
+            NetworkState.Fail(errorMsg)
         }
         return result
     }
@@ -36,13 +30,7 @@ class KeywordAddRepositoryImpl @Inject constructor(
         val response = userRemoteDataSource.getKeywordSiteRecommendation()
         var result: NetworkState = NetworkState.Uninitialized
         if(response.isSuccessful){
-            val siteRecommendationList = mutableListOf<String>()
-            response.body()?.body?.let{ it ->
-                it.forEach{
-                    siteRecommendationList.add(it)
-                }
-            }
-            result = NetworkState.Success(siteRecommendationList)
+            result = NetworkState.Success(response.body()?.body)
         } else {
             CommonResponse.FAIL.apply { errorMessage = response.body()!!.code.toString() }
                 .run { result = NetworkState.Fail(this) }
@@ -54,13 +42,7 @@ class KeywordAddRepositoryImpl @Inject constructor(
         val response = userRemoteDataSource.getKeywordSiteSearch(site)
         var result: NetworkState = NetworkState.Uninitialized
         if(response.isSuccessful){
-            val siteSearchList = mutableListOf<String>()
-            response.body()?.body?.let{ it ->
-                it.forEach{
-                    siteSearchList.add(it)
-                }
-            }
-            result = NetworkState.Success(siteSearchList)
+            result = NetworkState.Success(response.body()?.body)
         } else {
             CommonResponse.FAIL.apply { errorMessage = response.body()!!.code.toString() }
                 .run { result = NetworkState.Fail(this) }
@@ -72,13 +54,7 @@ class KeywordAddRepositoryImpl @Inject constructor(
         val response = userRemoteDataSource.getKeywordSearch(keyword)
         var result: NetworkState = NetworkState.Uninitialized
         if(response.isSuccessful){
-            val keywordSearchList = mutableListOf<String>()
-            response.body()?.body?.let{ it ->
-                it.forEach{
-                    keywordSearchList.add(it)
-                }
-            }
-            result = NetworkState.Success(keywordSearchList)
+            result = NetworkState.Success(response.body()?.body)
         } else {
             CommonResponse.FAIL.apply { errorMessage = response.body()!!.code.toString() }
                 .run { result = NetworkState.Fail(this) }
@@ -89,12 +65,12 @@ class KeywordAddRepositoryImpl @Inject constructor(
     override suspend fun pushKeyword(keywordResponse: KeywordAddResponse): NetworkState {
         val response = userRemoteDataSource.pushKeyword(keywordResponse)
         var result: NetworkState = NetworkState.Uninitialized
-        if(response.isSuccessful){
-            val msg = "msg: ${response.body()?.body}, code: ${response.body()?.code}"
-            result = NetworkState.Success(msg)
+        result = if(response.isSuccessful){
+            val msg = "msg: ${response.body()?.body} code: ${response.body()?.code}"
+            NetworkState.Success(msg)
         } else{
-            CommonResponse.FAIL.apply { errorMessage = "msg: ${response.body()?.body}, code: ${response.body()?.code}" }
-                .run { result = NetworkState.Fail(this) }
+            val msg = "msg: ${response.errorBody()?.string()}, code: ${response.body()?.code}"
+            NetworkState.Fail(msg)
         }
         return result
     }

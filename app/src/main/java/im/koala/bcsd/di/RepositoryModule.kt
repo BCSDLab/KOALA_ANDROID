@@ -11,6 +11,8 @@ import im.koala.data.api.NoAuthApi
 import im.koala.data.repository.GooglePostTokenRepositoryImpl
 import im.koala.data.repository.KeywordAddRepositoryImpl
 import im.koala.data.repository.UserRepositoryImpl
+import im.koala.data.repository.local.AlarmSiteDataSource
+import im.koala.data.repository.local.AlarmSiteDataSourceImpl
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.local.UserLocalDataSourceImpl
 import im.koala.data.repository.remote.UserRemoteDataSource
@@ -38,6 +40,11 @@ object RepositoryModule {
     @Provides
     fun provideUserLocalDataSource(): UserLocalDataSource {
         return UserLocalDataSourceImpl()
+    }
+
+    @Provides
+    fun provideAlarmSiteDataSource():AlarmSiteDataSource{
+        return AlarmSiteDataSourceImpl()
     }
 
     @Provides

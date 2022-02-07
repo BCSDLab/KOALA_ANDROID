@@ -9,9 +9,6 @@ import javax.inject.Inject
 class GetKeywordSearchUseCase @Inject constructor (
     private val keywordAddRepository: KeywordAddRepository
 ) {
-    operator fun invoke(keyword:String): Flow<NetworkState> = flow {
-        emit(NetworkState.Loading)
-        var result = keywordAddRepository.getKeywordSearch(keyword)
-        emit(result)
-    }
+    suspend operator fun invoke(keyword:String): NetworkState = keywordAddRepository.getKeywordSearch(keyword)
+
 }

@@ -9,9 +9,6 @@ import javax.inject.Inject
 class GetSiteSearchUseCase @Inject constructor (
     private val keywordAddRepository: KeywordAddRepository
 ) {
-    operator fun invoke(site:String): Flow<NetworkState> = flow {
-        emit(NetworkState.Loading)
-        var result = keywordAddRepository.getKeywordSiteSearch(site)
-        emit(result)
-    }
+    suspend operator fun invoke(site:String): NetworkState = keywordAddRepository.getKeywordSiteSearch(site)
+
 }

@@ -9,9 +9,6 @@ import javax.inject.Inject
 class GetSiteRecommendationUseCase @Inject constructor(
     private val keywordAddRepository: KeywordAddRepository
 ) {
-    operator fun invoke(): Flow<NetworkState> = flow {
-        emit(NetworkState.Loading)
-        var result = keywordAddRepository.getKeywordSiteRecommendation()
-        emit(result)
-    }
+    suspend operator fun invoke(): NetworkState = keywordAddRepository.getKeywordSiteRecommendation()
+
 }
