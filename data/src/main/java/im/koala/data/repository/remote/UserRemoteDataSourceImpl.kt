@@ -19,6 +19,10 @@ class UserRemoteDataSourceImpl@Inject constructor (private val noAuth: NoAuthApi
         return auth.pushKeyword(keywordAddResponse)
     }
 
+    override suspend fun deleteKeyword(keyword: String): Response<ResponseWrapper<String>> {
+        return auth.deleteKeyword(keyword)
+    }
+
     override suspend fun getKeywordRecommendation(): Response<ResponseWrapper<List<String>>> {
         return auth.getKeywordRecommendation()
     }

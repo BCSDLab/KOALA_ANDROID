@@ -10,6 +10,7 @@ interface UserRemoteDataSource {
     suspend fun getKeyword(): Response<KeywordBodyEntity>
     suspend fun postSnsLogin(snsType: String, accessToken: String, deviceToken: String): Response<TokenBodyEntity>
     suspend fun pushKeyword(keywordAddResponse: KeywordAddResponse): Response<ResponseWrapper<String>>
+    suspend fun deleteKeyword(keyword: String): Response<ResponseWrapper<String>>
     suspend fun getKeywordRecommendation(): Response<ResponseWrapper<List<String>>>
     suspend fun getKeywordSiteRecommendation(): Response<ResponseWrapper<List<String>>>
     suspend fun getKeywordSiteSearch(site: String): Response<ResponseWrapper<List<String>>>

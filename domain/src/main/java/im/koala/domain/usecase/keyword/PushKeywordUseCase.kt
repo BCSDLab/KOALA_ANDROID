@@ -7,8 +7,25 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class PushKeywordUseCase @Inject constructor (
+class PushKeywordUseCase @Inject constructor(
     private val keywordAddRepository: KeywordAddRepository
 ) {
-    suspend operator fun invoke(keywordResponse: KeywordAddResponse): NetworkState = keywordAddRepository.pushKeyword(keywordResponse)
+    suspend operator fun invoke(
+        alarmCycle: Int,
+        alarmMode: Boolean,
+        isImportant: Boolean,
+        name: String,
+        untilPressOkButton: Boolean,
+        vibrationMode: Boolean,
+        alarmSiteList: List<String>?
+    ): NetworkState =
+        keywordAddRepository.pushKeyword(
+            alarmCycle,
+            alarmMode,
+            isImportant,
+            name,
+            untilPressOkButton,
+            vibrationMode,
+            alarmSiteList
+        )
 }

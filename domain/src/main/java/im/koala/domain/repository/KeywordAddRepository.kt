@@ -4,7 +4,16 @@ import im.koala.domain.state.NetworkState
 import im.koala.domain.model.KeywordAddResponse
 
 interface KeywordAddRepository {
-    suspend fun pushKeyword(keywordResponse: KeywordAddResponse): NetworkState
+    suspend fun pushKeyword(
+        alarmCycle : Int,
+        alarmMode : Boolean,
+        isImportant: Boolean,
+        name : String,
+        untilPressOkButton : Boolean,
+        vibrationMode : Boolean,
+        alarmSiteList:List<String>?
+    ): NetworkState
+    suspend fun deleteKeyword(keyword: String): NetworkState
     suspend fun getKeywordRecommendation(): NetworkState
     suspend fun getKeywordSiteRecommendation(): NetworkState
     suspend fun getKeywordSiteSearch(site: String): NetworkState

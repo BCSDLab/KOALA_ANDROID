@@ -1,6 +1,6 @@
 package im.koala.bcsd.ui.keyword
 
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -17,8 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.accompanist.pager.*
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.textfield.KoalaTextField
 import im.koala.bcsd.ui.theme.*
@@ -30,43 +29,43 @@ import kotlinx.coroutines.launch
 fun KeywordAddInputScreen(
     navController: NavController,
     textFieldPlaceholder: String,
+    errorMessage:String,
     tabDataList:List<String>,
+    searchingText:MutableState<String>,
     searchText:MutableState<String>,
     recommendationList:List<String>,
     recentSearchList:List<String>,
     searchList:List<String>,
-    searchKeyword: ()->Unit,
-    recommendationKeyword: ()->Unit,
+    getSearchList: ()->Unit,
     setRecentSearchList: ()->Unit,
-    getRecentSearchList:()->Unit
 ){
     val pagerState = rememberPagerState()
-    recommendationKeyword()
-    getRecentSearchList()
     Column(
         modifier = Modifier.padding(horizontal = 16.dp)
     ){
         KeywordAddInputScreenTopBar(
             keywordText = searchText,
+            searchingText = searchingText,
             navController = navController,
             textFieldPlaceholder = textFieldPlaceholder,
+            errorMessage = errorMessage,
             setRecentSearchList = { setRecentSearchList() }
         )
-        if(searchText.value.isEmpty()){
+        if(searchingText.value.isEmpty()){
             KeyWordAddInputTabBar(
                 pagerState = pagerState,
                 tabDataList = tabDataList
             )
             KeyWordAddInputPager(
-                keywordText = searchText,
+                searchingText = searchingText,
                 pagerState = pagerState,
                 keywordRecommendationList = recommendationList,
                 recentSearchList = recentSearchList
             )
         }
         else{
-            searchKeyword()
-            KeywordAddInputSearchLazyColumn(searchList,searchText)
+            getSearchList()
+            KeywordAddInputSearchLazyColumn(searchList,searchingText)
         }
     }
 }
@@ -74,10 +73,13 @@ fun KeywordAddInputScreen(
 @Composable
 fun KeywordAddInputScreenTopBar(
     keywordText: MutableState<String>,
+    searchingText:MutableState<String>,
     navController: NavController,
     textFieldPlaceholder:String,
+    errorMessage:String,
     setRecentSearchList:()->Unit
 ) {
+    val context = LocalContext.current
     KoalaTheme{
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -87,7 +89,9 @@ fun KeywordAddInputScreenTopBar(
                 .padding(top = 13.dp)
         ) {
             IconButton(
-                onClick = { navController.navigateUp() },
+                onClick = {
+                    navController.navigateUp()
+                          },
                 modifier = Modifier.size(28.dp)
             ) {
                 Icon(
@@ -98,8 +102,8 @@ fun KeywordAddInputScreenTopBar(
                 )
             }
             KoalaTextField(
-                value =keywordText.value, onValueChange ={
-                    keywordText.value = it
+                value = searchingText.value, onValueChange ={
+                    searchingText.value = it
                 },
                 placeholder = { Text(text = textFieldPlaceholder) },
                 modifier = Modifier
@@ -109,8 +113,14 @@ fun KeywordAddInputScreenTopBar(
             )
             IconButton(
                 onClick = {
-                    setRecentSearchList()
-                    navController.navigateUp()
+                    if (searchingText.value.isEmpty()){
+                        Toast.makeText(context,errorMessage,Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+                        keywordText.value = searchingText.value
+                        setRecentSearchList()
+                        navController.navigateUp()
+                    }
                           },
                 modifier = Modifier.size(50.dp)
             ) {
@@ -173,28 +183,28 @@ fun KeyWordAddInputTabBar(pagerState: PagerState,tabDataList:List<String>) {
 @ExperimentalPagerApi
 @Composable
 fun KeyWordAddInputPager(
-    keywordText:MutableState<String>,
+    searchingText:MutableState<String>,
     pagerState: PagerState,
     keywordRecommendationList:List<String>,
     recentSearchList:List<String>
 ){
     HorizontalPager(state = pagerState,count = 2) { index ->
         when(index){
-            0 -> KeywordAddInputLazyColumn(keywordList = recentSearchList, searchText = keywordText)
-            1 -> KeywordAddInputLazyColumn(keywordList = keywordRecommendationList,searchText = keywordText)
+            0 -> KeywordAddInputLazyColumn(searchingList = recentSearchList, searchingText = searchingText)
+            1 -> KeywordAddInputLazyColumn(searchingList = keywordRecommendationList,searchingText = searchingText)
         }
     }
 }
 
 @Composable
-fun KeywordAddInputLazyColumn(keywordList:List<String>, searchText:MutableState<String>){
+fun KeywordAddInputLazyColumn(searchingList:List<String>, searchingText:MutableState<String>){
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(start = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(keywordList) {
-            Box(Modifier.clickable { searchText.value = it }){
+        items(searchingList) {
+            Box(Modifier.clickable { searchingText.value = it }){
                 Text(
                     text = it,
                     fontSize = 17.sp,

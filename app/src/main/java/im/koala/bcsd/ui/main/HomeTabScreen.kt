@@ -1,13 +1,6 @@
 
 package im.koala.bcsd.ui.main
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.primarySurface
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -21,8 +14,10 @@ import im.koala.bcsd.ui.history.HistoryScreen
 import im.koala.bcsd.ui.keyword.KeywordScreen
 import im.koala.bcsd.ui.setting.SettingScreen
 import androidx.compose.animation.Crossfade
+import androidx.compose.material.*
 import androidx.navigation.NavController
 
+@ExperimentalMaterialApi
 @Composable
 fun HomeTabScreen(
     viewModel: MainViewModel,

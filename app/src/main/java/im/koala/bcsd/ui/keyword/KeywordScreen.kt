@@ -1,27 +1,15 @@
 package im.koala.bcsd.ui.keyword
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -31,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.google.accompanist.insets.ProvideWindowInsets
@@ -41,6 +30,7 @@ import im.koala.bcsd.ui.main.MainViewModel
 import im.koala.bcsd.ui.theme.Yellow
 import im.koala.domain.model.KeywordResponse
 
+@ExperimentalMaterialApi
 @Composable
 fun KeywordScreen(
     lazyListState: LazyListState,
@@ -49,7 +39,6 @@ fun KeywordScreen(
     navController: NavController
 ) {
     val keywordUi = viewModel.keywordUi
-
     ProvideWindowInsets {
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
@@ -100,7 +89,7 @@ fun KeywordScreen(
                     .height(1.dp),
                 color = MaterialTheme.colors.onBackground
             )
-            DrawLazyColumView(
+            DrawLazyColumnView(
                 modifier = Modifier.constrainAs(keywordLazyColumView) {
                     top.linkTo(divider.bottom, margin = 12.dp)
                     start.linkTo(parent.start, margin = 24.dp)
@@ -112,7 +101,9 @@ fun KeywordScreen(
                 lazyListState = lazyListState,
                 keywordList = keywordUi.value.keywordList,
                 selectKeyword = selectKeyword,
-                navController = navController
+                deleteKeyword = { viewModel.deleteKeyword(it) },
+                navController = navController,
+                viewModel = viewModel
             )
         }
     }
@@ -148,22 +139,64 @@ fun DrawHorizantalDivider(modifier: Modifier, color: Color) {
     )
 }
 
+@ExperimentalMaterialApi
 @Composable
-fun DrawLazyColumView(
+fun DrawLazyColumnView(
     modifier: Modifier,
     lazyListState: LazyListState,
     keywordList: MutableList<KeywordResponse>,
     selectKeyword: (MainScreenBottomTab, Int) -> Unit,
-    navController: NavController
-) {
-
+    deleteKeyword: (keyword:String)->Unit,
+    navController: NavController,
+    viewModel: MainViewModel
+)  {
     LazyColumn(
         modifier = modifier,
         state = lazyListState
     ) {
-
-        items(keywordList) { it ->
-            DrawKeywordItem(keyword = it, selectKeyword)
+        items(keywordList) { its ->
+            val state = rememberDismissState(
+                confirmStateChange = {
+                    if (it == DismissValue.DismissedToStart) {
+                        deleteKeyword(its.name)
+                        viewModel.executeGetKeywordList()
+                    }
+                    true
+                }
+            )
+            SwipeToDismiss(
+                state = state,
+                background = {
+                    val color = when (state.dismissDirection) {
+                        DismissDirection.StartToEnd -> Color.Transparent
+                        DismissDirection.EndToStart -> Color.Red
+                        null -> Color.Transparent
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = color)
+                            .padding(
+                                start = 255.dp,
+                                end = 31.dp,
+                                top = 13.dp,
+                                bottom = 12.dp
+                            )
+                    ) {
+                        Text(
+                            text = "제거",
+                            fontSize = 14.sp,
+                            color = Color.White,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                },
+                dismissContent = {
+                    DrawKeywordItem(keyword = its, selectKeyword)
+                },
+                directions = setOf(DismissDirection.EndToStart),
+                dismissThresholds = { FractionalThreshold(0.6f) }
+            )
         }
         item {
             DrawAddKeywordButton(navController)
@@ -176,6 +209,7 @@ fun DrawKeywordItem(keyword: KeywordResponse, selectKeyword: (MainScreenBottomTa
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(MaterialTheme.colors.surface)
             .height(65.dp)
             // .padding(horizontal = 24.dp)
             .clickable(

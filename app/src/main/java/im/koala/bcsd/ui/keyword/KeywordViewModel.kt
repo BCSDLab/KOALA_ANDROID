@@ -1,20 +1,20 @@
 package im.koala.bcsd.ui.keyword
 
 import android.util.Log
-import android.widget.Toast
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import im.koala.domain.state.NetworkState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import im.koala.data.api.response.ResponseWrapper
 import im.koala.data.repository.local.AlarmSiteDataSource
 import im.koala.data.repository.local.Site
 import im.koala.domain.model.KeywordAddResponse
+import im.koala.domain.model.KeywordResponse
+import im.koala.domain.usecase.GetKeywordListUseCase
 import im.koala.domain.usecase.keyword.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,19 +26,19 @@ class KeywordViewModel @Inject constructor(
     private val getRecentSearchListUseCase: GetRecentSearchListUseCase,
     private val setRecentSearchListUseCase: SetRecentSearchListUseCase,
     private val pushKeywordUseCase:PushKeywordUseCase,
+    private val getKeywordListUseCase: GetKeywordListUseCase,
     private val alarmSiteData:AlarmSiteDataSource
 ): ViewModel(){
-    val pushKeywordResponse: MutableLiveData<Response<ResponseWrapper<String>>> = MutableLiveData()
-
     val keywordSearchList: MutableLiveData<List<String>> = MutableLiveData()
-    val keywordSiteSearchList: MutableLiveData<List<String>> = MutableLiveData()
-    val keywordSiteRecommendationList: MutableLiveData<List<String>> = MutableLiveData()
     val keywordRecommendationList: MutableLiveData<List<String>> = MutableLiveData()
-
     val recentKeywordSearchList:MutableLiveData<List<String>> = MutableLiveData(listOf(""))
-    val recentSiteSearchList:MutableLiveData<List<String>> = MutableLiveData(listOf(""))
 
+    val siteSearchList: MutableLiveData<List<String>> = MutableLiveData()
+    val siteRecommendationList: MutableLiveData<List<String>> = MutableLiveData()
+    val recentSiteSearchList:MutableLiveData<List<String>> = MutableLiveData(listOf(""))
     val alarmSiteList:MutableLiveData<List<String>> = MutableLiveData(listOf(""))
+
+    val keywordNameList:MutableLiveData<List<String>> = MutableLiveData(listOf(""))
 
     fun getKeywordSearchList(keyword:String){
         viewModelScope.launch {
@@ -52,7 +52,7 @@ class KeywordViewModel @Inject constructor(
     fun getKeywordSiteSearch(site:String){
         viewModelScope.launch {
             when(val _keywordSiteSearchList = getSiteSearchUseCase(site)){
-                is NetworkState.Success<*> -> keywordSiteSearchList.value = _keywordSiteSearchList.data as List<String>
+                is NetworkState.Success<*> -> siteSearchList.value = _keywordSiteSearchList.data as List<String>
                 is NetworkState.Fail<*> -> Log.d("KeywordAddViewModel",_keywordSiteSearchList.data.toString())
             }
         }
@@ -61,7 +61,7 @@ class KeywordViewModel @Inject constructor(
     fun getSiteRecommendation(){
         viewModelScope.launch {
             when(val _keywordSiteRecommendationList = getSiteRecommendationUseCase()){
-                is NetworkState.Success<*> -> keywordSiteRecommendationList.value = _keywordSiteRecommendationList.data as List<String>
+                is NetworkState.Success<*> -> siteRecommendationList.value = _keywordSiteRecommendationList.data as List<String>
                 is NetworkState.Fail<*> -> Log.d("KeywordAddViewModel",_keywordSiteRecommendationList.data.toString())
             }
         }
@@ -111,7 +111,6 @@ class KeywordViewModel @Inject constructor(
     }
 
     fun getAlarmSiteList(){
-        Log.d("keywordaddscreen111","getalarmsitelist")
         val _alarmSiteList = mutableListOf<String>()
         alarmSiteData.getAllList { list: List<Site> ->
             list.onEach { site ->
@@ -141,42 +140,37 @@ class KeywordViewModel @Inject constructor(
         alarmMode : Boolean,
         isImportant: Boolean,
         name : String,
-        siteList : List<String>,
         untilPressOkButton : Boolean,
         vibrationMode : Boolean
     ){
-        val alarmCycleData = if(isImportant){
-            when(alarmCycle){
-                0 -> 5
-                1 -> 10
-                2-> 15
-                3-> 30
-                4-> 60
-                5-> 120
-                6-> 240
-                7-> 360
-                else -> 0
-            }
-        } else 0
-
-        val silentModeData = if(alarmMode) 1 else 0
-        val isImportantData = if(isImportant) 1 else 0
-        val untilPressOkButtonData = if(untilPressOkButton && isImportant) 1 else 0
-        val vibrationModeData = if(vibrationMode) 1 else 0
-
-        val keywordResponse = KeywordAddResponse(
-            alarmCycle = alarmCycleData,
-            silentMode = silentModeData,
-            isImportant = isImportantData,
-            name = name,
-            siteList = listOf("PORTAL"),
-            untilPressOkButton = untilPressOkButtonData,
-            vibrationMode = vibrationModeData
-        )
         viewModelScope.launch {
-            when(val pushKeywordResponse = pushKeywordUseCase(keywordResponse)){
+            when(val pushKeywordResponse = pushKeywordUseCase(
+                alarmCycle,
+                alarmMode,
+                isImportant,
+                name,
+                untilPressOkButton,
+                vibrationMode,
+                alarmSiteList.value
+            )){
                 is NetworkState.Success<*> -> Log.d("KeywordAddViewModel",pushKeywordResponse.data.toString())
                 is NetworkState.Fail<*> -> Log.d("KeywordAddViewModel",pushKeywordResponse.data.toString())
+            }
+        }
+    }
+
+    fun getKeywordNameList(){
+        viewModelScope.launch {
+            getKeywordListUseCase().collect{
+                when(it){
+                    is NetworkState.Success<*> -> {
+                        val keywordList = it.data as List<KeywordResponse>
+                        val _keywordNameList:MutableList<String> = mutableListOf()
+                        keywordList.forEach{ _keywordNameList.add(it.name) }
+                        keywordNameList.value = _keywordNameList
+                    }
+                    is NetworkState.Fail<*> -> Log.d("KeywordAddViewModel",it.data.toString())
+                }
             }
         }
     }

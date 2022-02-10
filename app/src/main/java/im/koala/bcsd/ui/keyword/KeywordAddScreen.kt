@@ -25,11 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import im.koala.bcsd.R
 import im.koala.bcsd.navigation.NavScreen
 import im.koala.bcsd.ui.button.KoalaToggle
+import im.koala.bcsd.ui.main.MainViewModel
 import im.koala.bcsd.ui.textfield.KoalaTextField
 import im.koala.bcsd.ui.theme.*
 
@@ -41,29 +40,31 @@ fun KeywordAddScreen(
     selectAlarmCycle: MutableState<Int>,
     alarmDistinction:MutableState<Boolean>,
     keywordSearchText:MutableState<String>,
-    notificationSiteText:MutableState<String>,
+    alarmSiteText:MutableState<String>,
     deleteSite:MutableState<String>,
     alarmSiteList:List<String>,
     alarmCheckedList: List<MutableState<Boolean>>,
-    getAlarmSiteList: () -> Unit,
+    keywordNameList: List<String>,
     addAlarmSiteList: () -> Unit,
     deleteAlarmSite: () -> Unit,
     deleteAllAlarmSiteList: () -> Unit,
     pushKeyword: () -> Unit,
-) {
-    val isError: MutableState<Boolean> = remember { mutableStateOf(false) }
+){
+    val isSiteError: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val isKeywordError: MutableState<Boolean> = remember { mutableStateOf(false) }
     val alarmCycleList = arrayOf( "5분", "10분", "15분", "30분", "1시간", "2시간", "4시간", "6시간")
-    getAlarmSiteList()
 
     Column(modifier = Modifier.fillMaxSize()) {
         KeywordAddScreenTopBar(
             screenName = screenName,
-            isError = isError,
+            isSiteError = isSiteError,
+            isKeywordError = isKeywordError,
             keywordSearchText = keywordSearchText,
             alarmSiteList = alarmSiteList,
             navController = navController,
+            keywordNameList = keywordNameList,
             pushKeyword = { pushKeyword() },
-            deleteAllSiteList = { deleteAllAlarmSiteList() }
+            deleteAllSiteList = { deleteAllAlarmSiteList() },
         )
 
         Divider(
@@ -74,12 +75,13 @@ fun KeywordAddScreen(
 
         KeywordInputTextField(
             navController = navController,
-            keywordText = keywordSearchText
+            keywordText = keywordSearchText,
+            isKeywordError = isKeywordError
         )
 
         SearchForNotificationsTextField(
-            text = notificationSiteText,
-            isError = isError,
+            text = alarmSiteText,
+            isSiteError = isSiteError,
             navController = navController,
             alarmSiteList = alarmSiteList,
             deleteSite = deleteSite,
@@ -99,12 +101,14 @@ fun KeywordAddScreen(
 @Composable
 fun KeywordAddScreenTopBar(
     screenName:String,
-    isError: MutableState<Boolean>,
+    isSiteError: MutableState<Boolean>,
+    isKeywordError: MutableState<Boolean>,
     keywordSearchText:MutableState<String>,
     alarmSiteList:List<String>,
     navController: NavController,
+    keywordNameList:List<String>,
     pushKeyword: () ->Unit,
-    deleteAllSiteList: () -> Unit
+    deleteAllSiteList: () -> Unit,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -133,8 +137,14 @@ fun KeywordAddScreenTopBar(
         )
         TextButton(
             onClick = {
-                isError.value = alarmSiteList.isEmpty()
-                if(!isError.value) pushKeyword()
+                isSiteError.value = alarmSiteList.isEmpty()
+                isKeywordError.value = keywordSearchText.value in keywordNameList || keywordSearchText.value.isEmpty()
+                if(!isSiteError.value && !isKeywordError.value) {
+                    pushKeyword()
+                    deleteAllSiteList()
+                    keywordSearchText.value = ""
+                    navController.navigateUp()
+                }
                       },
         ) {
             Text(
@@ -147,25 +157,47 @@ fun KeywordAddScreenTopBar(
 }
 
 @Composable
-fun KeywordInputTextField(navController: NavController,keywordText:MutableState<String>) {
+fun KeywordInputTextField(
+    navController: NavController,
+    isKeywordError: MutableState<Boolean>,
+    keywordText:MutableState<String>
+) {
     KoalaTheme {
-        Box(Modifier.fillMaxWidth()){
-            KoalaTextField(
-                value = keywordText.value, onValueChange = { keywordText.value = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colors.surface)
-                    .padding(horizontal = 16.dp),
-                placeholder = { Text(text = stringResource(id = R.string.keyword_input)) },
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_hashtag),
-                        contentDescription = "",
-                        modifier = Modifier.padding(8.dp)
-                    )
-                },
-            )
-            Box(modifier = Modifier.matchParentSize().clickable { navController.navigate(NavScreen.KeywordAddInput.route) })
+        val bottomPadding: Dp = if (isKeywordError.value) 4.dp else 16.dp
+        Column (
+            modifier = Modifier.padding(bottom = bottomPadding)
+            ){
+            Box(Modifier.fillMaxWidth()){
+                KoalaTextField(
+                    value = keywordText.value,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colors.surface)
+                        .padding(horizontal = 16.dp),
+                    onValueChange = { keywordText.value = it },
+                    placeholder = { Text(text = stringResource(id = R.string.keyword_input)) },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_hashtag),
+                            contentDescription = "",
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    },
+                    isError = isKeywordError.value
+                )
+                Box(modifier = Modifier
+                    .matchParentSize()
+                    .clickable { navController.navigate(NavScreen.KeywordAddInput.route) })
+            }
+
+            if (isKeywordError.value) {
+                Text(
+                    text = stringResource(id = R.string.error_search_for_keyword),
+                    color = Yellow,
+                    fontSize = 11.sp,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
         }
     }
 }
@@ -175,17 +207,17 @@ fun KeywordInputTextField(navController: NavController,keywordText:MutableState<
 fun SearchForNotificationsTextField(
     navController: NavController,
     text: MutableState<String>,
-    isError: MutableState<Boolean>,
+    isSiteError: MutableState<Boolean>,
     alarmSiteList:List<String>,
     deleteSite:MutableState<String>,
     addAlarmSiteList: () -> Unit,
     deleteAlarmSite: () -> Unit
 ) {
     KoalaTheme {
-        val bottomPadding: Dp = if (isError.value) 17.dp else 32.dp
+        val bottomPadding: Dp = if (isSiteError.value) 13.dp else 32.dp
         val deleteSign = remember{ mutableStateOf(false) }
 
-        Column(modifier = Modifier.padding(top = 16.dp, bottom = bottomPadding)) {
+        Column(modifier = Modifier.padding(bottom = bottomPadding)) {
             Box(Modifier.fillMaxWidth()){
                 KoalaTextField(
                     value = text.value, onValueChange = {
@@ -196,7 +228,7 @@ fun SearchForNotificationsTextField(
                         .background(MaterialTheme.colors.surface)
                         .padding(horizontal = 16.dp),
                     placeholder = { Text(text = stringResource(id = R.string.search_for_notifications)) },
-                    isError = isError.value,
+                    isError = isSiteError.value,
                     leadingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_search),
@@ -205,11 +237,22 @@ fun SearchForNotificationsTextField(
                         )
                     }
                 )
-                Box(modifier = Modifier.matchParentSize().clickable { navController.navigate(NavScreen.KeywordSiteAddInput.route) })
+                Box(modifier = Modifier
+                    .matchParentSize()
+                    .clickable { navController.navigate(NavScreen.KeywordSiteAddInput.route) })
             }
             if(text.value.isNotEmpty()){
                 addAlarmSiteList()
                 text.value = ""
+            }
+
+            if (isSiteError.value) {
+                Text(
+                    text = stringResource(id = R.string.error_search_for_alarm),
+                    color = Yellow,
+                    fontSize = 11.sp,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
             }
 
             SearchForNotificationsLazyColumn(
@@ -218,15 +261,6 @@ fun SearchForNotificationsTextField(
                 deleteSite = deleteSite,
                 deleteAlarmSite = { deleteAlarmSite() },
             )
-
-            if (isError.value) {
-                Text(
-                    text = stringResource(id = R.string.error_search_for_notifications),
-                    color = Yellow,
-                    fontSize = 11.sp,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
         }
     }
 }

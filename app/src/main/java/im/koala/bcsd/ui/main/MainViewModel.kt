@@ -1,5 +1,6 @@
 package im.koala.bcsd.ui.main
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -10,6 +11,7 @@ import im.koala.domain.state.NetworkState
 import im.koala.domain.model.CommonResponse
 import im.koala.domain.model.KeywordResponse
 import im.koala.domain.usecase.GetKeywordListUseCase
+import im.koala.domain.usecase.keyword.DeleteKeywordUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,7 +27,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getKeywordListUseCase: GetKeywordListUseCase
+    private val getKeywordListUseCase: GetKeywordListUseCase,
+    private val deleteKeywordUseCase: DeleteKeywordUseCase,
 ) : ViewModel() {
     private val _selectedTab: MutableState<MainScreenBottomTab> = mutableStateOf(MainScreenBottomTab.KEYWORD)
     val selectedTab: State<MainScreenBottomTab> get() = _selectedTab
@@ -66,6 +69,15 @@ class MainViewModel @Inject constructor(
         getKeywordListUseCase().onEach {
             domainKeywordSharedFlow.emit(it)
         }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
+    }
+
+    fun deleteKeyword(keyword:String){
+        viewModelScope.launch {
+            when(val deleteKeywordResponse = deleteKeywordUseCase(keyword)){
+                is NetworkState.Success<*> -> Log.d("mainViewModel",deleteKeywordResponse.data.toString())
+                is NetworkState.Fail<*> -> Log.d("mainViewModel",deleteKeywordResponse.data.toString())
+            }
+        }
     }
 }
 data class KeywordUi(
