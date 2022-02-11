@@ -7,7 +7,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -25,7 +24,8 @@ import im.koala.bcsd.ui.keyword.*
 @ExperimentalMaterialApi
 @Composable
 fun MainScreen(
-    keywordViewModel:KeywordViewModel = viewModel()
+    keywordViewModel:KeywordViewModel = viewModel(),
+    viewModel: MainViewModel = viewModel()
 ) {
     val navController = rememberNavController()
     val tabStateHolder = HomeTabStateHolder(
@@ -47,7 +47,7 @@ fun MainScreen(
                 keywordViewModel.deleteAllSiteList()
 
                 HomeTabScreen(
-                    viewModel = hiltViewModel(),
+                    viewModel = viewModel,
                     tabStateHolder = tabStateHolder,
                     selectItem = { tab, index ->
                         when (tab) {
@@ -93,13 +93,14 @@ fun MainScreen(
                     deleteAlarmSite = { keywordViewModel.deleteAlarmSite(deleteSite.value) },
                     deleteAllAlarmSiteList = { keywordViewModel.deleteAllSiteList() },
                 ) {
-                    keywordViewModel.pushKeyword(
+                    viewModel.pushKeyword(
                         alarmCycle = selectAlarmCycle.value,
                         alarmMode = alarmCheckedList[0].value,
                         isImportant = alarmDistinction.value,
                         name = keywordSearchText.value,
                         untilPressOkButton = alarmCheckedList[2].value,
-                        vibrationMode = alarmCheckedList[1].value
+                        vibrationMode = alarmCheckedList[1].value,
+                        alarmSiteList = alarmSiteList
                     )
                 }
             }
@@ -151,7 +152,7 @@ fun MainScreen(
                     recommendationList = alarmSiteRecommendationList,
                     searchList = alarmSiteSearchList,
                     recentSearchList = recentSiteSearchList,
-                    getSearchList = { keywordViewModel.getKeywordSiteSearch(siteSearchingText.value) },
+                    getSearchList = { keywordViewModel.getSiteSearchList(siteSearchingText.value) },
                     setRecentSearchList = { keywordViewModel.setRecentSiteSearchList(alarmSiteText.value) },
                 )
             }

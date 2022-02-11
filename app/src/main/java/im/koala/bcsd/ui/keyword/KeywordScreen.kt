@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -103,7 +104,6 @@ fun KeywordScreen(
                 selectKeyword = selectKeyword,
                 deleteKeyword = { viewModel.deleteKeyword(it) },
                 navController = navController,
-                viewModel = viewModel
             )
         }
     }
@@ -148,21 +148,25 @@ fun DrawLazyColumnView(
     selectKeyword: (MainScreenBottomTab, Int) -> Unit,
     deleteKeyword: (keyword:String)->Unit,
     navController: NavController,
-    viewModel: MainViewModel
 )  {
     LazyColumn(
         modifier = modifier,
         state = lazyListState
     ) {
-        items(keywordList) { its ->
+        itemsIndexed(
+            items = keywordList,
+            key = { _, item->
+                item.hashCode()
+            }
+        )
+        { _, item ->
             val state = rememberDismissState(
                 confirmStateChange = {
                     if (it == DismissValue.DismissedToStart) {
-                        deleteKeyword(its.name)
-                        viewModel.executeGetKeywordList()
+                        deleteKeyword(item.name)
                     }
                     true
-                }
+                },
             )
             SwipeToDismiss(
                 state = state,
@@ -192,10 +196,9 @@ fun DrawLazyColumnView(
                     }
                 },
                 dismissContent = {
-                    DrawKeywordItem(keyword = its, selectKeyword)
+                    DrawKeywordItem(keyword = item, selectKeyword)
                 },
                 directions = setOf(DismissDirection.EndToStart),
-                dismissThresholds = { FractionalThreshold(0.6f) }
             )
         }
         item {

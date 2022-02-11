@@ -2,11 +2,11 @@ package im.koala.bcsd.ui.keyword
 
 import android.util.Log
 import android.widget.NumberPicker
+import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -53,8 +54,9 @@ fun KeywordAddScreen(
     val isSiteError: MutableState<Boolean> = remember { mutableStateOf(false) }
     val isKeywordError: MutableState<Boolean> = remember { mutableStateOf(false) }
     val alarmCycleList = arrayOf( "5분", "10분", "15분", "30분", "1시간", "2시간", "4시간", "6시간")
-
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
         KeywordAddScreenTopBar(
             screenName = screenName,
             isSiteError = isSiteError,
@@ -110,6 +112,8 @@ fun KeywordAddScreenTopBar(
     pushKeyword: () ->Unit,
     deleteAllSiteList: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val errorMsg = stringResource(id = R.string.keyword_search_empty)
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -137,13 +141,16 @@ fun KeywordAddScreenTopBar(
         )
         TextButton(
             onClick = {
-                isSiteError.value = alarmSiteList.isEmpty()
-                isKeywordError.value = keywordSearchText.value in keywordNameList || keywordSearchText.value.isEmpty()
-                if(!isSiteError.value && !isKeywordError.value) {
-                    pushKeyword()
-                    deleteAllSiteList()
-                    keywordSearchText.value = ""
-                    navController.navigateUp()
+                if(keywordSearchText.value.isEmpty()) Toast.makeText(context,errorMsg,Toast.LENGTH_SHORT).show()
+                else{
+                    isSiteError.value = alarmSiteList.isEmpty()
+                    isKeywordError.value = keywordSearchText.value in keywordNameList
+                    if(!isSiteError.value && !isKeywordError.value) {
+                        pushKeyword()
+                        deleteAllSiteList()
+                        keywordSearchText.value = ""
+                        navController.navigateUp()
+                    }
                 }
                       },
         ) {

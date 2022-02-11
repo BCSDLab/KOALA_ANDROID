@@ -5,8 +5,10 @@ import androidx.compose.runtime.MutableState
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import im.koala.domain.state.NetworkState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import im.koala.bcsd.ui.main.MainViewModel
 import im.koala.data.repository.local.AlarmSiteDataSource
 import im.koala.data.repository.local.Site
 import im.koala.domain.model.KeywordAddResponse
@@ -25,21 +27,22 @@ class KeywordViewModel @Inject constructor(
     private val getSiteSearchUseCase: GetSiteSearchUseCase,
     private val getRecentSearchListUseCase: GetRecentSearchListUseCase,
     private val setRecentSearchListUseCase: SetRecentSearchListUseCase,
-    private val pushKeywordUseCase:PushKeywordUseCase,
     private val getKeywordListUseCase: GetKeywordListUseCase,
-    private val alarmSiteData:AlarmSiteDataSource
+    private val alarmSiteData:AlarmSiteDataSource,
 ): ViewModel(){
     val keywordSearchList: MutableLiveData<List<String>> = MutableLiveData()
     val keywordRecommendationList: MutableLiveData<List<String>> = MutableLiveData()
     val recentKeywordSearchList:MutableLiveData<List<String>> = MutableLiveData(listOf(""))
-
     val siteSearchList: MutableLiveData<List<String>> = MutableLiveData()
     val siteRecommendationList: MutableLiveData<List<String>> = MutableLiveData()
     val recentSiteSearchList:MutableLiveData<List<String>> = MutableLiveData(listOf(""))
     val alarmSiteList:MutableLiveData<List<String>> = MutableLiveData(listOf(""))
-
     val keywordNameList:MutableLiveData<List<String>> = MutableLiveData(listOf(""))
 
+    /*
+        getKeywordSearchList(keyword:String),getSiteSearchList(site:String)
+        : 파라미터로 들어온 값에 해당하는 리스트를 livedata 에 저장한다.
+    */
     fun getKeywordSearchList(keyword:String){
         viewModelScope.launch {
             when(val _keywordSearchList = getKeywordSearchUseCase(keyword)){
@@ -49,7 +52,7 @@ class KeywordViewModel @Inject constructor(
         }
     }
 
-    fun getKeywordSiteSearch(site:String){
+    fun getSiteSearchList(site:String){
         viewModelScope.launch {
             when(val _keywordSiteSearchList = getSiteSearchUseCase(site)){
                 is NetworkState.Success<*> -> siteSearchList.value = _keywordSiteSearchList.data as List<String>
@@ -57,6 +60,11 @@ class KeywordViewModel @Inject constructor(
             }
         }
     }
+
+    /*
+         getSiteRecommendation(),getKeywordRecommendation()
+         : 추천 키워드, 추천 대상이 담긴 리스트를 서버에서 받아와서 livedata 에 저장한다.
+   */
 
     fun getSiteRecommendation(){
         viewModelScope.launch {
@@ -75,6 +83,12 @@ class KeywordViewModel @Inject constructor(
             }
         }
     }
+    /*
+        setRecentKeywordSearchList(keywordSearch:String), setRecentSiteSearchList(siteSearch:String)
+        : 최근에 검색했던 키워드, 알림받을 대상 리스트를 추가하는 메서드
+        getRecentKeywordSearchList(), getRecentSiteSearchList()
+        : 최근에 검색했던 키워드, 알림받을 대상 리스트를 가져오는 메서드
+    */
 
     fun setRecentKeywordSearchList(keywordSearch:String){
         val setRecentKeywordSearchList = mutableListOf<String>()
@@ -110,6 +124,13 @@ class KeywordViewModel @Inject constructor(
         }
     }
 
+    /*
+         getAlarmSiteList() : 알림받을 대상 리스트를 가져오는 메서드
+         addAlarmSiteList(site:String) : 알림받을 대상 리스트를 추가하는 메서드
+         deleteAlarmSite(site:String) : 알림받을 대상 리스트에서 파라미터로 들어온 값을 제거하는 메서드
+         deleteAllSiteList() : 알림받을 대상 리스트 내에 있는 값들을 전부 없애는 메서드
+    */
+
     fun getAlarmSiteList(){
         val _alarmSiteList = mutableListOf<String>()
         alarmSiteData.getAllList { list: List<Site> ->
@@ -135,29 +156,9 @@ class KeywordViewModel @Inject constructor(
         getAlarmSiteList()
     }
 
-    fun pushKeyword(
-        alarmCycle : Int,
-        alarmMode : Boolean,
-        isImportant: Boolean,
-        name : String,
-        untilPressOkButton : Boolean,
-        vibrationMode : Boolean
-    ){
-        viewModelScope.launch {
-            when(val pushKeywordResponse = pushKeywordUseCase(
-                alarmCycle,
-                alarmMode,
-                isImportant,
-                name,
-                untilPressOkButton,
-                vibrationMode,
-                alarmSiteList.value
-            )){
-                is NetworkState.Success<*> -> Log.d("KeywordAddViewModel",pushKeywordResponse.data.toString())
-                is NetworkState.Fail<*> -> Log.d("KeywordAddViewModel",pushKeywordResponse.data.toString())
-            }
-        }
-    }
+    /*
+        getKeywordNameList() : 키워드를 추가하기 전에 키워드 중복검사를 하기위해서 키워드 name 만 담긴 리스트를 가져오는 메서드
+    */
 
     fun getKeywordNameList(){
         viewModelScope.launch {
