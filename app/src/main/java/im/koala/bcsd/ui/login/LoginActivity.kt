@@ -85,6 +85,11 @@ class LoginActivity : ComponentActivity() {
             startActivity(this)
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.setActivityContext(null)
+    }
 }
 
 @ExperimentalComposeUiApi
@@ -525,8 +530,6 @@ fun SnsLoginScreen(
     }
     if (deviceTokenState.value.errorMesage.isNotEmpty()) {
         CallToastMessage(context = context, message = deviceTokenState.value.errorMesage)
-    } else {
-        CallToastMessage(context = context, message = stringResource(id = R.string.not_founc_device_token))
     }
     if (deviceTokenState.value.goToMainActivity) {
         Intent(context, MainActivity::class.java).run {

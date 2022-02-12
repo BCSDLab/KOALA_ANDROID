@@ -1,6 +1,6 @@
 package im.koala.data.repository
 
-import im.koala.bcsd.state.NetworkState
+import im.koala.domain.state.ApiResponse
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.domain.model.CommonResponse
@@ -16,22 +16,22 @@ class UserRepositoryImpl @Inject constructor(
         snsType: String,
         snsAccessToken: String,
         deviceToken: String
-    ): NetworkState {
+    ): ApiResponse {
         val response = userRemoteDataSource.postSnsLogin(snsType, snsAccessToken, deviceToken)
-        var result: NetworkState = NetworkState.Uninitialized
+        var result: ApiResponse = ApiResponse.Uninitialized
         if (response.isSuccessful) {
             TokenResponse().apply {
                 accessToken = response.body()?.body?.accessToken ?: run {
-                    return NetworkState.Fail(CommonResponse.UNKOWN)
+                    return ApiResponse.Fail(CommonResponse.UNKOWN)
                 }
                 refreshToken = response.body()?.body?.refreshToken!!
             }.run {
                 userLocalDataSource.saveToken(this)
-                result = NetworkState.Success(this)
+                result = ApiResponse.Success(this)
             }
         } else {
             CommonResponse.FAIL.apply { errorMessage = response.body()!!.errorMessage }
-                .run { result = NetworkState.Fail(this) }
+                .run { result = ApiResponse.Fail(this) }
         }
         return result
     }

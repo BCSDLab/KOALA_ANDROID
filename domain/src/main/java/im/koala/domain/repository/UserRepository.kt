@@ -1,7 +1,7 @@
 package im.koala.domain.repository
 
-import im.koala.bcsd.state.NetworkState
+import im.koala.domain.state.ApiResponse
 
 interface UserRepository {
-    suspend fun postSnsLogin(snsType: String, accessToken: String, deviceToken: String): NetworkState
+    suspend fun postSnsLogin(snsType: String, accessToken: String, deviceToken: String): ApiResponse
 }
