@@ -8,7 +8,7 @@ import im.koala.data.constants.REFRESH_TOKEN
 import im.koala.domain.model.TokenResponse
 import javax.inject.Inject
 
-class UserLocalDataSourceImpl@Inject constructor() : UserLocalDataSource {
+class UserLocalDataSourceImpl @Inject constructor() : UserLocalDataSource {
     private val gson: Gson = GsonBuilder().create()
 
     override fun saveToken(tokenResponse: TokenResponse) {
@@ -17,11 +17,11 @@ class UserLocalDataSourceImpl@Inject constructor() : UserLocalDataSource {
     }
 
     override suspend fun getRecentSearchList(key: String): List<String> {
-        return Hawk.get(key,mutableListOf())
+        return Hawk.get(key, mutableListOf())
     }
 
     override suspend fun setRecentSearchList(key: String, recentSearchList: List<String>) {
-        Hawk.put(key,recentSearchList)
+        Hawk.put(key, recentSearchList)
     }
 
 }

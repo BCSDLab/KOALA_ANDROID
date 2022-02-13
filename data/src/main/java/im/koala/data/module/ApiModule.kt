@@ -51,7 +51,7 @@ class ApiModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
 
-    private val authRetrofit:Retrofit
+    private val authRetrofit: Retrofit
         get() = Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(KOALA_API_URL)
