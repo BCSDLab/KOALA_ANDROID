@@ -14,13 +14,4 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
     }
-
-    @Test
-    fun foo(){
-        var a = 0
-        flow<String> {
-            a = 2
-        }
-        assertEquals(2,a)
-    }
 }
