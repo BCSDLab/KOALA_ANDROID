@@ -1,6 +1,6 @@
 package im.koala.data.repository
 
-import im.koala.bcsd.state.NetworkState
+import im.koala.bcsd.state.Result
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.domain.entity.signup.SignUpResult
@@ -18,29 +18,29 @@ class UserRepositoryImpl @Inject constructor(
         snsType: String,
         snsAccessToken: String,
         deviceToken: String
-    ): NetworkState {
+    ): Result {
         val response = userRemoteDataSource.postSnsLogin(snsType, snsAccessToken, deviceToken)
-        var result: NetworkState = NetworkState.Uninitialized
+        var result: Result = Result.Uninitialized
         if (response.isSuccessful) {
             TokenResponse().apply {
                 accessToken = response.body()?.body?.accessToken ?: run {
-                    return NetworkState.Fail(CommonResponse.UNKOWN)
+                    return Result.Fail(CommonResponse.UNKOWN)
                 }
                 refreshToken = response.body()?.body?.refreshToken!!
             }.run {
                 userLocalDataSource.saveToken(this)
-                result = NetworkState.Success(this)
+                result = Result.Success(this)
             }
         } else {
             CommonResponse.FAIL.apply { errorMessage = response.body()!!.errorMessage }
-                .run { result = NetworkState.Fail(this) }
+                .run { result = Result.Fail(this) }
         }
         return result
     }
 
-    override suspend fun getKeyword(): NetworkState {
+    override suspend fun getKeyword(): Result {
         val response = userRemoteDataSource.getKeyword()
-        var result: NetworkState = NetworkState.Uninitialized
+        var result: Result = Result.Uninitialized
         if (response.isSuccessful) {
             val keywordList = mutableListOf<KeywordResponse>()
             response.body()?.body?.let {
@@ -55,10 +55,10 @@ class UserRepositoryImpl @Inject constructor(
                     keywordList.add(it)
                 }
             }
-            result = NetworkState.Success(keywordList)
+            result = Result.Success(keywordList)
         } else {
             CommonResponse.FAIL.apply { errorMessage = response.body()!!.errorMessage }
-                .run { result = NetworkState.Fail(this) }
+                .run { result = Result.Fail(this) }
         }
         return result
     }

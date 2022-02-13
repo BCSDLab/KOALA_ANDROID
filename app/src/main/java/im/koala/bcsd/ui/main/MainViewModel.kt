@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import im.koala.bcsd.state.NetworkState
+import im.koala.bcsd.state.Result
 import im.koala.domain.model.CommonResponse
 import im.koala.domain.model.KeywordResponse
 import im.koala.domain.usecase.GetKeywordListUseCase
@@ -33,8 +33,8 @@ class MainViewModel @Inject constructor(
     private val _keywordUi: MutableState<KeywordUi> = mutableStateOf(KeywordUi())
     val keywordUi: State<KeywordUi> get() = _keywordUi
 
-    val keywordState: StateFlow<NetworkState>
-    val domainKeywordSharedFlow = MutableSharedFlow<NetworkState>()
+    val keywordState: StateFlow<Result>
+    val domainKeywordSharedFlow = MutableSharedFlow<Result>()
 
     fun selectTab(tab: MainScreenBottomTab) {
         _selectedTab.value = tab
@@ -45,15 +45,15 @@ class MainViewModel @Inject constructor(
             viewModelScope,
             SharingStarted.Eagerly, 0
         )
-        keywordState = onGetKeywordListUseCase.stateIn(viewModelScope, SharingStarted.Eagerly, NetworkState.Uninitialized)
+        keywordState = onGetKeywordListUseCase.stateIn(viewModelScope, SharingStarted.Eagerly, Result.Uninitialized)
 
         viewModelScope.launch(Dispatchers.IO) {
             keywordState.collectLatest {
                 when (it) {
-                    is NetworkState.Success<*> -> {
+                    is Result.Success<*> -> {
                         _keywordUi.value = _keywordUi.value.copy(keywordList = (it.data as MutableList<KeywordResponse>))
                     }
-                    is NetworkState.Fail<*> -> {
+                    is Result.Fail<*> -> {
                         val response = it.data as CommonResponse
                         _keywordUi.value = _keywordUi.value.copy(errorMessage = response.errorMessage!!)
                     }

@@ -85,6 +85,11 @@ class LoginActivity : ComponentActivity() {
             startActivity(this)
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.setActivityContext(null)
+    }
 }
 
 @ExperimentalComposeUiApi
