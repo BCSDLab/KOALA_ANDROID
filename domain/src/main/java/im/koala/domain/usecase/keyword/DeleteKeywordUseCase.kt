@@ -7,5 +7,6 @@ import javax.inject.Inject
 class DeleteKeywordUseCase @Inject constructor(
     private val keywordAddRepository: KeywordAddRepository
 ) {
-    suspend operator fun invoke(keyword:String): NetworkState = keywordAddRepository.deleteKeyword(keyword)
+    suspend operator fun invoke(keyword: String): NetworkState =
+        keywordAddRepository.deleteKeyword(keyword)
 }

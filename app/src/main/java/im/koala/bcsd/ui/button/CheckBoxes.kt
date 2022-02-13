@@ -81,7 +81,7 @@ fun KoalaToggle(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    iconModifier:Modifier = Modifier
+    iconModifier: Modifier = Modifier
 ) {
 
     Box(

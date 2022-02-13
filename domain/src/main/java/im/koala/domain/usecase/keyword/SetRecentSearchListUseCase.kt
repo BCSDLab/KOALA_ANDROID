@@ -6,7 +6,7 @@ import javax.inject.Inject
 class SetRecentSearchListUseCase @Inject constructor(
     private val keywordAddRepository: KeywordAddRepository
 ) {
-    suspend operator fun invoke(key:String,searchList:List<String>){
-        keywordAddRepository.setRecentSearchList(key,searchList)
+    suspend operator fun invoke(key: String, searchList: List<String>) {
+        keywordAddRepository.setRecentSearchList(key, searchList)
     }
 }

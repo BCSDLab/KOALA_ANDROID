@@ -6,7 +6,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.koala.domain.state.NetworkState
 import im.koala.domain.model.CommonResponse
@@ -15,7 +14,6 @@ import im.koala.domain.usecase.GetKeywordListUseCase
 import im.koala.domain.usecase.keyword.DeleteKeywordUseCase
 import im.koala.domain.usecase.keyword.PushKeywordUseCase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -33,8 +31,9 @@ class MainViewModel @Inject constructor(
     private val getKeywordListUseCase: GetKeywordListUseCase,
     private val deleteKeywordUseCase: DeleteKeywordUseCase,
     private val pushKeywordUseCase: PushKeywordUseCase,
-): ViewModel() {
-    private val _selectedTab: MutableState<MainScreenBottomTab> = mutableStateOf(MainScreenBottomTab.KEYWORD)
+) : ViewModel() {
+    private val _selectedTab: MutableState<MainScreenBottomTab> =
+        mutableStateOf(MainScreenBottomTab.KEYWORD)
     val selectedTab: State<MainScreenBottomTab> get() = _selectedTab
 
     private val _keywordUi: MutableState<KeywordUi> = mutableStateOf(KeywordUi())
@@ -46,39 +45,48 @@ class MainViewModel @Inject constructor(
     fun selectTab(tab: MainScreenBottomTab) {
         _selectedTab.value = tab
     }
+
     init {
 
         val onGetKeywordListUseCase = domainKeywordSharedFlow.shareIn(
             viewModelScope,
             SharingStarted.Eagerly, 0
         )
-        keywordState = onGetKeywordListUseCase.stateIn(viewModelScope, SharingStarted.Eagerly, NetworkState.Uninitialized)
+        keywordState = onGetKeywordListUseCase.stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            NetworkState.Uninitialized
+        )
 
         viewModelScope.launch(Dispatchers.IO) {
             keywordState.collectLatest {
                 when (it) {
                     is NetworkState.Success<*> -> {
-                        _keywordUi.value = _keywordUi.value.copy(keywordList = (it.data as MutableList<KeywordResponse>))
+                        _keywordUi.value =
+                            _keywordUi.value.copy(keywordList = (it.data as MutableList<KeywordResponse>))
                     }
                     is NetworkState.Fail<*> -> {
                         val response = it.data as CommonResponse
-                        _keywordUi.value = _keywordUi.value.copy(errorMessage = response.errorMessage!!)
+                        _keywordUi.value =
+                            _keywordUi.value.copy(errorMessage = response.errorMessage!!)
                     }
                 }
             }
         }
     }
 
-    private fun reloadKeywordList(){
+    private fun reloadKeywordList() {
         viewModelScope.launch(Dispatchers.IO) {
             keywordState.collectLatest {
                 when (it) {
                     is NetworkState.Success<*> -> {
-                        _keywordUi.value = _keywordUi.value.copy(keywordList = (it.data as MutableList<KeywordResponse>))
+                        _keywordUi.value =
+                            _keywordUi.value.copy(keywordList = (it.data as MutableList<KeywordResponse>))
                     }
                     is NetworkState.Fail<*> -> {
                         val response = it.data as CommonResponse
-                        _keywordUi.value = _keywordUi.value.copy(errorMessage = response.errorMessage!!)
+                        _keywordUi.value =
+                            _keywordUi.value.copy(errorMessage = response.errorMessage!!)
                     }
                 }
             }
@@ -91,31 +99,34 @@ class MainViewModel @Inject constructor(
         }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
     }
 
-    fun deleteKeyword(keyword:String){
+    fun deleteKeyword(keyword: String) {
         viewModelScope.launch {
-            when(val deleteKeywordResponse = deleteKeywordUseCase(keyword)){
+            when (val deleteKeywordResponse = deleteKeywordUseCase(keyword)) {
                 is NetworkState.Success<*> -> {
-                    Log.d("mainViewModel",deleteKeywordResponse.data.toString())
+                    Log.d("mainViewModel", deleteKeywordResponse.data.toString())
                     reloadKeywordList()
                     executeGetKeywordList()
-                    Log.d("mainViewModel",keywordUi.value.keywordList.toString())
+                    Log.d("mainViewModel", keywordUi.value.keywordList.toString())
                 }
-                is NetworkState.Fail<*> -> Log.d("mainViewModel",deleteKeywordResponse.data.toString())
+                is NetworkState.Fail<*> -> Log.d(
+                    "mainViewModel",
+                    deleteKeywordResponse.data.toString()
+                )
             }
         }
     }
 
     fun pushKeyword(
-        alarmCycle : Int,
-        alarmMode : Boolean,
+        alarmCycle: Int,
+        alarmMode: Boolean,
         isImportant: Boolean,
-        name : String,
-        untilPressOkButton : Boolean,
-        vibrationMode : Boolean,
-        alarmSiteList:List<String>
-    ){
+        name: String,
+        untilPressOkButton: Boolean,
+        vibrationMode: Boolean,
+        alarmSiteList: List<String>
+    ) {
         viewModelScope.launch {
-            when(val pushKeywordResponse = pushKeywordUseCase(
+            when (val pushKeywordResponse = pushKeywordUseCase(
                 alarmCycle,
                 alarmMode,
                 isImportant,
@@ -123,17 +134,21 @@ class MainViewModel @Inject constructor(
                 untilPressOkButton,
                 vibrationMode,
                 alarmSiteList
-            )){
+            )) {
                 is NetworkState.Success<*> -> {
-                    Log.d("KeywordAddViewModel",pushKeywordResponse.data.toString())
+                    Log.d("KeywordAddViewModel", pushKeywordResponse.data.toString())
                     reloadKeywordList()
                     executeGetKeywordList()
                 }
-                is NetworkState.Fail<*> -> Log.d("KeywordAddViewModel",pushKeywordResponse.data.toString())
+                is NetworkState.Fail<*> -> Log.d(
+                    "KeywordAddViewModel",
+                    pushKeywordResponse.data.toString()
+                )
             }
         }
     }
 }
+
 data class KeywordUi(
     val keywordList: MutableList<KeywordResponse> = mutableListOf(),
     var errorMessage: String = ""

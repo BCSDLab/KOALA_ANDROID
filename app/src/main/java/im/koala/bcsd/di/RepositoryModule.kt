@@ -43,7 +43,7 @@ object RepositoryModule {
     }
 
     @Provides
-    fun provideAlarmSiteDataSource():AlarmSiteDataSource{
+    fun provideAlarmSiteDataSource(): AlarmSiteDataSource {
         return AlarmSiteDataSourceImpl()
     }
 
@@ -60,7 +60,7 @@ object RepositoryModule {
         authRemoteDataSource: UserRemoteDataSource,
         authLocalDataSource: UserLocalDataSource
     ): KeywordAddRepository {
-        return KeywordAddRepositoryImpl(authRemoteDataSource,authLocalDataSource)
+        return KeywordAddRepositoryImpl(authRemoteDataSource, authLocalDataSource)
     }
 
     @Provides

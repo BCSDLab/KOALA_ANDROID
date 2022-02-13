@@ -4,16 +4,40 @@ import android.util.Log
 import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.ListItem
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,31 +53,38 @@ import androidx.navigation.NavController
 import im.koala.bcsd.R
 import im.koala.bcsd.navigation.NavScreen
 import im.koala.bcsd.ui.button.KoalaToggle
-import im.koala.bcsd.ui.main.MainViewModel
 import im.koala.bcsd.ui.textfield.KoalaTextField
-import im.koala.bcsd.ui.theme.*
+import im.koala.bcsd.ui.theme.Black
+import im.koala.bcsd.ui.theme.GrayBorder
+import im.koala.bcsd.ui.theme.GrayFontColor
+import im.koala.bcsd.ui.theme.KoalaTheme
+import im.koala.bcsd.ui.theme.White
+import im.koala.bcsd.ui.theme.GrayDisabled
+import im.koala.bcsd.ui.theme.BlackBorder
+import im.koala.bcsd.ui.theme.Yellow
+import im.koala.bcsd.ui.theme.Gray
 
 @ExperimentalMaterialApi
 @Composable
 fun KeywordAddScreen(
-    screenName:String,
+    screenName: String,
     navController: NavController,
     selectAlarmCycle: MutableState<Int>,
-    alarmDistinction:MutableState<Boolean>,
-    keywordSearchText:MutableState<String>,
-    alarmSiteText:MutableState<String>,
-    deleteSite:MutableState<String>,
-    alarmSiteList:List<String>,
+    alarmDistinction: MutableState<Boolean>,
+    keywordSearchText: MutableState<String>,
+    alarmSiteText: MutableState<String>,
+    deleteSite: MutableState<String>,
+    alarmSiteList: List<String>,
     alarmCheckedList: List<MutableState<Boolean>>,
     keywordNameList: List<String>,
     addAlarmSiteList: () -> Unit,
     deleteAlarmSite: () -> Unit,
     deleteAllAlarmSiteList: () -> Unit,
     pushKeyword: () -> Unit,
-){
+) {
     val isSiteError: MutableState<Boolean> = remember { mutableStateOf(false) }
     val isKeywordError: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val alarmCycleList = arrayOf( "5분", "10분", "15분", "30분", "1시간", "2시간", "4시간", "6시간")
+    val alarmCycleList = arrayOf("5분", "10분", "15분", "30분", "1시간", "2시간", "4시간", "6시간")
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -102,14 +133,14 @@ fun KeywordAddScreen(
 
 @Composable
 fun KeywordAddScreenTopBar(
-    screenName:String,
+    screenName: String,
     isSiteError: MutableState<Boolean>,
     isKeywordError: MutableState<Boolean>,
-    keywordSearchText:MutableState<String>,
-    alarmSiteList:List<String>,
+    keywordSearchText: MutableState<String>,
+    alarmSiteList: List<String>,
     navController: NavController,
-    keywordNameList:List<String>,
-    pushKeyword: () ->Unit,
+    keywordNameList: List<String>,
+    pushKeyword: () -> Unit,
     deleteAllSiteList: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -141,18 +172,22 @@ fun KeywordAddScreenTopBar(
         )
         TextButton(
             onClick = {
-                if(keywordSearchText.value.isEmpty()) Toast.makeText(context,errorMsg,Toast.LENGTH_SHORT).show()
-                else{
+                if (keywordSearchText.value.isEmpty()) Toast.makeText(
+                    context,
+                    errorMsg,
+                    Toast.LENGTH_SHORT
+                ).show()
+                else {
                     isSiteError.value = alarmSiteList.isEmpty()
                     isKeywordError.value = keywordSearchText.value in keywordNameList
-                    if(!isSiteError.value && !isKeywordError.value) {
+                    if (!isSiteError.value && !isKeywordError.value) {
                         pushKeyword()
                         deleteAllSiteList()
                         keywordSearchText.value = ""
                         navController.navigateUp()
                     }
                 }
-                      },
+            },
         ) {
             Text(
                 text = stringResource(id = R.string.find_password_done),
@@ -167,14 +202,14 @@ fun KeywordAddScreenTopBar(
 fun KeywordInputTextField(
     navController: NavController,
     isKeywordError: MutableState<Boolean>,
-    keywordText:MutableState<String>
+    keywordText: MutableState<String>
 ) {
     KoalaTheme {
         val bottomPadding: Dp = if (isKeywordError.value) 4.dp else 16.dp
-        Column (
+        Column(
             modifier = Modifier.padding(bottom = bottomPadding)
-            ){
-            Box(Modifier.fillMaxWidth()){
+        ) {
+            Box(Modifier.fillMaxWidth()) {
                 KoalaTextField(
                     value = keywordText.value,
                     modifier = Modifier
@@ -215,17 +250,17 @@ fun SearchForNotificationsTextField(
     navController: NavController,
     text: MutableState<String>,
     isSiteError: MutableState<Boolean>,
-    alarmSiteList:List<String>,
-    deleteSite:MutableState<String>,
+    alarmSiteList: List<String>,
+    deleteSite: MutableState<String>,
     addAlarmSiteList: () -> Unit,
     deleteAlarmSite: () -> Unit
 ) {
     KoalaTheme {
         val bottomPadding: Dp = if (isSiteError.value) 13.dp else 32.dp
-        val deleteSign = remember{ mutableStateOf(false) }
+        val deleteSign = remember { mutableStateOf(false) }
 
         Column(modifier = Modifier.padding(bottom = bottomPadding)) {
-            Box(Modifier.fillMaxWidth()){
+            Box(Modifier.fillMaxWidth()) {
                 KoalaTextField(
                     value = text.value, onValueChange = {
                         text.value = it
@@ -248,7 +283,7 @@ fun SearchForNotificationsTextField(
                     .matchParentSize()
                     .clickable { navController.navigate(NavScreen.KeywordSiteAddInput.route) })
             }
-            if(text.value.isNotEmpty()){
+            if (text.value.isNotEmpty()) {
                 addAlarmSiteList()
                 text.value = ""
             }
@@ -275,33 +310,37 @@ fun SearchForNotificationsTextField(
 @ExperimentalMaterialApi
 @Composable
 fun SearchForNotificationsLazyColumn(
-    notificationSiteList:List<String>,
-    deleteSign:MutableState<Boolean>,
-    deleteSite:MutableState<String>,
+    notificationSiteList: List<String>,
+    deleteSign: MutableState<Boolean>,
+    deleteSite: MutableState<String>,
     deleteAlarmSite: () -> Unit,
-){
+) {
     LazyColumn(
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-    ){
-        items(notificationSiteList){
-            if(deleteSign.value){
+    ) {
+        items(notificationSiteList) {
+            if (deleteSign.value) {
                 deleteAlarmSite()
                 deleteSign.value = false
             }
-            SearchForNotificationsItem( text = it, deleteSign = deleteSign,deleteSite = deleteSite )
+            SearchForNotificationsItem(text = it, deleteSign = deleteSign, deleteSite = deleteSite)
         }
     }
 }
 
 @ExperimentalMaterialApi
 @Composable
-fun SearchForNotificationsItem(text:String,deleteSign: MutableState<Boolean>,deleteSite:MutableState<String>) {
+fun SearchForNotificationsItem(
+    text: String,
+    deleteSign: MutableState<Boolean>,
+    deleteSite: MutableState<String>
+) {
     ListItem(
         text = {
-               Text(
-                   text = text
-               )
+            Text(
+                text = text
+            )
         },
         trailing = {
             IconButton(onClick = {
@@ -340,9 +379,14 @@ fun NotificationsBox(
         ) {
             TextButton(
                 shape = RectangleShape,
-                border = if (notificationDistinction.value) BorderStroke(1.dp, BlackBorder) else BorderStroke(1.dp, GrayBorder),
+                border = if (notificationDistinction.value) BorderStroke(
+                    1.dp,
+                    BlackBorder
+                ) else BorderStroke(1.dp, GrayBorder),
                 modifier = Modifier.weight(0.5f),
-                colors = if (notificationDistinction.value) ButtonDefaults.buttonColors(Black) else ButtonDefaults.buttonColors(White),
+                colors = if (notificationDistinction.value) ButtonDefaults.buttonColors(Black) else ButtonDefaults.buttonColors(
+                    White
+                ),
                 onClick = { notificationDistinction.value = true }
             ) {
                 Text(
@@ -364,7 +408,9 @@ fun NotificationsBox(
                     GrayBorder
                 ) else BorderStroke(1.dp, BlackBorder),
                 modifier = Modifier.weight(0.5f),
-                colors = if (notificationDistinction.value) ButtonDefaults.buttonColors(White) else ButtonDefaults.buttonColors(Black),
+                colors = if (notificationDistinction.value) ButtonDefaults.buttonColors(White) else ButtonDefaults.buttonColors(
+                    Black
+                ),
                 onClick = { notificationDistinction.value = false }
             ) {
                 Text(
@@ -590,170 +636,3 @@ fun AlarmCycleDialog(
         )
     }
 }
-
-//@ExperimentalMaterialApi
-//@Preview(name = "키워드 레이아웃", showBackground = true)
-//@Composable
-//fun KeywordScreenPreview() {
-//    val text = remember { mutableStateOf("") }
-//    val navController = rememberNavController()
-//    val text2= remember { mutableStateOf("") }
-//
-//    KeywordAddScreen(navController,text,text2)
-//}
-
-//@Preview(name = "상단 내용", showBackground = true)
-//@Composable
-//fun KeywordAddScreenTopBarPreview() {
-//    val isError: MutableState<Boolean> = remember {mutableStateOf(false)}
-//    val notificationDistinction: MutableState<Boolean> = remember{mutableStateOf(true)}
-//    val text = remember { mutableStateOf("") }
-//    KeywordAddScreenTopBar(text, isError)
-//}
-//
-//@Preview(name = "키워드 검색", showBackground = true)
-//@Composable
-//fun KeywordInputTextFieldPreview() {
-//    val navController = rememberNavController()
-//    KeywordInputTextField(navController)
-//}
-//
-//@ExperimentalMaterialApi
-//@Preview(name = "알림받을 대상 검색", showBackground = true)
-//@Composable
-//fun SearchForNotificationsTextFieldPreview() {
-//    val isError1: MutableState<Boolean> = remember {mutableStateOf(false)}
-//    val isError2: MutableState<Boolean> = remember {mutableStateOf(true)}
-//
-//    val text = remember { mutableStateOf("") }
-//    Column() {
-//        SearchForNotificationsTextField(text, isError2)
-//        Spacer(modifier = Modifier.size(10.dp))
-//        SearchForNotificationsTextField(text, isError1)
-//    }
-//}
-//
-//@ExperimentalMaterialApi
-//@Preview(name = "중요알림 라인", showBackground = true)
-//@Composable
-//fun NotificationLinePreview() {
-//    val showDialog = remember {mutableStateOf(false)}
-//    val selectAlarmCycle = remember{mutableStateOf(0)}
-//    val alarmCycleList = arrayOf<String>(
-//        "10분",
-//        "20분",
-//        "30분",
-//        "40분",
-//        "50분",
-//    )
-//    val importantIsCheckedList: List<MutableState<Boolean>> = arrayListOf(
-//        remember { mutableStateOf(true) },
-//        remember { mutableStateOf(true) },
-//        remember { mutableStateOf(true) }
-//    )
-//    Column {
-//        NotificationLine(
-//            text = {
-//                Text(
-//                    text = "무음모드 알림",
-//                )
-//            },
-//            isChecked = importantIsCheckedList[0]
-//        )
-//        NotificationLine(
-//            text = {
-//                Text(
-//                    text = "진동 알림",
-//                )
-//            },
-//            isChecked = importantIsCheckedList[1]
-//        )
-//        NotificationLine(
-//            text = {
-//                Text(
-//                    text = "확인버튼누를 때 까지 알림",
-//                )
-//            },
-//            isChecked = importantIsCheckedList[2]
-//        )
-//        AlarmCycleLine(showDialog, selectAlarmCycle, alarmCycleList)
-//    }
-//}
-//
-//@ExperimentalMaterialApi
-//@Preview(name = "일반알림 라인", showBackground = true)
-//@Composable
-//fun GeneralNotificationLinePreview() {
-//    val generalIsCheckedList: List<MutableState<Boolean>> = arrayListOf(
-//        remember { mutableStateOf(true) },
-//        remember { mutableStateOf(true) }
-//    )
-//    Column {
-//        NotificationLine(
-//            text = {
-//                Text(
-//                    text = "무음모드 알림",
-//                    fontSize = 14.sp
-//                )
-//            },
-//        isChecked = generalIsCheckedList[0]
-//        )
-//        NotificationLine(
-//            text = {
-//                Text(
-//                    text = "진동 알림",
-//                    fontSize = 14.sp
-//                )
-//            },
-//            isChecked = generalIsCheckedList[1]
-//        )
-//    }
-//}
-//
-//@ExperimentalMaterialApi
-//@Preview(name = "알림박스", showBackground = true)
-//@Composable
-//fun NotificationsBoxPreview() {
-//    val notificationDistinction = remember{mutableStateOf(true)}
-//    val selectAlarmCycle: MutableState<Int> = remember{mutableStateOf(0)}
-//    val alarmCycleList = arrayOf<String>(
-//        "5분",
-//        "10분",
-//        "15분",
-//        "30분",
-//        "1시간",
-//        "2시간",
-//        "4시간",
-//        "6시간",
-//    )
-//    val importantIsCheckedList: List<MutableState<Boolean>> = arrayListOf(
-//        remember { mutableStateOf(true) },
-//        remember { mutableStateOf(true) },
-//        remember { mutableStateOf(true) }
-//    )
-//    val generalIsCheckedList: List<MutableState<Boolean>> = arrayListOf(
-//        remember { mutableStateOf(true) },
-//        remember { mutableStateOf(true) }
-//    )
-//    NotificationsBox(notificationDistinction, selectAlarmCycle, alarmCycleList,importantIsCheckedList,generalIsCheckedList)
-//}
-//
-//@ExperimentalMaterialApi
-//@Preview(name = "알림받을 대상 아이템", showBackground = true)
-//@Composable
-//fun SearchForNotificationsItemPreview() {
-//    SearchForNotificationsItem(
-//        text = {
-//            Text(
-//                text = "인스타그램",
-//                fontSize = 12.sp
-//            )
-//        })
-//}
-//
-//@ExperimentalMaterialApi
-//@Preview(name = "알림받을 대상 LAZY COLUMN", showBackground = true)
-//@Composable
-//fun SearchForNotificationsLazyColumnPreview(){
-//    SearchForNotificationsLazyColumn()
-//}

@@ -1,5 +1,5 @@
-
 package im.koala.bcsd.ui.main
+
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,7 +14,14 @@ import im.koala.bcsd.ui.history.HistoryScreen
 import im.koala.bcsd.ui.keyword.KeywordScreen
 import im.koala.bcsd.ui.setting.SettingScreen
 import androidx.compose.animation.Crossfade
-import androidx.compose.material.*
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.primarySurface
 import androidx.navigation.NavController
 
 @ExperimentalMaterialApi
@@ -40,7 +47,9 @@ fun HomeTabScreen(
 
                 tabs.forEach { tab ->
                     when (tab) {
-                        MainScreenBottomTab.KEYWORD -> { viewModel.executeGetKeywordList() }
+                        MainScreenBottomTab.KEYWORD -> {
+                            viewModel.executeGetKeywordList()
+                        }
                     }
                     BottomNavigationItem(
                         icon = {
@@ -49,7 +58,12 @@ fun HomeTabScreen(
                                 contentDescription = null
                             )
                         },
-                        label = { Text(text = stringResource(tab.title), color = MaterialTheme.colors.primary) },
+                        label = {
+                            Text(
+                                text = stringResource(tab.title),
+                                color = MaterialTheme.colors.primary
+                            )
+                        },
                         selected = tab == selectedTab,
                         onClick = { viewModel.selectTab(tab) },
                         selectedContentColor = MaterialTheme.colors.secondary,
@@ -65,7 +79,7 @@ fun HomeTabScreen(
         Crossfade(selectedTab) { destination ->
             when (destination) {
                 MainScreenBottomTab.KEYWORD -> KeywordScreen(
-                    tabStateHolder.keywordLazyListState, viewModel, selectItem,navController
+                    tabStateHolder.keywordLazyListState, viewModel, selectItem, navController
                 )
                 MainScreenBottomTab.HISTORY -> HistoryScreen(
                     modifier

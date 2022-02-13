@@ -2,13 +2,12 @@ package im.koala.domain.usecase.keyword
 
 import im.koala.domain.state.NetworkState
 import im.koala.domain.repository.KeywordAddRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetKeywordSearchUseCase @Inject constructor (
+class GetKeywordSearchUseCase @Inject constructor(
     private val keywordAddRepository: KeywordAddRepository
 ) {
-    suspend operator fun invoke(keyword:String): NetworkState = keywordAddRepository.getKeywordSearch(keyword)
+    suspend operator fun invoke(keyword: String): NetworkState =
+        keywordAddRepository.getKeywordSearch(keyword)
 
 }
