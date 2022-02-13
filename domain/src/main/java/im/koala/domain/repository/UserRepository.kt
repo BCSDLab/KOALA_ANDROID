@@ -9,5 +9,4 @@ interface UserRepository {
         accessToken: String,
         deviceToken: String
     ): NetworkState
-
 }

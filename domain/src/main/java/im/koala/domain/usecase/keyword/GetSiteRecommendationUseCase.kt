@@ -9,5 +9,4 @@ class GetSiteRecommendationUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(): NetworkState =
         keywordAddRepository.getKeywordSiteRecommendation()
-
 }

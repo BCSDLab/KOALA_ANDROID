@@ -227,9 +227,11 @@ fun KeywordInputTextField(
                     },
                     isError = isKeywordError.value
                 )
-                Box(modifier = Modifier
-                    .matchParentSize()
-                    .clickable { navController.navigate(NavScreen.KeywordAddInput.route) })
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable { navController.navigate(NavScreen.KeywordAddInput.route) }
+                )
             }
 
             if (isKeywordError.value) {
@@ -279,9 +281,11 @@ fun SearchForNotificationsTextField(
                         )
                     }
                 )
-                Box(modifier = Modifier
-                    .matchParentSize()
-                    .clickable { navController.navigate(NavScreen.KeywordSiteAddInput.route) })
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable { navController.navigate(NavScreen.KeywordSiteAddInput.route) }
+                )
             }
             if (text.value.isNotEmpty()) {
                 addAlarmSiteList()
@@ -343,11 +347,12 @@ fun SearchForNotificationsItem(
             )
         },
         trailing = {
-            IconButton(onClick = {
-                deleteSite.value = text
-                deleteSign.value = true
-            })
-            {
+            IconButton(
+                onClick = {
+                    deleteSite.value = text
+                    deleteSign.value = true
+                }
+            ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_x),
                     contentDescription = "",
@@ -474,7 +479,6 @@ fun ImportantNotificationBox(
             isChecked = isCheckedList[2]
         )
         AlarmCycleLine(showDialog, selectAlarmCycle, alarmCycleList)
-
     }
 }
 
@@ -613,7 +617,8 @@ fun AlarmCycleDialog(
                         colors = ButtonDefaults.buttonColors(White),
                         onClick = {
                             openDialog.value = false
-                        }) {
+                        }
+                    ) {
                         Text(
                             text = stringResource(id = R.string.keyword_close),
                             color = Gray
@@ -625,7 +630,8 @@ fun AlarmCycleDialog(
                             selectAlarmCycle.value = temp
                             Log.d("asdfsdf", selectAlarmCycle.value.toString() + ": ad")
                             openDialog.value = false
-                        }) {
+                        }
+                    ) {
                         Text(
                             text = stringResource(id = R.string.find_password_done),
                             color = Yellow

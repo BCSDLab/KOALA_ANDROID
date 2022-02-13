@@ -16,7 +16,6 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 import retrofit2.http.PATCH
 
-
 interface AuthApi {
     @GET(KOALA_API_KEYWORD_SEARCH)
     suspend fun getKeywordSearch(
@@ -46,5 +45,4 @@ interface AuthApi {
     suspend fun deleteKeyword(
         @Query("keyword-name") keyword: String
     ): Response<ResponseWrapper<String>>
-
 }

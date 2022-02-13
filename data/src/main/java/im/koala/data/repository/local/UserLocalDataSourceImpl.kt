@@ -23,5 +23,4 @@ class UserLocalDataSourceImpl @Inject constructor() : UserLocalDataSource {
     override suspend fun setRecentSearchList(key: String, recentSearchList: List<String>) {
         Hawk.put(key, recentSearchList)
     }
-
 }

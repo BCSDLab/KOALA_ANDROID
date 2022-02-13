@@ -1,6 +1,5 @@
 package im.koala.domain
 
-import kotlinx.coroutines.flow.flow
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

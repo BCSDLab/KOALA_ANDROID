@@ -9,5 +9,4 @@ class GetKeywordSearchUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(keyword: String): NetworkState =
         keywordAddRepository.getKeywordSearch(keyword)
-
 }
