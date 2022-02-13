@@ -32,6 +32,7 @@ ext {
     composeUiTest = "androidx.compose.ui:ui-test-junit4:$compose_version"
     composeTooling = "androidx.compose.ui:ui-tooling:$compose_version"
     composeLiveData = "androidx.compose.runtime:runtime-livedata:$compose_version"
+    composeUiTool = "androidx.compose.ui:ui-util:$compose_version"
 
     /* Dependency - ConstraintLayout Compose */
     def constraint_layout = "1.0.0-beta02"
@@ -134,7 +135,7 @@ ext {
     hiltTest = "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptTest = "com.google.dagger:hilt-android-compiler:$hilt_version"
     hiltAndroidTest = "com.google.dagger:hilt-android-testing:$hilt_version"
-    hiltKaptAndroid = "com.google.dagger:hilt-android-compiler$hilt_version"
+    hiltKaptAndroid = "com.google.dagger:hilt-android-compiler:$hilt_version"
     androidTestAnnotation = "com.google.dagger:hilt-android-compiler$hilt_version"
 
     def hilt_compose_navigation_version = "1.0.0-alpha03"

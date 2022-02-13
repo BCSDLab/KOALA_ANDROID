@@ -2,12 +2,15 @@ package im.koala.data.source.remote
 
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
+import im.koala.data.api.AuthApi
 import im.koala.data.api.NoAuthApi
 import im.koala.data.api.response.ResponseWrapper
 import im.koala.data.api.response.signup.SignUpResultResponse
 import im.koala.data.constant.KOALA_API_SIGN_UP_CHECK_EMAIL_OK_MESSAGE
 import im.koala.data.constant.KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE
 import im.koala.data.constant.KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE
+import im.koala.data.repository.remote.UserRemoteDataSource
+import im.koala.data.repository.remote.UserRemoteDataSourceImpl
 import im.koala.domain.entity.signup.SignUpResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -28,17 +31,20 @@ import retrofit2.Response
 @Suppress("NonAsciiCharacters")
 @ExperimentalCoroutinesApi
 class SignUpRemoteDataSourceTest {
-
     @Mock
     private lateinit var noAuthApi: NoAuthApi
 
+    @Mock
+    private lateinit var authApi: AuthApi
+
     @InjectMocks
-    private lateinit var signUpRemoteDataSource: SignUpRemoteDataSource
+    private lateinit var userRemoteDataSource: UserRemoteDataSource
 
     @Before
     fun init() {
         noAuthApi = mock()
-        signUpRemoteDataSource = SignUpRemoteDataSource(noAuthApi)
+        authApi = mock()
+        userRemoteDataSource = UserRemoteDataSourceImpl(noAuthApi, authApi)
     }
 
     @Test
@@ -63,7 +69,7 @@ class SignUpRemoteDataSourceTest {
                     )
                 )
 
-            Assert.assertTrue(signUpRemoteDataSource.checkIdIsAvailable(id))
+            Assert.assertTrue(userRemoteDataSource.checkIdIsAvailable(id))
         }
 
     @Test
@@ -79,7 +85,7 @@ class SignUpRemoteDataSourceTest {
                     )
                 )
 
-            Assert.assertFalse(signUpRemoteDataSource.checkIdIsAvailable(id))
+            Assert.assertFalse(userRemoteDataSource.checkIdIsAvailable(id))
         }
 
     @Test
@@ -93,7 +99,7 @@ class SignUpRemoteDataSourceTest {
 
         Assert.assertThrows(JsonParseException::class.java) {
             runBlockingTest {
-                signUpRemoteDataSource.checkIdIsAvailable(id)
+                userRemoteDataSource.checkIdIsAvailable(id)
             }
         }
     }
@@ -111,7 +117,7 @@ class SignUpRemoteDataSourceTest {
                     )
                 )
 
-            Assert.assertTrue(signUpRemoteDataSource.checkEmailIsAvailable(email))
+            Assert.assertTrue(userRemoteDataSource.checkEmailIsAvailable(email))
         }
 
     @Test
@@ -135,7 +141,7 @@ class SignUpRemoteDataSourceTest {
                     )
                 )
 
-            Assert.assertFalse(signUpRemoteDataSource.checkEmailIsAvailable(email))
+            Assert.assertFalse(userRemoteDataSource.checkEmailIsAvailable(email))
         }
 
     @Test
@@ -149,7 +155,7 @@ class SignUpRemoteDataSourceTest {
 
         Assert.assertThrows(JsonParseException::class.java) {
             runBlockingTest {
-                signUpRemoteDataSource.checkEmailIsAvailable(id)
+                userRemoteDataSource.checkEmailIsAvailable(id)
             }
         }
     }
@@ -167,7 +173,7 @@ class SignUpRemoteDataSourceTest {
                     )
                 )
 
-            Assert.assertTrue(signUpRemoteDataSource.checkNicknameIsAvailable(nickname))
+            Assert.assertTrue(userRemoteDataSource.checkNicknameIsAvailable(nickname))
         }
 
     @Test
@@ -192,7 +198,7 @@ class SignUpRemoteDataSourceTest {
                     )
                 )
 
-            Assert.assertFalse(signUpRemoteDataSource.checkNicknameIsAvailable(nickname))
+            Assert.assertFalse(userRemoteDataSource.checkNicknameIsAvailable(nickname))
         }
 
     @Test
@@ -206,7 +212,7 @@ class SignUpRemoteDataSourceTest {
 
         Assert.assertThrows(JsonParseException::class.java) {
             runBlockingTest {
-                signUpRemoteDataSource.checkNicknameIsAvailable(id)
+                userRemoteDataSource.checkNicknameIsAvailable(id)
             }
         }
     }
@@ -238,7 +244,7 @@ class SignUpRemoteDataSourceTest {
             )
 
             assertThat(
-                signUpRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password),
+                userRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password),
                 equalTo(SignUpResult.Failed("[이메일 형식에 맞지 않습니다]"))
             )
         }
@@ -269,7 +275,7 @@ class SignUpRemoteDataSourceTest {
 
             Assert.assertEquals(
                 SignUpResult.Failed("이미 존재하는 이메일입니다"),
-                signUpRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
+                userRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
             )
         }
 
@@ -299,7 +305,7 @@ class SignUpRemoteDataSourceTest {
 
             Assert.assertEquals(
                 SignUpResult.Failed("이미 존재하는 아이디입니다"),
-                signUpRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
+                userRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
             )
         }
 
@@ -329,7 +335,7 @@ class SignUpRemoteDataSourceTest {
 
             Assert.assertEquals(
                 SignUpResult.Failed("이미 존재하는 닉네임입니다"),
-                signUpRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
+                userRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
             )
         }
 
@@ -371,7 +377,7 @@ class SignUpRemoteDataSourceTest {
                     userType = 0,
                     isAuth = 0
                 ),
-                signUpRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
+                userRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
             )
         }
 }

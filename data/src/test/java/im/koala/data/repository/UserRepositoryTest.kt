@@ -1,8 +1,9 @@
 package im.koala.data.repository
 
-import im.koala.data.source.remote.SignUpRemoteDataSource
+import im.koala.data.repository.local.UserLocalDataSource
+import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.domain.entity.signup.SignUpResult
-import im.koala.domain.repository.SignUpRepository
+import im.koala.domain.repository.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert
@@ -16,72 +17,75 @@ import org.mockito.kotlin.whenever
 
 @Suppress("NonAsciiCharacters")
 @ExperimentalCoroutinesApi
-class SignUpRepositoryTest {
+class UserRepositoryTest {
 
     @Mock
-    private lateinit var signUpRemoteDataSource: SignUpRemoteDataSource
+    private lateinit var userRemoteDataSource: UserRemoteDataSource
+    @Mock
+    private lateinit var userLocalDataSource: UserLocalDataSource
 
     @InjectMocks
-    private lateinit var signUpRepository: SignUpRepository
+    private lateinit var userRepository: UserRepository
 
     @Before
     fun init() {
-        signUpRemoteDataSource = mock()
-        signUpRepository = SignUpRepositoryImpl(signUpRemoteDataSource)
+        userRemoteDataSource = mock()
+        userLocalDataSource = mock()
+        userRepository = UserRepositoryImpl(userRemoteDataSource, userLocalDataSource)
     }
 
     @Test
     fun `remoteDataSource의 checkIdIsAvailable이 true를 반환할 경우 false를 반환한다`() = runBlockingTest {
         val id = "aaa"
-        whenever(signUpRemoteDataSource.checkIdIsAvailable(any()))
+        whenever(userRemoteDataSource.checkIdIsAvailable(any()))
             .thenReturn(true)
 
-        Assert.assertFalse(signUpRepository.checkIdDuplicate(id))
+        Assert.assertFalse(userRepository.checkIdDuplicate(id))
     }
 
     @Test
     fun `remoteDataSource의 checkIdIsAvailable이 false를 반환할 경우 true를 반환한다`() = runBlockingTest {
         val id = "aaa"
-        whenever(signUpRemoteDataSource.checkIdIsAvailable(any()))
+        whenever(userRemoteDataSource.checkIdIsAvailable(any()))
             .thenReturn(true)
 
-        Assert.assertFalse(signUpRepository.checkIdDuplicate(id))
+        Assert.assertFalse(userRepository.checkIdDuplicate(id))
     }
 
     @Test
     fun `remoteDataSource의 checkEmailIsAvailable이 true를 반환할 경우 false를 반환한다`() = runBlockingTest {
         val email = "aaa@gmail.com"
-        whenever(signUpRemoteDataSource.checkEmailIsAvailable(any()))
+        whenever(userRemoteDataSource.checkEmailIsAvailable(any()))
             .thenReturn(true)
 
-        Assert.assertFalse(signUpRepository.checkEmailDuplicate(email))
+        Assert.assertFalse(userRepository.checkEmailDuplicate(email))
     }
 
     @Test
     fun `remoteDataSource의 checkEmailIsAvailable이 false를 반환할 경우 true를 반환한다`() = runBlockingTest {
         val email = "aaa@gmail.com"
-        whenever(signUpRemoteDataSource.checkEmailIsAvailable(any()))
+        whenever(userRemoteDataSource.checkEmailIsAvailable(any()))
             .thenReturn(true)
 
-        Assert.assertFalse(signUpRepository.checkEmailDuplicate(email))
+        Assert.assertFalse(userRepository.checkEmailDuplicate(email))
     }
 
     @Test
     fun `remoteDataSource의 checkNicknameIsAvailable이 true를 반환할 경우 false를 반환한다`() = runBlockingTest {
         val nickname = "asdf"
-        whenever(signUpRemoteDataSource.checkNicknameIsAvailable(any()))
+        whenever(userRemoteDataSource.checkNicknameIsAvailable(any()))
             .thenReturn(true)
 
-        Assert.assertFalse(signUpRepository.checkNicknameDuplicate(nickname))
+        Assert.assertFalse(userRepository.checkNicknameDuplicate(nickname))
     }
 
     @Test
     fun `remoteDataSource의 checkNicknameIsAvailable이 false를 반환할 경우 true를 반환한다`() = runBlockingTest {
         val nickname = "asdf"
-        whenever(signUpRemoteDataSource.checkNicknameIsAvailable(any()))
+        whenever(userRemoteDataSource.checkNicknameIsAvailable(any()))
             .thenReturn(true)
 
-        Assert.assertFalse(signUpRepository.checkNicknameDuplicate(nickname))
+        Assert.assertFalse(userRepository.checkNicknameDuplicate(nickname))
     }
 
     @Test
@@ -92,7 +96,7 @@ class SignUpRepositoryTest {
         val password = "asdf"
 
         whenever(
-            signUpRemoteDataSource.signUp(
+            userRemoteDataSource.signUp(
                 any(),
                 any(),
                 any(),
@@ -118,7 +122,7 @@ class SignUpRepositoryTest {
                 userType = 0,
                 isAuth = 0
             ),
-            signUpRepository.signUp(accountId, password, accountEmail, accountNickname)
+            userRepository.signUp(accountId, password, accountEmail, accountNickname)
         )
     }
 
@@ -130,7 +134,7 @@ class SignUpRepositoryTest {
         val password = "asdf"
 
         whenever(
-            signUpRemoteDataSource.signUp(
+            userRemoteDataSource.signUp(
                 any(),
                 any(),
                 any(),
@@ -142,7 +146,7 @@ class SignUpRepositoryTest {
 
         Assert.assertEquals(
             SignUpResult.Failed("Test"),
-            signUpRepository.signUp(accountId, password, accountEmail, accountNickname)
+            userRepository.signUp(accountId, password, accountEmail, accountNickname)
         )
     }
 }

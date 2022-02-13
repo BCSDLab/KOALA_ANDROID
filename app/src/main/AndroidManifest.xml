@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="im.koala.bcsd">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:name=".KoalaApp"
@@ -51,11 +52,13 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <!-- Redirect URI: "kakao{NATIVE_APP_KEY}://oauth" -->
-                <data android:host="oauth"
+                <data
+                    android:host="oauth"
                     android:scheme="{kakao_oauth_key}" />
             </intent-filter>
         </activity>
@@ -67,9 +70,13 @@
             android:name="com.nhn.android.naverlogin.ui.OAuthLoginInAppBrowserActivity"
             android:exported="true"
             tools:node="merge"></activity>
-        <activity android:name="com.nhn.android.naverlogin.ui.OAuthCustomTabActivity"
+        <activity
+            android:name="com.nhn.android.naverlogin.ui.OAuthCustomTabActivity"
             android:exported="true"
-            tools:node="merge"/>
+            tools:node="merge" />
+        <activity
+            android:name=".ui.keyworddetail.KeywordDetailActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

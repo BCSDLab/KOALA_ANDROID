@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import im.koala.bcsd.R
+import im.koala.bcsd.ui.theme.GrayAppBar
 import im.koala.bcsd.ui.theme.GrayBorder
 import im.koala.bcsd.ui.theme.KoalaTheme
 
@@ -42,6 +43,12 @@ fun KoalaTextAppBar(
     modifier: Modifier = Modifier,
     showBackButton: Boolean = true,
     onBackClick: () -> Unit = { },
+    divider: @Composable () -> Unit = {
+        Divider(
+            modifier = Modifier.fillMaxWidth(),
+            color = GrayBorder
+        )
+    },
     actions: @Composable (RowScope.() -> Unit)
 ) {
     Column {
@@ -89,7 +96,7 @@ fun KoalaTextAppBar(
 
                 ProvideTextStyle(
                     value = TextStyle(
-                        color = MaterialTheme.colors.onPrimary,
+                        color = GrayAppBar,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
                         textAlign = TextAlign.Center,
@@ -105,10 +112,8 @@ fun KoalaTextAppBar(
                 }
             }
         }
-        Divider(
-            modifier = Modifier.fillMaxWidth(),
-            color = GrayBorder
-        )
+
+        divider()
     }
 }
 

@@ -1,7 +1,7 @@
 package im.koala.domain.usecase.signup
 
 import im.koala.domain.entity.signup.SignUpResult
-import im.koala.domain.repository.SignUpRepository
+import im.koala.domain.repository.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert
@@ -18,7 +18,7 @@ import org.mockito.kotlin.whenever
 class SignUpUseCaseTest {
 
     @Mock
-    private lateinit var signUpRepository: SignUpRepository
+    private lateinit var signUpRepository: UserRepository
 
     @InjectMocks
     private lateinit var signUpUseCase: SignUpUseCase
