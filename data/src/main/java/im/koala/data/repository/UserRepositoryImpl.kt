@@ -1,6 +1,6 @@
 package im.koala.data.repository
 
-import im.koala.bcsd.state.Result
+import im.koala.domain.state.Result
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.domain.entity.signup.SignUpResult

@@ -15,7 +15,7 @@ import com.nhn.android.naverlogin.data.OAuthLoginPreferenceManager
 import com.nhn.android.naverlogin.data.OAuthLoginState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.koala.bcsd.R
-import im.koala.bcsd.state.Result
+import im.koala.domain.state.Result
 import im.koala.bcsd.ui.BaseViewModel
 import im.koala.domain.constants.GOOGLE
 import im.koala.domain.constants.KAKAO

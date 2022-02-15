@@ -1,6 +1,13 @@
 package im.koala.data.api
 
+import im.koala.data.api.response.ResponseWrapper
 import im.koala.data.api.response.keyword.KeywordNoticeResponse
+import im.koala.data.api.response.keywordadd.KeywordAddResponse
+import im.koala.data.constant.KOALA_API_KEYWORD_RECOMMENDATION
+import im.koala.data.constant.KOALA_API_KEYWORD_SEARCH
+import im.koala.data.constant.KOALA_API_KEYWORD_SITE_RECOMMENDATION
+import im.koala.data.constant.KOALA_API_KEYWORD_SITE_SEARCH
+import im.koala.data.constant.KOALA_API_URL_KEYWORD
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE_READING_CHECK
@@ -9,8 +16,10 @@ import im.koala.data.constants.KEYWORD
 import im.koala.data.entity.CommonEntity
 import im.koala.data.entity.KeywordBodyEntity
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface AuthApi {
@@ -39,4 +48,30 @@ interface AuthApi {
     suspend fun markAsReadKeywordNotice(
         @Query("notice-id") noticeId: Int
     ): CommonEntity
+
+    @GET(KOALA_API_KEYWORD_SEARCH)
+    suspend fun getKeywordSearch(
+        @Query("keyword") keyword: String
+    ): Response<ResponseWrapper<List<String>>>
+
+    @GET(KOALA_API_KEYWORD_SITE_SEARCH)
+    suspend fun getKeywordSiteSearch(
+        @Query("site") site: String
+    ): Response<ResponseWrapper<List<String>>>
+
+    @GET(KOALA_API_KEYWORD_SITE_RECOMMENDATION)
+    suspend fun getKeywordSiteRecommendation(): Response<ResponseWrapper<List<String>>>
+
+    @GET(KOALA_API_KEYWORD_RECOMMENDATION)
+    suspend fun getKeywordRecommendation(): Response<ResponseWrapper<List<String>>>
+
+    @POST(KOALA_API_URL_KEYWORD)
+    suspend fun pushKeyword(
+        @Body keywordAddResponse: KeywordAddResponse
+    ): Response<ResponseWrapper<String>>
+
+    @PATCH(KOALA_API_URL_KEYWORD)
+    suspend fun deleteKeyword(
+        @Query("keyword-name") keyword: String
+    ): Response<ResponseWrapper<String>>
 }

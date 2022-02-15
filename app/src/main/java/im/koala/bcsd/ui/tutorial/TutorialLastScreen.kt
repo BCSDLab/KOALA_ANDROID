@@ -15,6 +15,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.accompanist.pager.ExperimentalPagerApi
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.login.LoginActivity
 import im.koala.bcsd.ui.theme.Black
@@ -39,6 +41,8 @@ import im.koala.bcsd.ui.theme.GrayDisabled
 import im.koala.bcsd.ui.theme.White
 import im.koala.bcsd.ui.theme.KoalaTheme
 
+@ExperimentalMaterialApi
+@OptIn(ExperimentalPagerApi::class)
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @Composable
@@ -245,6 +249,7 @@ fun TutorialLastScreen() {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
 @Preview

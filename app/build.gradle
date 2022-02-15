@@ -123,4 +123,7 @@ dependencies {
     implementation project.naverIdLogin
 
     implementation project.googlePlayService
+
+    implementation project.viewPager
+    implementation project.viewPagerIndicators
 }

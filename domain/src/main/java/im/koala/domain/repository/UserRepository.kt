@@ -1,6 +1,6 @@
 package im.koala.domain.repository
 
-import im.koala.bcsd.state.Result
+import im.koala.domain.state.Result
 import im.koala.domain.entity.signup.SignUpResult
 
 interface UserRepository {

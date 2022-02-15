@@ -113,4 +113,22 @@
     <string name="keyword_site_youtube">유튜브</string>
     <string name="keyword_detail_menu_read_item">읽은 알림</string>
     <string name="keyword_detail_menu_not_read_item">읽지 않은 알림</string>
+
+    <string name="keyword_input">키워드 입력</string>
+    <string name="keyword_add">키워드 추가하기</string>
+    <string name="keyword_important_alarm">중요알림</string>
+    <string name="keyword_general_alarm">일반알림</string>
+    <string name="keyword_silent_mode_alarm">무음모드 알림</string>
+    <string name="keyword_vibration_mode_alarm">진동 알림</string>
+    <string name="keyword_alarm_cycle">알림 주기</string>
+    <string name="keyword_alarm_cycle_choice">알림주기를 선택해 주세요</string>
+    <string name="keyword_until_check_button_alarm">확인버튼누를 때 까지 알림</string>
+    <string name="search_for_notifications">알림받을 대상 검색</string>
+    <string name="search_for_notifications_input">알림받을 대상 입력</string>
+    <string name="error_search_for_alarm">알림받을 대상을 반드시 선택해 주세요.</string>
+    <string name="error_search_for_keyword">이미 등록된 키워드입니다.</string>
+    <string name="keyword_close">닫기</string>
+    <string name="keyword_search_fail">검색 결과가 없습니다.</string>
+    <string name="keyword_search_empty">키워드를 입력해주세요.</string>
+    <string name="site_search_empty">알림받을 사이트를 입력해주세요.</string>
 </resources>

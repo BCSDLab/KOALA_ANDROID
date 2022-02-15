@@ -4,19 +4,27 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -27,22 +35,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import im.koala.bcsd.R
+import im.koala.bcsd.navigation.NavScreen
 import im.koala.bcsd.ui.login.DrawImageView
 import im.koala.bcsd.ui.main.MainScreenBottomTab
 import im.koala.bcsd.ui.main.MainViewModel
 import im.koala.bcsd.ui.theme.Yellow
 import im.koala.domain.model.KeywordResponse
 
+@ExperimentalMaterialApi
 @Composable
 fun KeywordScreen(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState,
     viewModel: MainViewModel,
-    selectKeyword: (MainScreenBottomTab, Int) -> Unit
+    selectKeyword: (MainScreenBottomTab, Int) -> Unit,
+    navController: NavController
 ) {
     val keywordUi = viewModel.keywordUi
 
@@ -107,21 +120,23 @@ fun KeywordScreen(
                 },
                 lazyListState = lazyListState,
                 keywordList = keywordUi.value.keywordList,
-                selectKeyword = selectKeyword
+                selectKeyword = selectKeyword,
+                deleteKeyword = { viewModel.deleteKeyword(it) },
+                navController = navController,
             )
         }
     }
 }
 
 @Composable
-fun DrawAddKeywordButton() {
+fun DrawAddKeywordButton(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(65.dp)
             // .padding(horizontal = 24.dp)
             .clickable(
-                onClick = { Log.e("asdfasdf", "addKeyword") }
+                onClick = { navController.navigate(NavScreen.KeywordAdd.route) }
             ),
         verticalAlignment = Alignment.CenterVertically
 
@@ -143,24 +158,69 @@ fun DrawHorizantalDivider(modifier: Modifier, color: Color) {
     )
 }
 
+@ExperimentalMaterialApi
 @Composable
 fun DrawLazyColumView(
     modifier: Modifier,
     lazyListState: LazyListState,
     keywordList: MutableList<KeywordResponse>,
-    selectKeyword: (MainScreenBottomTab, Int) -> Unit
+    selectKeyword: (MainScreenBottomTab, Int) -> Unit,
+    deleteKeyword: (keyword: String) -> Unit,
+    navController: NavController,
 ) {
-
     LazyColumn(
         modifier = modifier,
         state = lazyListState
     ) {
-
-        items(keywordList) { it ->
-            DrawKeywordItem(keyword = it, selectKeyword)
+        itemsIndexed(
+            items = keywordList,
+            key = { _, item ->
+                item.hashCode()
+            }
+        ) { _, item ->
+            val state = rememberDismissState(
+                confirmStateChange = {
+                    if (it == DismissValue.DismissedToStart) {
+                        deleteKeyword(item.name)
+                    }
+                    true
+                },
+            )
+            SwipeToDismiss(
+                state = state,
+                background = {
+                    val color = when (state.dismissDirection) {
+                        DismissDirection.StartToEnd -> Color.Transparent
+                        DismissDirection.EndToStart -> Color.Red
+                        null -> Color.Transparent
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = color)
+                            .padding(
+                                start = 255.dp,
+                                end = 31.dp,
+                                top = 13.dp,
+                                bottom = 12.dp
+                            )
+                    ) {
+                        Text(
+                            text = "제거",
+                            fontSize = 14.sp,
+                            color = Color.White,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                },
+                dismissContent = {
+                    DrawKeywordItem(keyword = item, selectKeyword)
+                },
+                directions = setOf(DismissDirection.EndToStart),
+            )
         }
         item {
-            DrawAddKeywordButton()
+            DrawAddKeywordButton(navController)
         }
     }
 }
@@ -170,6 +230,7 @@ fun DrawKeywordItem(keyword: KeywordResponse, selectKeyword: (MainScreenBottomTa
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(MaterialTheme.colors.surface)
             .height(65.dp)
             // .padding(horizontal = 24.dp)
             .clickable(
