@@ -188,4 +188,8 @@ ext {
     googlePlayService = "com.google.android.gms:play-services-auth:$google_play_service_version"
 
     firebaseCloudMessage = "com.google.firebase:firebase-messaging-ktx"
+
+    /* viewPager library */
+    viewPager = "com.google.accompanist:accompanist-pager:0.22.0-rc"
+    viewPagerIndicators = "com.google.accompanist:accompanist-pager-indicators:0.22.0-rc"
 }
