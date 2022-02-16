@@ -37,34 +37,13 @@ annotation class GOOGLE
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    val httpLogginInterceptor = HttpLoggingInterceptor().apply {
+    private val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
         level = if (KoalaApp.instance.isApplicationDebug) {
             HttpLoggingInterceptor.Level.BODY
         } else {
             HttpLoggingInterceptor.Level.HEADERS
         }
     }
-    /*
-    @Target(
-        AnnotationTarget.VALUE_PARAMETER,
-        AnnotationTarget.FUNCTION,
-        AnnotationTarget.EXPRESSION
-    )
-
-    @Qualifier
-    @Retention(AnnotationRetention.SOURCE)
-    annotation class NO_AUTH
-
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class AUTH
-
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class REFRESH_AUTH
-
-
-     */
 
     @AUTH
     @Provides
@@ -87,7 +66,7 @@ object NetworkModule {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
             writeTimeout(15, TimeUnit.SECONDS)
-            addInterceptor(httpLogginInterceptor)
+            addInterceptor(httpLoggingInterceptor)
         }.build()
     }
 
@@ -99,7 +78,7 @@ object NetworkModule {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
             writeTimeout(15, TimeUnit.SECONDS)
-            addInterceptor(httpLogginInterceptor)
+            addInterceptor(httpLoggingInterceptor)
             addInterceptor(authInterceptor)
         }.build()
     }
@@ -148,7 +127,7 @@ object NetworkModule {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
             writeTimeout(15, TimeUnit.SECONDS)
-            addInterceptor(httpLogginInterceptor)
+            addInterceptor(httpLoggingInterceptor)
         }.build()
     }
 

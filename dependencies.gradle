@@ -180,8 +180,8 @@ ext {
     firebaseCrashlyticsKtx = "com.google.firebase:firebase-crashlytics-ktx:$firebase_crashlytics_ktx_version"
 
     /* naver login api */
-    def naver_login_version = "4.2.6"
-    naverIdLogin = "com.naver.nid:naveridlogin-android-sdk:$naver_login_version"
+    def naver_login_version = "5.0.1"
+    naverIdLogin = "com.navercorp.nid:oauth:$naver_login_version"
 
     /* Google Play Service */
     def google_play_service_version = "20.0.0"

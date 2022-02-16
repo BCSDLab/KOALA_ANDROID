@@ -13,24 +13,9 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Surface
-import androidx.compose.material.Switch
-import androidx.compose.material.SwitchDefaults
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -49,20 +34,17 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.lifecycleScope
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.AndroidEntryPoint
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.findid.FindIdActivity
 import im.koala.bcsd.ui.findpassword.FindPasswordActivity
 import im.koala.bcsd.ui.main.MainActivity
 import im.koala.bcsd.ui.signup.SignUpContract
-import im.koala.bcsd.ui.theme.Black
-import im.koala.bcsd.ui.theme.GrayBorder
-import im.koala.bcsd.ui.theme.GrayDisabled
-import im.koala.bcsd.ui.theme.GrayNormal
-import im.koala.bcsd.ui.theme.Green
-import im.koala.bcsd.ui.theme.KoalaTheme
-import im.koala.bcsd.ui.theme.White
-import im.koala.bcsd.ui.theme.Yellow2
+import im.koala.bcsd.ui.theme.*
+import kotlinx.coroutines.flow.collect
 
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
@@ -71,15 +53,48 @@ class LoginActivity : ComponentActivity() {
     private val viewModel: LoginViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initObserver()
         setContent {
             KoalaTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    LoginScreen(context = this, viewModel = viewModel)
+                    LoginScreen(viewModel = viewModel)
                 }
             }
         }
     }
+
+    private fun initObserver(){
+        lifecycleScope.launchWhenStarted {
+            viewModel.uiEvent.collect { uiEvent ->
+                when(uiEvent){
+                    LoginViewUIEvent.GoToMainActivity -> {
+                        goToMainActivity()
+                    }
+                    LoginViewUIEvent.ProceedGoogleLogin -> TODO()
+                    LoginViewUIEvent.ProceedNaverLogin -> { proceedNaverLogin() }
+                    is LoginViewUIEvent.ShowErrorMessage -> TODO()
+                }
+            }
+        }
+    }
+
+    private fun proceedNaverLogin(){
+        NaverIdLoginSDK.authenticate(this@LoginActivity, object: OAuthLoginCallback {
+            override fun onError(errorCode: Int, message: String) {
+
+            }
+
+            override fun onFailure(httpStatus: Int, message: String) {
+
+            }
+
+            override fun onSuccess() {
+                NaverIdLoginSDK.getAccessToken()
+                viewModel.proceedNaverLogin()
+            }
+        })
+    }
+
     private fun goToMainActivity() {
         Intent(this, MainActivity::class.java).run {
             startActivity(this)
@@ -88,16 +103,15 @@ class LoginActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        viewModel.setActivityContext(null)
     }
 }
 
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @Composable
-fun LoginScreen(context: Context, viewModel: LoginViewModel) {
+fun LoginScreen(viewModel: LoginViewModel) {
     val context = LocalContext.current
-    var isNormalLoginState = remember { mutableStateOf(true) }
+    val isNormalLoginState = remember { mutableStateOf(true) }
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (logoImageView, loginRowLayout, normalLoginConstraintLyaout) = createRefs()
 
@@ -485,7 +499,7 @@ fun SnsLoginScreen(
             backgroundColor = Green,
             textColor = White,
             text = stringResource(id = R.string.naver_login),
-            onClick = {}
+            onClick = { viewModel.onClickNaverLoginButton() }
         )
         DrawImageView(
             modifier = Modifier
@@ -513,7 +527,6 @@ fun SnsLoginScreen(
             textColor = Black,
             text = stringResource(id = R.string.kakao_login),
             onClick = {
-                viewModel.setActivityContext(context)
                 viewModel.onClickKakaoLoginButton()
             }
         )
