@@ -1,14 +1,17 @@
 package im.koala.data.api
 
 import im.koala.data.api.request.signup.SignUpRequest
+import im.koala.data.api.request.user.UserRequest
 import im.koala.data.api.response.ResponseWrapper
 import im.koala.data.api.response.signup.SignUpResultResponse
 import im.koala.data.constant.KOALA_API_URL_ACCOUNT_CHECK
 import im.koala.data.constant.KOALA_API_URL_EMAIL_CHECK
 import im.koala.data.constant.KOALA_API_URL_NICKNAME_CHECK
 import im.koala.data.constant.KOALA_API_URL_SIGN_UP
+import im.koala.data.constant.KOALA_API_URL_USER_LOGIN
 import im.koala.data.constants.SNSLOGIN
 import im.koala.data.entity.TokenBodyEntity
+import im.koala.domain.model.TokenResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -44,4 +47,18 @@ interface NoAuthApi {
         @Path("snsType") snsType: String,
         @Query("device_token") deviceToken: String
     ): Response<TokenBodyEntity>
+
+    @POST(KOALA_API_URL_USER_LOGIN)
+    suspend fun login(
+        @Query("device_token") deviceToken: String,
+        @Body userRequest: UserRequest
+    ): Response<TokenResponse>
+
+    @POST(KOALA_API_URL_USER_LOGIN)
+    suspend fun loginNonMember(
+        @Query("device_token") deviceToken: String
+    ): Response<TokenResponse>
+
+    @POST(KOALA_API_URL_USER_LOGIN)
+    suspend fun refresh(): Response<TokenResponse>
 }

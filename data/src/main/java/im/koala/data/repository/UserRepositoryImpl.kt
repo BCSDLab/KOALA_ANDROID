@@ -1,6 +1,5 @@
 package im.koala.data.repository
 
-import im.koala.domain.state.Result
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.domain.entity.signup.SignUpResult
@@ -8,6 +7,8 @@ import im.koala.domain.model.CommonResponse
 import im.koala.domain.model.KeywordResponse
 import im.koala.domain.model.TokenResponse
 import im.koala.domain.repository.UserRepository
+import im.koala.domain.state.Result
+import im.koala.domain.util.toSHA256
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -36,6 +37,45 @@ class UserRepositoryImpl @Inject constructor(
                 .run { result = Result.Fail(this) }
         }
         return result
+    }
+
+    override suspend fun login(id: String, password: String): kotlin.Result<TokenResponse> {
+        val result = userRemoteDataSource.login(
+            accountId = id,
+            password = password,
+            deviceToken = userLocalDataSource.getDeviceToken()
+        )
+
+        return try {
+            if(result.isSuccessful) {
+                val tokenResponse = result.body()!!
+                userLocalDataSource.saveToken(tokenResponse)
+
+                kotlin.Result.success(result.body()!!)
+            }  else {
+                val errorMessage = kotlin.runCatching { result.errorBody()?.string() }
+                kotlin.Result.failure(RuntimeException(errorMessage.getOrDefault("")))
+            }
+        } catch (e: Exception) {
+            kotlin.Result.failure(RuntimeException(result.errorBody()?.string()))
+        }
+    }
+
+    override suspend fun loginWithoutSignUp(): kotlin.Result<TokenResponse> {
+        val result = userRemoteDataSource.loginWithoutSignUp(
+            deviceToken = userLocalDataSource.getDeviceToken()
+        )
+
+        return try {
+            if(result.isSuccessful) {
+                kotlin.Result.success(result.body()!!)
+            }  else {
+                val errorMessage = kotlin.runCatching { result.errorBody()?.string() }
+                kotlin.Result.failure(RuntimeException(errorMessage.getOrDefault("")))
+            }
+        } catch (e: Exception) {
+            kotlin.Result.failure(RuntimeException(result.errorBody()?.string()))
+        }
     }
 
     override suspend fun getKeyword(): Result {
@@ -81,6 +121,6 @@ class UserRepositoryImpl @Inject constructor(
         accountEmail: String,
         accountNickname: String
     ): SignUpResult {
-        return userRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
+        return userRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password.toSHA256())
     }
 }

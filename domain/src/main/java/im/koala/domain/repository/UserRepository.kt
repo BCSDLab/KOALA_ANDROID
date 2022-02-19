@@ -1,11 +1,17 @@
 package im.koala.domain.repository
 
-import im.koala.domain.state.Result
 import im.koala.domain.entity.signup.SignUpResult
+import im.koala.domain.model.TokenResponse
+import im.koala.domain.state.Result
 
 interface UserRepository {
     suspend fun getKeyword(): Result
     suspend fun postSnsLogin(snsType: String, accessToken: String, deviceToken: String): Result
+    suspend fun login(
+        id: String,
+        password: String
+    ) : kotlin.Result<TokenResponse>
+    suspend fun loginWithoutSignUp(): kotlin.Result<TokenResponse>
 
     /**
      * @return true if id is duplicated, false if id is not duplicated
