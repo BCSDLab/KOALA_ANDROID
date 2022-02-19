@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import im.koala.domain.state.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
+import im.koala.data.api.response.keywordadd.KeywordAddResponse
+import im.koala.data.api.response.keywordadd.KeywordAddResponseUi
 import im.koala.data.repository.local.AlarmSiteDataSource
 import im.koala.data.repository.local.AlarmSite
 import im.koala.domain.model.KeywordResponse
@@ -15,6 +17,7 @@ import im.koala.domain.usecase.keywordadd.GetKeywordSearchUseCase
 import im.koala.domain.usecase.keywordadd.GetRecentSearchListUseCase
 import im.koala.domain.usecase.keywordadd.GetSiteRecommendationUseCase
 import im.koala.domain.usecase.keywordadd.GetSiteSearchUseCase
+import im.koala.domain.usecase.keywordadd.GeyKeywordDetailsUseCase
 import im.koala.domain.usecase.keywordadd.SetRecentSearchListUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,6 +33,7 @@ class KeywordViewModel @Inject constructor(
     private val setRecentSearchListUseCase: SetRecentSearchListUseCase,
     private val getKeywordListUseCase: GetKeywordListUseCase,
     private val alarmSiteData: AlarmSiteDataSource,
+    private val getKeywordDetailsUseCase: GeyKeywordDetailsUseCase
 ) : ViewModel() {
     val keywordSearchList: MutableLiveData<List<String>> = MutableLiveData()
     val keywordRecommendationList: MutableLiveData<List<String>> = MutableLiveData()
@@ -39,6 +43,17 @@ class KeywordViewModel @Inject constructor(
     val recentSiteSearchList: MutableLiveData<List<String>> = MutableLiveData(listOf(""))
     val alarmSiteList: MutableLiveData<List<String>> = MutableLiveData(listOf(""))
     val keywordNameList: MutableLiveData<List<String>> = MutableLiveData(listOf(""))
+
+    /*
+        키워드 수정하기 변수
+    */
+    val uiState: MutableLiveData<KeywordAddResponseUi> = MutableLiveData()
+//    val isImportantState: MutableLiveData<Boolean> = MutableLiveData()
+//    val silentModeState: MutableLiveData<Boolean> = MutableLiveData()
+//    val untilPressOkButtonState: MutableLiveData<Boolean> = MutableLiveData()
+//    val vibrationModeState: MutableLiveData<Boolean> = MutableLiveData()
+//    val keywordSearch: MutableLiveData<String> = MutableLiveData()
+//    val alarmCycleData: MutableLiveData<Int> = MutableLiveData()
 
     /*
         getKeywordSearchList(keyword:String),getSiteSearchList(site:String)
@@ -195,6 +210,28 @@ class KeywordViewModel @Inject constructor(
                     }
                     is Result.Fail<*> -> Log.d("KeywordAddViewModel", it.data.toString())
                 }
+            }
+        }
+    }
+
+    fun getKeywordDetails(keyword: String) {
+        viewModelScope.launch {
+            when (val _keywordDetails = getKeywordDetailsUseCase(keyword)) {
+                is Result.Success<*> -> {
+                    val keywordDetails: KeywordAddResponseUi = _keywordDetails.data as KeywordAddResponseUi
+                    uiState.value = keywordDetails
+//                    isImportantState.value = keywordDetails.isImportant
+//                    silentModeState.value = keywordDetails.silentMode
+//                    untilPressOkButtonState.value = keywordDetails.untilPressOkButton
+//                    vibrationModeState.value = keywordDetails.vibrationMode
+//                    keywordSearch.value = keywordDetails.name
+//                    alarmCycleData.value = keywordDetails.alarmCycle
+//                    siteSearchList.value = keywordDetails.siteList
+                }
+                is Result.Fail<*> -> Log.d(
+                    "KeywordAddViewModel",
+                    _keywordDetails.data.toString()
+                )
             }
         }
     }

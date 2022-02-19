@@ -13,6 +13,13 @@ class KeywordAddRemoteDataSourceImpl @Inject constructor(
         return authApi.pushKeyword(keywordAddResponse)
     }
 
+    override suspend fun editKeyword(
+        keyword: String,
+        keywordAddResponse: KeywordAddResponse
+    ): Response<ResponseWrapper<String>> {
+        return authApi.editKeyword(keyword, keywordAddResponse)
+    }
+
     override suspend fun deleteKeyword(keyword: String): Response<ResponseWrapper<String>> {
         return authApi.deleteKeyword(keyword)
     }
@@ -31,5 +38,9 @@ class KeywordAddRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getKeywordSearch(keyword: String): Response<ResponseWrapper<List<String>>> {
         return authApi.getKeywordSearch(keyword)
+    }
+
+    override suspend fun getKeywordDetails(keyword: String): Response<KeywordAddResponse> {
+        return authApi.getKeywordDetails(keyword)
     }
 }

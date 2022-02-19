@@ -8,6 +8,7 @@ import im.koala.data.constant.KOALA_API_KEYWORD_SEARCH
 import im.koala.data.constant.KOALA_API_KEYWORD_SITE_RECOMMENDATION
 import im.koala.data.constant.KOALA_API_KEYWORD_SITE_SEARCH
 import im.koala.data.constant.KOALA_API_URL_KEYWORD
+import im.koala.data.constant.KOALA_API_URL_KEYWORD_DETAILS
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE_READING_CHECK
@@ -20,6 +21,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface AuthApi {
@@ -74,4 +76,15 @@ interface AuthApi {
     suspend fun deleteKeyword(
         @Query("keyword-name") keyword: String
     ): Response<ResponseWrapper<String>>
+
+    @PUT(KOALA_API_URL_KEYWORD)
+    suspend fun editKeyword(
+        @Query("keyword-name") keyword: String,
+        @Body keywordAddResponse: KeywordAddResponse
+    ): Response<ResponseWrapper<String>>
+
+    @GET(KOALA_API_URL_KEYWORD_DETAILS)
+    suspend fun getKeywordDetails(
+        @Query("keyword-name") keyword: String,
+    ): Response<KeywordAddResponse>
 }

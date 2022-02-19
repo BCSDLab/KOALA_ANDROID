@@ -26,6 +26,7 @@ import im.koala.bcsd.ui.keyword.KeywordDetailScreen
 import im.koala.bcsd.ui.keywordadd.KeywordAddInputScreen
 import im.koala.bcsd.ui.keywordadd.KeywordAddScreen
 import im.koala.bcsd.ui.keywordadd.KeywordViewModel
+import im.koala.data.api.response.keywordadd.KeywordAddResponseUi
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
@@ -42,6 +43,7 @@ fun MainScreen(
     )
     val keywordSearchText = remember { mutableStateOf("") }
     val alarmSiteText = remember { mutableStateOf("") }
+    val uiState by keywordViewModel.uiState.observeAsState(KeywordAddResponseUi())
 
     ProvideWindowInsets {
         NavHost(navController = navController, startDestination = NavScreen.Keyword.route) {
