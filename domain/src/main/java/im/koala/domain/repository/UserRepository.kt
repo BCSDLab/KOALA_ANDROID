@@ -6,7 +6,7 @@ import im.koala.domain.entity.signup.SignUpResult
 interface UserRepository {
     suspend fun getKeyword(): Result
     suspend fun postSnsLogin(snsType: String, accessToken: String, deviceToken: String): Result
-
+    fun getFCMToken(success: (String) -> Unit, fail: (String?) -> Unit)
     /**
      * @return true if id is duplicated, false if id is not duplicated
      */

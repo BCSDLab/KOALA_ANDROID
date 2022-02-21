@@ -1,5 +1,9 @@
 package im.koala.data.repository
 
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
+import com.orhanobut.hawk.Hawk
+import im.koala.data.constants.FCM_TOKEN
 import im.koala.domain.state.Result
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.remote.UserRemoteDataSource
@@ -32,7 +36,7 @@ class UserRepositoryImpl @Inject constructor(
                 result = Result.Success(this)
             }
         } else {
-            CommonResponse.FAIL.apply { errorMessage = response.body()!!.errorMessage }
+            CommonResponse.FAIL.apply { errorMessage = response.errorBody()?.source()?.buffer.toString() }
                 .run { result = Result.Fail(this) }
         }
         return result
@@ -82,5 +86,18 @@ class UserRepositoryImpl @Inject constructor(
         accountNickname: String
     ): SignUpResult {
         return userRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
+    }
+
+    override fun getFCMToken(success: (String) -> Unit, fail: (String?) -> Unit) {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    fail(task.exception?.message)
+                    return@OnCompleteListener
+                }
+                Hawk.put(FCM_TOKEN, task.result)
+                success(task.result)
+            }
+        )
     }
 }

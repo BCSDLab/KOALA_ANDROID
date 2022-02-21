@@ -10,7 +10,6 @@ import javax.inject.Inject
 @HiltViewModel
 open class BaseViewModel @Inject constructor() : ViewModel() {
     var isLoading by mutableStateOf(false)
-
     open val vmExceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
     }
 

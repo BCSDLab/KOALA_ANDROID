@@ -1,21 +1,19 @@
 package im.koala.bcsd.ui.login
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -35,24 +33,50 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.lifecycleScope
-import com.navercorp.nid.NaverIdLoginSDK
-import com.navercorp.nid.oauth.OAuthLoginCallback
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.findid.FindIdActivity
 import im.koala.bcsd.ui.findpassword.FindPasswordActivity
 import im.koala.bcsd.ui.main.MainActivity
 import im.koala.bcsd.ui.signup.SignUpContract
-import im.koala.bcsd.ui.theme.*
+import im.koala.data.api.response.toErrorResponse
+import im.koala.domain.constants.GOOGLE
+import im.koala.domain.constants.KAKAO
+import im.koala.domain.constants.NAVER
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
+
     private val viewModel: LoginViewModel by viewModels()
+    private lateinit var auth: FirebaseAuth
+    private val googleSignInResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+        try {
+            val account = task.getResult(ApiException::class.java)!!
+            lifecycleScope.launch { viewModel.snsTokenFlow.emit(account.idToken!!) }
+
+            Log.e("result", "${account.id} / ${account.idToken}")
+            // firebaseAuthWithGoogle(account.idToken!!)
+        } catch (e: Exception) {
+            Log.e("result", "${e.message} / ${e.toErrorResponse()}")
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
         initObserver()
         setContent {
             KoalaTheme {
@@ -62,37 +86,61 @@ class LoginActivity : ComponentActivity() {
             }
         }
     }
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.e("LoginActivity", "signInWithCredential:success")
+                    val user = auth.currentUser
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.e("LoginActivity", "signInWithCredential:failure", task.exception)
+                }
+            }
+    }
 
-    private fun initObserver(){
+    private fun initObserver() {
         lifecycleScope.launchWhenStarted {
             viewModel.uiEvent.collect { uiEvent ->
-                when(uiEvent){
+                when (uiEvent) {
                     LoginViewUIEvent.GoToMainActivity -> {
                         goToMainActivity()
                     }
-                    LoginViewUIEvent.ProceedGoogleLogin -> TODO()
+                    LoginViewUIEvent.ProceedGoogleLogin -> { proceedGoogleLogin(this@LoginActivity) }
                     LoginViewUIEvent.ProceedNaverLogin -> { proceedNaverLogin() }
-                    is LoginViewUIEvent.ShowErrorMessage -> TODO()
+                    LoginViewUIEvent.ProceedKakaoLogin -> { proceedKakaoLogin() }
+                    is LoginViewUIEvent.ShowErrorMessage -> {
+                        callToastMessage(context = this@LoginActivity, message = uiEvent.message)
+                    }
                 }
             }
         }
     }
-
-    private fun proceedNaverLogin(){
-        NaverIdLoginSDK.authenticate(this@LoginActivity, object: OAuthLoginCallback {
-            override fun onError(errorCode: Int, message: String) {
-
-            }
-
-            override fun onFailure(httpStatus: Int, message: String) {
-
-            }
-
-            override fun onSuccess() {
-                NaverIdLoginSDK.getAccessToken()
-                viewModel.proceedNaverLogin()
-            }
-        })
+    fun callToastMessage(context: Context, message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+    private fun proceedNaverLogin() {
+        // NaverIdLoginSDK.authenticate(this@LoginActivity, viewModel.naverLoginCallback)
+    }
+    private fun proceedKakaoLogin() {
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
+            UserApiClient.instance.loginWithKakaoTalk(this, callback = viewModel.kakaoCallback)
+        } else {
+            UserApiClient.instance.loginWithKakaoAccount(this, callback = viewModel.kakaoCallback)
+        }
+    }
+    private fun proceedGoogleLogin(context: Context) {
+        var signInIntent = getGoogleClient(context).signInIntent
+        googleSignInResult.launch(signInIntent)
+    }
+    private fun getGoogleClient(context: Context): GoogleSignInClient {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.google_web_client_id))
+            .requestEmail()
+            .build()
+        return GoogleSignIn.getClient(context, gso)
     }
 
     private fun goToMainActivity() {
@@ -449,7 +497,6 @@ fun SnsLoginScreen(
     modifier: Modifier,
     viewModel: LoginViewModel
 ) {
-    val deviceTokenState = viewModel.uiState
 
     ConstraintLayout(modifier = modifier) {
         val (googleButton, googleIcon, naverButton, naverIcon, kakaoButton, kakaoIcon) = createRefs()
@@ -472,7 +519,10 @@ fun SnsLoginScreen(
             backgroundColor = White,
             textColor = Black,
             text = stringResource(id = R.string.google_login),
-            onClick = {}
+            onClick = {
+                viewModel.onClickSnsLoginButton(GOOGLE)
+                viewModel.snsType = GOOGLE
+            }
         )
 
         DrawImageView(
@@ -499,7 +549,10 @@ fun SnsLoginScreen(
             backgroundColor = Green,
             textColor = White,
             text = stringResource(id = R.string.naver_login),
-            onClick = { viewModel.onClickNaverLoginButton() }
+            onClick = {
+                viewModel.snsType = NAVER
+                viewModel.onClickSnsLoginButton(NAVER)
+            }
         )
         DrawImageView(
             modifier = Modifier
@@ -527,7 +580,8 @@ fun SnsLoginScreen(
             textColor = Black,
             text = stringResource(id = R.string.kakao_login),
             onClick = {
-                viewModel.onClickKakaoLoginButton()
+                viewModel.onClickSnsLoginButton(KAKAO)
+                viewModel.snsType = KAKAO
             }
         )
         DrawImageView(
@@ -540,15 +594,6 @@ fun SnsLoginScreen(
                 },
             drawableId = R.drawable.ic_kakao_logo
         )
-    }
-    if (deviceTokenState.value.errorMesage.isNotEmpty()) {
-        CallToastMessage(context = context, message = deviceTokenState.value.errorMesage)
-    }
-    if (deviceTokenState.value.goToMainActivity) {
-        Intent(context, MainActivity::class.java).run {
-            context.startActivity(this)
-        }
-        (context as? Activity)?.finish()
     }
 }
 @Composable
