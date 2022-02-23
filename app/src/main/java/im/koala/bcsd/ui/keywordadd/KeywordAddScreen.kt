@@ -1,6 +1,5 @@
 package im.koala.bcsd.ui.keywordadd
 
-import android.util.Log
 import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
@@ -69,19 +68,9 @@ import im.koala.bcsd.ui.theme.Gray
 fun KeywordAddScreen(
     screenName: String,
     navController: NavController,
-    selectAlarmCycle: MutableState<Int>,
-    alarmDistinction: MutableState<Boolean>,
-    keywordSearchText: String,
-    alarmSiteText: String,
+    keywordViewModel: KeywordViewModel,
     deleteSite: MutableState<String>,
-    alarmSiteList: List<String>,
-    alarmCheckedList: List<MutableState<Boolean>>,
-    keywordNameList: List<String>,
-    addAlarmSiteList: () -> Unit,
-    deleteAlarmSite: () -> Unit,
-    setKeyword: (String) -> Unit,
-    setSite: (String) -> Unit,
-    pushKeyword: () -> Unit,
+    pushOrEditKeyword: () -> Unit,
 ) {
     val isSiteError: MutableState<Boolean> = remember { mutableStateOf(false) }
     val isKeywordError: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -93,11 +82,9 @@ fun KeywordAddScreen(
             screenName = screenName,
             isSiteError = isSiteError,
             isKeywordError = isKeywordError,
-            keywordSearchText = keywordSearchText,
-            alarmSiteList = alarmSiteList,
+            keywordViewModel = keywordViewModel,
             navController = navController,
-            keywordNameList = keywordNameList,
-            pushKeyword = { pushKeyword() },
+            pushOrEditKeyword = { pushOrEditKeyword() },
         )
 
         Divider(
@@ -108,41 +95,33 @@ fun KeywordAddScreen(
 
         KeywordInputTextField(
             navController = navController,
-            keywordText = keywordSearchText,
+            keywordViewModel = keywordViewModel,
             isKeywordError = isKeywordError,
-            setKeyword = { setKeyword(it) }
         )
 
         SearchForNotificationsTextField(
-            text = alarmSiteText,
+            keywordViewModel = keywordViewModel,
             isSiteError = isSiteError,
             navController = navController,
-            alarmSiteList = alarmSiteList,
             deleteSite = deleteSite,
-            deleteAlarmSite = { deleteAlarmSite() },
-            addAlarmSiteList = { addAlarmSiteList() },
-            setSite = { setSite(it) }
         )
 
         NotificationsBox(
-            notificationDistinction = alarmDistinction,
-            selectAlarmCycle = selectAlarmCycle,
+            keywordViewModel = keywordViewModel,
+            selectAlarmCycle = keywordViewModel.uiState.alarmCycle,
             alarmCycleList = alarmCycleList,
-            alarmCheckedList = alarmCheckedList,
         )
     }
 }
 
 @Composable
 fun KeywordAddScreenTopBar(
+    keywordViewModel:KeywordViewModel,
     screenName: String,
     isSiteError: MutableState<Boolean>,
     isKeywordError: MutableState<Boolean>,
-    keywordSearchText: String,
-    alarmSiteList: List<String>,
     navController: NavController,
-    keywordNameList: List<String>,
-    pushKeyword: () -> Unit,
+    pushOrEditKeyword: () -> Unit,
 ) {
     val context = LocalContext.current
     val errorMsg = stringResource(id = R.string.keyword_search_empty)
@@ -169,16 +148,16 @@ fun KeywordAddScreenTopBar(
         )
         TextButton(
             onClick = {
-                if (keywordSearchText.isEmpty()) Toast.makeText(
+                if (keywordViewModel.uiState.keyword.isEmpty()) Toast.makeText(
                     context,
                     errorMsg,
                     Toast.LENGTH_SHORT
                 ).show()
                 else {
-                    isSiteError.value = alarmSiteList.isEmpty()
-                    isKeywordError.value = keywordSearchText in keywordNameList
+                    isSiteError.value = keywordViewModel.uiState.siteList.isEmpty()
+                    isKeywordError.value = keywordViewModel.uiState.keyword in keywordViewModel.uiState.nameList
                     if (!isSiteError.value && !isKeywordError.value) {
-                        pushKeyword()
+                        pushOrEditKeyword()
                         navController.navigateUp()
                     }
                 }
@@ -195,10 +174,9 @@ fun KeywordAddScreenTopBar(
 
 @Composable
 fun KeywordInputTextField(
+    keywordViewModel:KeywordViewModel,
     navController: NavController,
     isKeywordError: MutableState<Boolean>,
-    keywordText: String,
-    setKeyword: (String) -> Unit
 ) {
     KoalaTheme {
         val bottomPadding: Dp = if (isKeywordError.value) 4.dp else 16.dp
@@ -207,12 +185,12 @@ fun KeywordInputTextField(
         ) {
             Box(Modifier.fillMaxWidth()) {
                 KoalaTextField(
-                    value = keywordText,
+                    value = keywordViewModel.uiState.keyword,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
                         .padding(horizontal = 16.dp),
-                    onValueChange = { setKeyword(it) },
+                    onValueChange = { keywordViewModel.changeState("keyword", stringData = it) },
                     placeholder = { Text(text = stringResource(id = R.string.keyword_input)) },
                     leadingIcon = {
                         Icon(
@@ -245,14 +223,10 @@ fun KeywordInputTextField(
 @ExperimentalMaterialApi
 @Composable
 fun SearchForNotificationsTextField(
+    keywordViewModel: KeywordViewModel,
     navController: NavController,
-    text: String,
     isSiteError: MutableState<Boolean>,
-    alarmSiteList: List<String>,
     deleteSite: MutableState<String>,
-    addAlarmSiteList: () -> Unit,
-    deleteAlarmSite: () -> Unit,
-    setSite: (String) -> Unit
 ) {
     KoalaTheme {
         val bottomPadding: Dp = if (isSiteError.value) 13.dp else 32.dp
@@ -261,7 +235,7 @@ fun SearchForNotificationsTextField(
         Column(modifier = Modifier.padding(bottom = bottomPadding)) {
             Box(Modifier.fillMaxWidth()) {
                 KoalaTextField(
-                    value = text, onValueChange = { setSite(it) },
+                    value = keywordViewModel.uiState.site, onValueChange = { keywordViewModel.changeState("site", stringData = it) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
@@ -282,9 +256,9 @@ fun SearchForNotificationsTextField(
                         .clickable { navController.navigate(NavScreen.KeywordSiteAddInput.route) }
                 )
             }
-            if (text.isNotEmpty()) {
-                addAlarmSiteList()
-                setSite("")
+            if (keywordViewModel.uiState.site.isNotEmpty()) {
+                keywordViewModel.addAlarmSiteList(keywordViewModel.uiState.site)
+                keywordViewModel.changeState("site")
             }
 
             if (isSiteError.value) {
@@ -297,10 +271,9 @@ fun SearchForNotificationsTextField(
             }
 
             SearchForNotificationsLazyColumn(
-                notificationSiteList = alarmSiteList,
+                keywordViewModel = keywordViewModel,
                 deleteSign = deleteSign,
                 deleteSite = deleteSite,
-                deleteAlarmSite = { deleteAlarmSite() },
             )
         }
     }
@@ -309,18 +282,17 @@ fun SearchForNotificationsTextField(
 @ExperimentalMaterialApi
 @Composable
 fun SearchForNotificationsLazyColumn(
-    notificationSiteList: List<String>,
+    keywordViewModel: KeywordViewModel,
     deleteSign: MutableState<Boolean>,
     deleteSite: MutableState<String>,
-    deleteAlarmSite: () -> Unit,
 ) {
     LazyColumn(
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(notificationSiteList) {
+        items(keywordViewModel.uiState.siteList) {
             if (deleteSign.value) {
-                deleteAlarmSite()
+                keywordViewModel.deleteAlarmSite(deleteSite.value)
                 deleteSign.value = false
             }
             SearchForNotificationsItem(text = it, deleteSign = deleteSign, deleteSite = deleteSite)
@@ -363,10 +335,9 @@ fun SearchForNotificationsItem(
 @ExperimentalMaterialApi
 @Composable
 fun NotificationsBox(
-    notificationDistinction: MutableState<Boolean>,
-    selectAlarmCycle: MutableState<Int>,
+    keywordViewModel:KeywordViewModel,
+    selectAlarmCycle: Int,
     alarmCycleList: Array<String>,
-    alarmCheckedList: List<MutableState<Boolean>>,
 ) {
     Column(
         modifier = Modifier
@@ -379,20 +350,20 @@ fun NotificationsBox(
         ) {
             TextButton(
                 shape = RectangleShape,
-                border = if (notificationDistinction.value) BorderStroke(
+                border = if (keywordViewModel.uiState.isImportant) BorderStroke(
                     1.dp,
                     BlackBorder
                 ) else BorderStroke(1.dp, GrayBorder),
                 modifier = Modifier.weight(0.5f),
-                colors = if (notificationDistinction.value) ButtonDefaults.buttonColors(Black) else ButtonDefaults.buttonColors(
+                colors = if (keywordViewModel.uiState.isImportant) ButtonDefaults.buttonColors(Black) else ButtonDefaults.buttonColors(
                     White
                 ),
-                onClick = { notificationDistinction.value = true }
+                onClick = { keywordViewModel.changeState("isImportant") }
             ) {
                 Text(
                     text = stringResource(id = R.string.keyword_important_alarm),
                     fontSize = 14.sp,
-                    color = if (notificationDistinction.value) White else GrayDisabled,
+                    color = if (keywordViewModel.uiState.isImportant) White else GrayDisabled,
                     modifier = Modifier.padding(
                         start = 57.dp,
                         end = 56.dp,
@@ -403,20 +374,20 @@ fun NotificationsBox(
             }
             TextButton(
                 shape = RectangleShape,
-                border = if (notificationDistinction.value) BorderStroke(
+                border = if (keywordViewModel.uiState.isImportant) BorderStroke(
                     1.dp,
                     GrayBorder
                 ) else BorderStroke(1.dp, BlackBorder),
                 modifier = Modifier.weight(0.5f),
-                colors = if (notificationDistinction.value) ButtonDefaults.buttonColors(White) else ButtonDefaults.buttonColors(
+                colors = if (keywordViewModel.uiState.isImportant) ButtonDefaults.buttonColors(White) else ButtonDefaults.buttonColors(
                     Black
                 ),
-                onClick = { notificationDistinction.value = false }
+                onClick = { keywordViewModel.changeState("isNotImportant") }
             ) {
                 Text(
                     text = stringResource(id = R.string.keyword_general_alarm),
                     fontSize = 14.sp,
-                    color = if (notificationDistinction.value) GrayDisabled else White,
+                    color = if (keywordViewModel.uiState.isImportant) GrayDisabled else White,
                     modifier = Modifier.padding(
                         start = 57.dp,
                         end = 56.dp,
@@ -426,24 +397,25 @@ fun NotificationsBox(
                 )
             }
         }
-        if (notificationDistinction.value) ImportantNotificationBox(
+        if (keywordViewModel.uiState.isImportant) ImportantNotificationBox(
+            keywordViewModel,
             selectAlarmCycle,
             alarmCycleList,
-            alarmCheckedList
-        ) else GeneralNotificationBox(alarmCheckedList)
+        ) else GeneralNotificationBox(keywordViewModel)
     }
 }
 
 @ExperimentalMaterialApi
 @Composable
 fun ImportantNotificationBox(
-    selectAlarmCycle: MutableState<Int>,
+    keywordViewModel:KeywordViewModel,
+    selectAlarmCycle: Int,
     alarmCycleList: Array<String>,
-    isCheckedList: List<MutableState<Boolean>>
 ) {
     val showDialog = remember { mutableStateOf(false) }
     Column {
         NotificationLine(
+            keywordViewModel = keywordViewModel,
             text = {
                 Text(
                     text = stringResource(id = R.string.keyword_silent_mode_alarm),
@@ -451,9 +423,11 @@ fun ImportantNotificationBox(
                     fontSize = 14.sp
                 )
             },
-            isChecked = isCheckedList[0]
+            isChecked = keywordViewModel.uiState.silentMode,
+            commend = "silentMode"
         )
         NotificationLine(
+            keywordViewModel = keywordViewModel,
             text = {
                 Text(
                     text = stringResource(id = R.string.keyword_vibration_mode_alarm),
@@ -461,9 +435,11 @@ fun ImportantNotificationBox(
                     fontSize = 14.sp
                 )
             },
-            isChecked = isCheckedList[1]
+            isChecked = keywordViewModel.uiState.vibrationMode,
+            commend = "vibrationMode"
         )
         NotificationLine(
+            keywordViewModel = keywordViewModel,
             text = {
                 Text(
                     text = stringResource(id = R.string.keyword_until_check_button_alarm),
@@ -471,17 +447,19 @@ fun ImportantNotificationBox(
                     fontSize = 14.sp
                 )
             },
-            isChecked = isCheckedList[2]
+            isChecked = keywordViewModel.uiState.untilPressOkButton,
+            commend = "untilPressOkButton"
         )
-        AlarmCycleLine(showDialog, selectAlarmCycle, alarmCycleList)
+        AlarmCycleLine(keywordViewModel, showDialog, selectAlarmCycle, alarmCycleList)
     }
 }
 
 @ExperimentalMaterialApi
 @Composable
-fun GeneralNotificationBox(alarmCheckedList: List<MutableState<Boolean>>) {
+fun GeneralNotificationBox(keywordViewModel: KeywordViewModel) {
     Column {
         NotificationLine(
+            keywordViewModel = keywordViewModel,
             text = {
                 Text(
                     text = stringResource(id = R.string.keyword_silent_mode_alarm),
@@ -489,9 +467,11 @@ fun GeneralNotificationBox(alarmCheckedList: List<MutableState<Boolean>>) {
                     fontSize = 14.sp
                 )
             },
-            isChecked = alarmCheckedList[0]
+            isChecked = keywordViewModel.uiState.silentMode,
+            commend = "silentMode"
         )
         NotificationLine(
+            keywordViewModel = keywordViewModel,
             text = {
                 Text(
                     text = stringResource(id = R.string.keyword_vibration_mode_alarm),
@@ -499,26 +479,27 @@ fun GeneralNotificationBox(alarmCheckedList: List<MutableState<Boolean>>) {
                     fontSize = 14.sp
                 )
             },
-            isChecked = alarmCheckedList[1]
+            isChecked = keywordViewModel.uiState.vibrationMode,
+            commend = "vibrationMode"
         )
     }
 }
 
 @ExperimentalMaterialApi
 @Composable
-fun NotificationLine(text: @Composable () -> Unit, isChecked: MutableState<Boolean>) {
-    val paddingStart: Dp by animateDpAsState(targetValue = if (isChecked.value) 24.dp else 1.dp)
+fun NotificationLine(keywordViewModel: KeywordViewModel,text: @Composable () -> Unit, isChecked: Boolean, commend: String) {
+    val paddingStart: Dp by animateDpAsState(targetValue = if (isChecked) 24.dp else 1.dp)
     ListItem(
         text = text,
         trailing = {
             KoalaToggle(
-                checked = isChecked.value,
-                onCheckedChange = { isChecked.value = !isChecked.value },
+                checked = isChecked,
+                onCheckedChange = { keywordViewModel.changeState(commend) },
                 modifier = Modifier
                     .width(48.dp)
                     .height(24.dp)
                     .clip(RoundedCornerShape(50))
-                    .background(if (isChecked.value) Yellow else GrayDisabled),
+                    .background(if (isChecked) Yellow else GrayDisabled),
                 iconModifier = Modifier
                     .padding(start = paddingStart, top = 1.dp, bottom = 1.dp)
                     .size(22.dp)
@@ -532,11 +513,12 @@ fun NotificationLine(text: @Composable () -> Unit, isChecked: MutableState<Boole
 @ExperimentalMaterialApi
 @Composable
 fun AlarmCycleLine(
+    keywordViewModel: KeywordViewModel,
     showDialog: MutableState<Boolean>,
-    selectAlarmCycle: MutableState<Int>,
+    selectAlarmCycle: Int,
     alarmCycleList: Array<String>
 ) {
-    if (showDialog.value) AlarmCycleDialog(showDialog, selectAlarmCycle, alarmCycleList)
+    if (showDialog.value) AlarmCycleDialog(showDialog, keywordViewModel, alarmCycleList)
     ListItem(
         text = {
             Text(
@@ -550,7 +532,7 @@ fun AlarmCycleLine(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = alarmCycleList[selectAlarmCycle.value],
+                    text = alarmCycleList[selectAlarmCycle],
                     color = Black,
                     fontSize = 14.sp
                 )
@@ -573,7 +555,7 @@ fun AlarmCycleLine(
 @Composable
 fun AlarmCycleDialog(
     openDialog: MutableState<Boolean>,
-    selectAlarmCycle: MutableState<Int>,
+    keywordViewModel: KeywordViewModel,
     alarmCycleList: Array<String>
 ) {
     var temp = 0
@@ -622,8 +604,7 @@ fun AlarmCycleDialog(
                     TextButton(
                         colors = ButtonDefaults.buttonColors(White),
                         onClick = {
-                            selectAlarmCycle.value = temp
-                            Log.d("asdfsdf", selectAlarmCycle.value.toString() + ": ad")
+                            keywordViewModel.changeState("alarmCycle", intData = temp)
                             openDialog.value = false
                         }
                     ) {

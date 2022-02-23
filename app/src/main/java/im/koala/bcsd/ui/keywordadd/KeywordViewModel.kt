@@ -3,11 +3,14 @@ package im.koala.bcsd.ui.keywordadd
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import im.koala.domain.state.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
+import im.koala.bcsd.navigation.NavScreen
 import im.koala.data.api.response.keywordadd.KeywordAddResponseUi
 import im.koala.data.repository.local.AlarmSiteDataSource
 import im.koala.data.repository.local.AlarmSite
@@ -22,6 +25,7 @@ import im.koala.domain.usecase.keywordadd.GeyKeywordDetailsUseCase
 import im.koala.domain.usecase.keywordadd.SetRecentSearchListUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
@@ -36,22 +40,8 @@ class KeywordViewModel @Inject constructor(
     private val alarmSiteData: AlarmSiteDataSource,
     private val getKeywordDetailsUseCase: GeyKeywordDetailsUseCase,
 ) : ViewModel() {
-    val keywordSearchList: MutableLiveData<List<String>> = MutableLiveData()
-    val keywordRecommendationList: MutableLiveData<List<String>> = MutableLiveData()
-    val recentKeywordSearchList: MutableLiveData<List<String>> = MutableLiveData(listOf(""))
-    val siteSearchList: MutableLiveData<List<String>> = MutableLiveData()
-    val siteRecommendationList: MutableLiveData<List<String>> = MutableLiveData()
-    val recentSiteSearchList: MutableLiveData<List<String>> = MutableLiveData(listOf(""))
-    val alarmSiteList: MutableLiveData<List<String>> = MutableLiveData(listOf(""))
-    val keywordNameList: MutableLiveData<List<String>> = MutableLiveData(listOf(""))
-
-    /*
-        키워드 수정하기 변수
-    */
-    val uiState: MutableLiveData<KeywordAddResponseUi> = MutableLiveData(KeywordAddResponseUi())
-    val y by mutableStateOf(KeywordAddResponseUi())
-    val searchingKeyword: MutableLiveData<String> = MutableLiveData("")
-    val searchingSite: MutableLiveData<String> = MutableLiveData()
+    var uiState by mutableStateOf(KeywordAddUiState())
+        private set
 
     /*
         getKeywordSearchList(keyword:String),getSiteSearchList(site:String)
@@ -60,9 +50,8 @@ class KeywordViewModel @Inject constructor(
     fun getKeywordSearchList(keyword: String) {
         viewModelScope.launch {
             when (val _keywordSearchList = getKeywordSearchUseCase(keyword)) {
-                is Result.Success<*> ->
-                    keywordSearchList.value =
-                        _keywordSearchList.data as List<String>
+                is Result.Success<*> -> uiState =
+                    uiState.copy(searchList = _keywordSearchList.data as List<String>)
                 is Result.Fail<*> -> Log.d(
                     "KeywordAddViewModel",
                     _keywordSearchList.data.toString()
@@ -74,9 +63,8 @@ class KeywordViewModel @Inject constructor(
     fun getSiteSearchList(site: String) {
         viewModelScope.launch {
             when (val _keywordSiteSearchList = getSiteSearchUseCase(site)) {
-                is Result.Success<*> ->
-                    siteSearchList.value =
-                        _keywordSiteSearchList.data as List<String>
+                is Result.Success<*> -> uiState =
+                    uiState.copy(searchList = _keywordSiteSearchList.data as List<String>)
                 is Result.Fail<*> -> Log.d(
                     "KeywordAddViewModel",
                     _keywordSiteSearchList.data.toString()
@@ -93,9 +81,8 @@ class KeywordViewModel @Inject constructor(
     fun getSiteRecommendation() {
         viewModelScope.launch {
             when (val _keywordSiteRecommendationList = getSiteRecommendationUseCase()) {
-                is Result.Success<*> ->
-                    siteRecommendationList.value =
-                        _keywordSiteRecommendationList.data as List<String>
+                is Result.Success<*> -> uiState =
+                    uiState.copy(recommendationList = _keywordSiteRecommendationList.data as List<String>)
                 is Result.Fail<*> -> Log.d(
                     "KeywordAddViewModel",
                     _keywordSiteRecommendationList.data.toString()
@@ -107,9 +94,8 @@ class KeywordViewModel @Inject constructor(
     fun getKeywordRecommendation() {
         viewModelScope.launch {
             when (val _keywordRecommendationList = getKeywordRecommendationUseCase()) {
-                is Result.Success<*> ->
-                    keywordRecommendationList.value =
-                        _keywordRecommendationList.data as List<String>
+                is Result.Success<*> -> uiState =
+                    uiState.copy(recommendationList = _keywordRecommendationList.data as List<String>)
                 is Result.Fail<*> -> Log.d(
                     "KeywordAddViewModel",
                     _keywordRecommendationList.data.toString()
@@ -127,7 +113,7 @@ class KeywordViewModel @Inject constructor(
     fun setRecentKeywordSearchList(keywordSearch: String) {
         val setRecentKeywordSearchList = mutableListOf<String>()
         viewModelScope.launch {
-            recentKeywordSearchList.value?.let { setRecentKeywordSearchList.addAll(it) }
+            uiState.recentSearchList.let { setRecentKeywordSearchList.addAll(it) }
             if (keywordSearch !in setRecentKeywordSearchList) setRecentKeywordSearchList.add(
                 keywordSearch
             )
@@ -138,7 +124,7 @@ class KeywordViewModel @Inject constructor(
     fun getRecentKeywordSearchList() {
         viewModelScope.launch {
             getRecentSearchListUseCase("keyword_search_key").collectLatest { value ->
-                recentKeywordSearchList.value = value
+                uiState = uiState.copy(recentSearchList = value)
             }
         }
     }
@@ -146,7 +132,7 @@ class KeywordViewModel @Inject constructor(
     fun setRecentSiteSearchList(siteSearch: String) {
         val setRecentSiteSearchList = mutableListOf<String>()
         viewModelScope.launch {
-            recentSiteSearchList.value?.let { setRecentSiteSearchList.addAll(it) }
+            uiState.recentSearchList.let { setRecentSiteSearchList.addAll(it) }
             if (siteSearch !in setRecentSiteSearchList) setRecentSiteSearchList.add(siteSearch)
             setRecentSearchListUseCase("site_search_key", setRecentSiteSearchList)
         }
@@ -155,7 +141,7 @@ class KeywordViewModel @Inject constructor(
     fun getRecentSiteSearchList() {
         viewModelScope.launch {
             getRecentSearchListUseCase("site_search_key").collectLatest { value ->
-                recentSiteSearchList.value = value
+                uiState = uiState.copy(recentSearchList = value)
             }
         }
     }
@@ -174,7 +160,7 @@ class KeywordViewModel @Inject constructor(
                 _alarmSiteList.add(site.site!!)
             }
         }
-        alarmSiteList.value = _alarmSiteList
+        uiState = uiState.copy(siteList = _alarmSiteList)
     }
 
     fun addAlarmSiteList(site: String) {
@@ -194,6 +180,7 @@ class KeywordViewModel @Inject constructor(
 
     /*
         getKeywordNameList() : 키워드를 추가하기 전에 키워드 중복검사를 하기위해서 키워드 name 만 담긴 리스트를 가져오는 메서드
+        getKeywordNameListToEdit() : 키워드 수정하기를 할 때, 중복검사를 하기 위해서 키워드 name 만 담긴 리스트를 가져오는 메서드
     */
 
     fun getKeywordNameList() {
@@ -202,9 +189,9 @@ class KeywordViewModel @Inject constructor(
                 when (it) {
                     is Result.Success<*> -> {
                         val keywordList = it.data as List<KeywordResponse>
-                        val _keywordNameList: MutableList<String> = mutableListOf()
-                        keywordList.forEach { _keywordNameList.add(it.name) }
-                        keywordNameList.value = _keywordNameList
+                        val keywordNameList: MutableList<String> = mutableListOf()
+                        keywordList.forEach { data -> keywordNameList.add(data.name) }
+                        uiState = uiState.copy(nameList = keywordNameList)
                     }
                     is Result.Fail<*> -> Log.d("KeywordAddViewModel", it.data.toString())
                 }
@@ -212,7 +199,63 @@ class KeywordViewModel @Inject constructor(
         }
     }
 
-    fun getKeywordDetails(keyword: String) {
+    fun getKeywordNameListToEdit(keyword: String) {
+        viewModelScope.launch {
+            getKeywordListUseCase().collectLatest {
+                when (it) {
+                    is Result.Success<*> -> {
+                        val keywordList = it.data as List<KeywordResponse>
+                        val keywordNameList: MutableList<String> = mutableListOf()
+                        keywordList.forEach { data -> keywordNameList.add(data.name) }
+                        keywordNameList.remove(keyword)
+                        uiState = uiState.copy(nameList = keywordNameList)
+                    }
+                    is Result.Fail<*> -> Log.d("KeywordAddViewModel", it.data.toString())
+                }
+            }
+        }
+    }
+
+    /*
+         changeState(commend: String, stringData: String = "", intData: Int = 0)
+         키워드 추가할 때, uiState 를 변경할 수 있는 setter
+    */
+    fun changeState(commend: String, stringData: String = "", intData: Int = 0) {
+        when (commend) {
+            "keyword" -> uiState = uiState.copy(keyword = stringData)
+            "site" -> uiState = uiState.copy(site = stringData)
+            "alarmCycle" -> uiState = uiState.copy(alarmCycle = intData)
+            "isImportant" -> uiState = uiState.copy(isImportant = true)
+            "isNotImportant" -> uiState = uiState.copy(isImportant = false)
+            "silentMode" -> uiState = uiState.copy(silentMode = !uiState.silentMode)
+            "vibrationMode" -> uiState = uiState.copy(vibrationMode = !uiState.vibrationMode)
+            "untilPressOkButton" -> uiState =
+                uiState.copy(untilPressOkButton = !uiState.untilPressOkButton)
+        }
+    }
+
+    /*
+        initState() : 키워드 추가할 때 필요한 변수를 초기화 한다.
+    */
+
+    fun initState() {
+        uiState = uiState.copy(isImportant = true)
+        uiState = uiState.copy(vibrationMode = true)
+        uiState = uiState.copy(untilPressOkButton = true)
+        uiState = uiState.copy(silentMode = true)
+        uiState = uiState.copy(alarmCycle = 0)
+        deleteAllSiteList()
+        getKeywordNameList()
+        changeState("keyword")
+    }
+
+    /*
+        getKeywordDetails(keyword: String, navController:NavController)
+        navController 를 통해 수정화면으로 전환한 후, delay 후 수신한 response 를 uiState 와 매핑한다.
+        delay 를 안하면 수정화면 세팅이 안된다.
+    */
+
+    fun getKeywordDetails(keyword: String, navController:NavController) {
         viewModelScope.launch {
             when (val _keywordDetails = getKeywordDetailsUseCase(keyword)) {
                 is Result.Success<*> -> {
@@ -222,10 +265,18 @@ class KeywordViewModel @Inject constructor(
                         "KeywordAddViewModel",
                         "keywordDetails: ${_keywordDetails.data.toString()}"
                     )
-                    setSearchKeyword(keyword)
-                    uiState.value = keywordDetails
-                    alarmSiteList.value = keywordDetails.siteList
+                    navController.navigate(NavScreen.KeywordEdit.route)
+                    delay(500)
+                    changeState("keyword", stringData = keyword)
+                    changeState("alarmCycle", intData = keywordDetails.alarmCycle)
+                    uiState = uiState.copy(isImportant = keywordDetails.isImportant)
+                    uiState = uiState.copy(vibrationMode = keywordDetails.vibrationMode)
+                    uiState = uiState.copy(untilPressOkButton = keywordDetails.untilPressOkButton)
+                    uiState = uiState.copy(silentMode = keywordDetails.silentMode)
+                    uiState = uiState.copy(siteList = keywordDetails.siteList)
+                    uiState = uiState.copy(editKeyword = keywordDetails.name)
                     keywordDetails.siteList.onEach { addAlarmSiteList(it) }
+                    getKeywordNameListToEdit(keyword)
                 }
                 is Result.Fail<*> -> Log.d(
                     "KeywordAddViewModel",
@@ -233,13 +284,5 @@ class KeywordViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    fun setSearchKeyword(keyword: String) {
-        searchingKeyword.value = keyword
-    }
-
-    fun setSearchSite(site: String) {
-        searchingSite.value = site
     }
 }

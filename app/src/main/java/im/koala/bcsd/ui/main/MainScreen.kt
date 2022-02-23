@@ -7,9 +7,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
@@ -42,23 +39,13 @@ fun MainScreen(
         rememberLazyListState(),
         rememberLazyListState()
     )
-    val keywordSearchText by keywordViewModel.searchingKeyword.observeAsState("")
-    val siteSearchText by keywordViewModel.searchingSite.observeAsState("")
-    val alarmDistinction: MutableState<Boolean> = remember { mutableStateOf(true) }
-    val selectAlarmCycle: MutableState<Int> = remember { mutableStateOf(0) }
-    val alarmCheckedList: List<MutableState<Boolean>> = arrayListOf(
-        remember { mutableStateOf(true) },
-        remember { mutableStateOf(true) },
-        remember { mutableStateOf(true) }
-    )
     ProvideWindowInsets {
         NavHost(navController = navController, startDestination = NavScreen.Keyword.route) {
             composable(
                 route = NavScreen.Keyword.route,
                 arguments = emptyList()
             ) {
-                keywordViewModel.deleteAllSiteList()
-                keywordViewModel.setSearchKeyword("")
+                keywordViewModel.initState()
                 HomeTabScreen(
                     viewModel = viewModel,
                     tabStateHolder = tabStateHolder,
@@ -71,7 +58,6 @@ fun MainScreen(
                         }
                     },
                     navController = navController,
-                    keywordViewModel = keywordViewModel
                 )
             }
 
@@ -79,40 +65,20 @@ fun MainScreen(
                 route = NavScreen.KeywordAdd.route
             ) {
                 val deleteSite = remember { mutableStateOf("") }
-                val alarmSiteList by keywordViewModel.alarmSiteList.observeAsState(listOf(""))
-                val keywordNameList by keywordViewModel.keywordNameList.observeAsState(listOf(""))
-                alarmDistinction.value = true
-                selectAlarmCycle.value = 0
-                alarmCheckedList[0].value = true
-                alarmCheckedList[1].value = true
-                alarmCheckedList[2].value = true
-                keywordViewModel.getAlarmSiteList()
-                keywordViewModel.getKeywordNameList()
-
                 KeywordAddScreen(
+                    keywordViewModel = keywordViewModel,
                     screenName = stringResource(id = R.string.keyword_add),
                     navController = navController,
-                    selectAlarmCycle = selectAlarmCycle,
-                    alarmDistinction = alarmDistinction,
-                    keywordSearchText = keywordSearchText,
-                    alarmSiteText = siteSearchText,
                     deleteSite = deleteSite,
-                    alarmSiteList = alarmSiteList,
-                    alarmCheckedList = alarmCheckedList,
-                    keywordNameList = keywordNameList,
-                    addAlarmSiteList = { keywordViewModel.addAlarmSiteList(siteSearchText) },
-                    deleteAlarmSite = { keywordViewModel.deleteAlarmSite(deleteSite.value) },
-                    setSite = { keywordViewModel.setSearchSite(it) },
-                    setKeyword = { keywordViewModel.setSearchKeyword(it) },
                 ) {
                     viewModel.pushKeyword(
-                        alarmCycle = selectAlarmCycle.value,
-                        alarmMode = alarmCheckedList[0].value,
-                        isImportant = alarmDistinction.value,
-                        name = keywordSearchText,
-                        untilPressOkButton = alarmCheckedList[2].value,
-                        vibrationMode = alarmCheckedList[1].value,
-                        alarmSiteList = alarmSiteList
+                        alarmCycle = keywordViewModel.uiState.alarmCycle,
+                        alarmMode = keywordViewModel.uiState.silentMode,
+                        isImportant = keywordViewModel.uiState.isImportant,
+                        name = keywordViewModel.uiState.keyword,
+                        untilPressOkButton = keywordViewModel.uiState.untilPressOkButton,
+                        vibrationMode = keywordViewModel.uiState.vibrationMode,
+                        alarmSiteList = keywordViewModel.uiState.siteList
                     )
                 }
             }
@@ -121,13 +87,6 @@ fun MainScreen(
                 route = NavScreen.KeywordAddInput.route
             ) {
                 val keywordSearchingText = remember { mutableStateOf("") }
-                val keywordRecommendationList by keywordViewModel.keywordRecommendationList.observeAsState(
-                    listOf("")
-                )
-                val keywordSearchList by keywordViewModel.keywordSearchList.observeAsState(listOf(""))
-                val recentKeywordSearchList by keywordViewModel.recentKeywordSearchList.observeAsState(
-                    listOf("")
-                )
 
                 keywordViewModel.getKeywordRecommendation()
                 keywordViewModel.getRecentKeywordSearchList()
@@ -138,16 +97,14 @@ fun MainScreen(
                     textFieldPlaceholder = stringResource(id = R.string.keyword_input),
                     tabDataList = mutableListOf("최근 검색", "추천 키워드"),
                     searchingText = keywordSearchingText,
-                    recommendationList = keywordRecommendationList,
-                    recentSearchList = recentKeywordSearchList,
-                    searchList = keywordSearchList,
+                    recommendationList = keywordViewModel.uiState.recommendationList,
+                    recentSearchList = keywordViewModel.uiState.recentSearchList,
+                    searchList = keywordViewModel.uiState.searchList,
                     getSearchList = { keywordViewModel.getKeywordSearchList(keywordSearchingText.value) },
                     setRecentSearchList = {
-                        keywordViewModel.setRecentKeywordSearchList(
-                            keywordSearchText
-                        )
+                        keywordViewModel.setRecentKeywordSearchList(keywordViewModel.uiState.keyword)
                     },
-                    setKeyword = { keywordViewModel.setSearchKeyword(keywordSearchingText.value) }
+                    setKeyword = { keywordViewModel.changeState(commend = "keyword", stringData = keywordSearchingText.value) }
                 )
             }
 
@@ -155,13 +112,6 @@ fun MainScreen(
                 route = NavScreen.KeywordSiteAddInput.route
             ) {
                 val siteSearchingText = remember { mutableStateOf("") }
-                val alarmSiteRecommendationList by keywordViewModel.siteRecommendationList.observeAsState(
-                    listOf("")
-                )
-                val alarmSiteSearchList by keywordViewModel.siteSearchList.observeAsState(listOf(""))
-                val recentSiteSearchList by keywordViewModel.recentSiteSearchList.observeAsState(
-                    listOf("")
-                )
 
                 keywordViewModel.getSiteRecommendation()
                 keywordViewModel.getRecentSiteSearchList()
@@ -172,12 +122,12 @@ fun MainScreen(
                     textFieldPlaceholder = stringResource(id = R.string.search_for_notifications_input),
                     tabDataList = mutableListOf("최근 검색", "추천 대상"),
                     searchingText = siteSearchingText,
-                    recommendationList = alarmSiteRecommendationList,
-                    searchList = alarmSiteSearchList,
-                    recentSearchList = recentSiteSearchList,
+                    recommendationList = keywordViewModel.uiState.recommendationList,
+                    recentSearchList = keywordViewModel.uiState.recentSearchList,
+                    searchList = keywordViewModel.uiState.searchList,
                     getSearchList = { keywordViewModel.getSiteSearchList(siteSearchingText.value) },
-                    setRecentSearchList = { keywordViewModel.setRecentSiteSearchList(siteSearchText) },
-                    setKeyword = { keywordViewModel.setSearchSite(siteSearchingText.value) }
+                    setRecentSearchList = { keywordViewModel.setRecentSiteSearchList(keywordViewModel.uiState.site) },
+                    setKeyword = { keywordViewModel.changeState(commend = "site", stringData = siteSearchingText.value) }
                 )
             }
 
@@ -200,46 +150,22 @@ fun MainScreen(
             composable(
                 route = NavScreen.KeywordEdit.route,
             ) {
-                val uiState by keywordViewModel.uiState.observeAsState(KeywordAddResponseUi())
-                alarmDistinction.value = uiState.isImportant
-                selectAlarmCycle.value = uiState.alarmCycle
-                alarmCheckedList[0].value = uiState.silentMode
-                alarmCheckedList[1].value = uiState.vibrationMode
-                alarmCheckedList[2].value = uiState.untilPressOkButton
-                val alarmSiteList by keywordViewModel.alarmSiteList.observeAsState(uiState.siteList)
                 val deleteSite = remember { mutableStateOf("") }
-                val keywordNameList by keywordViewModel.keywordNameList.observeAsState(listOf(""))
-                keywordViewModel.getAlarmSiteList()
-                keywordViewModel.getKeywordNameList()
-                keywordViewModel.setSearchKeyword(keywordSearchText)
-                Log.d("KeywordAddViewModel","siteList: $alarmSiteList, nameList: $keywordNameList")
-                Log.d("KeywordAddViewModel","keyword: $keywordSearchText")
-
                 KeywordAddScreen(
                     screenName = stringResource(id = R.string.edit_keyword),
                     navController = navController,
-                    selectAlarmCycle = selectAlarmCycle,
-                    alarmDistinction = alarmDistinction,
-                    keywordSearchText = keywordSearchText,
-                    alarmSiteText = siteSearchText,
                     deleteSite = deleteSite,
-                    alarmSiteList = alarmSiteList,
-                    alarmCheckedList = alarmCheckedList,
-                    keywordNameList = keywordNameList,
-                    addAlarmSiteList = { keywordViewModel.addAlarmSiteList(siteSearchText) },
-                    deleteAlarmSite = { keywordViewModel.deleteAlarmSite(deleteSite.value) },
-                    setKeyword = { keywordViewModel.setSearchKeyword(it) },
-                    setSite = { keywordViewModel.setSearchSite(it) },
-                    pushKeyword = {
+                    keywordViewModel = keywordViewModel,
+                    pushOrEditKeyword = {
                         viewModel.editKeyword(
-                            keyword = uiState.name,
-                            alarmCycle = selectAlarmCycle.value,
-                            alarmMode = alarmCheckedList[0].value,
-                            isImportant = alarmDistinction.value,
-                            name = keywordSearchText,
-                            untilPressOkButton = alarmCheckedList[2].value,
-                            vibrationMode = alarmCheckedList[1].value,
-                            alarmSiteList = alarmSiteList
+                            keyword = keywordViewModel.uiState.editKeyword,
+                            alarmCycle = keywordViewModel.uiState.alarmCycle,
+                            alarmMode = keywordViewModel.uiState.silentMode,
+                            isImportant = keywordViewModel.uiState.isImportant,
+                            name = keywordViewModel.uiState.keyword,
+                            untilPressOkButton = keywordViewModel.uiState.untilPressOkButton,
+                            vibrationMode = keywordViewModel.uiState.vibrationMode,
+                            alarmSiteList = keywordViewModel.uiState.siteList
                         )
                     },
                 )

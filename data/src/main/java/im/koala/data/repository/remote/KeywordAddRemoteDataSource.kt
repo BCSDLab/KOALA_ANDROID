@@ -1,10 +1,8 @@
 package im.koala.data.repository.remote
 
-import im.koala.data.api.cc
 import im.koala.data.api.response.ResponseWrapper
 import im.koala.data.api.response.keywordadd.KeywordAddResponse
 import im.koala.data.api.response.keywordadd.KeywordAddResponseEntity
-import im.koala.data.api.tt
 import retrofit2.Response
 
 interface KeywordAddRemoteDataSource {
