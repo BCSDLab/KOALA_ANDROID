@@ -57,7 +57,6 @@ fun KeywordScreen(
     viewModel: MainViewModel,
     selectKeyword: (MainScreenBottomTab, Int) -> Unit,
     navController: NavController,
-    keywordViewModel: KeywordViewModel
 ) {
     val keywordUi = viewModel.keywordUi
 
@@ -125,7 +124,6 @@ fun KeywordScreen(
                 selectKeyword = selectKeyword,
                 deleteKeyword = { viewModel.deleteKeyword(it) },
                 navController = navController,
-                keywordViewModel = keywordViewModel
             )
         }
     }
@@ -170,7 +168,6 @@ fun DrawLazyColumView(
     selectKeyword: (MainScreenBottomTab, Int) -> Unit,
     deleteKeyword: (keyword: String) -> Unit,
     navController: NavController,
-    keywordViewModel: KeywordViewModel
 ) {
     LazyColumn(
         modifier = modifier,
@@ -218,7 +215,7 @@ fun DrawLazyColumView(
                     }
                 },
                 dismissContent = {
-                    DrawKeywordItem(keyword = item, selectKeyword,navController, keywordViewModel = keywordViewModel)
+                    DrawKeywordItem(keyword = item, selectKeyword)
                 },
                 directions = setOf(DismissDirection.EndToStart),
             )
@@ -230,7 +227,7 @@ fun DrawLazyColumView(
 }
 
 @Composable
-fun DrawKeywordItem(keyword: KeywordResponse, selectKeyword: (MainScreenBottomTab, Int) -> Unit, navController:NavController, keywordViewModel:KeywordViewModel) {
+fun DrawKeywordItem(keyword: KeywordResponse, selectKeyword: (MainScreenBottomTab, Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -239,11 +236,9 @@ fun DrawKeywordItem(keyword: KeywordResponse, selectKeyword: (MainScreenBottomTa
             // .padding(horizontal = 24.dp)
             .clickable(
                 onClick = {
-                    Log.d("KeywordAddViewModel","keywordName: ${keyword.name}")
-                    keywordViewModel.getKeywordDetails(keyword.name)
-                    navController.navigate(NavScreen.KeywordEdit.route)
-//                    selectKeyword(MainScreenBottomTab.KEYWORD, keyword.id)
-//                    Log.e("asdfasdf", keyword.id.toString())
+                    /* TODO KeywordDetail 화면 전환 */
+                    selectKeyword(MainScreenBottomTab.KEYWORD, keyword.id)
+                    Log.e("asdfasdf", keyword.id.toString())
                 }
             ),
         verticalAlignment = Alignment.CenterVertically
