@@ -23,7 +23,6 @@ import im.koala.bcsd.ui.setting.SettingScreen
 import androidx.compose.animation.Crossfade
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.NavController
-import im.koala.bcsd.ui.keywordadd.KeywordViewModel
 
 @ExperimentalMaterialApi
 @Composable

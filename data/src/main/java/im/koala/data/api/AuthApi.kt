@@ -1,6 +1,5 @@
 package im.koala.data.api
 
-import com.google.gson.annotations.SerializedName
 import im.koala.data.api.response.ResponseWrapper
 import im.koala.data.api.response.keyword.KeywordNoticeResponse
 import im.koala.data.api.response.keywordadd.KeywordAddResponse
@@ -17,7 +16,6 @@ import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE_READING_CHECK
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_SEARCH
-import im.koala.data.constant.test
 import im.koala.data.constants.KEYWORD
 import im.koala.data.entity.CommonEntity
 import im.koala.data.entity.KeywordBodyEntity

@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -50,8 +49,7 @@ class KeywordViewModel @Inject constructor(
     fun getKeywordSearchList(keyword: String) {
         viewModelScope.launch {
             when (val _keywordSearchList = getKeywordSearchUseCase(keyword)) {
-                is Result.Success<*> -> uiState =
-                    uiState.copy(searchList = _keywordSearchList.data as List<String>)
+                is Result.Success<*> -> uiState = uiState.copy(searchList = _keywordSearchList.data as List<String>)
                 is Result.Fail<*> -> Log.d(
                     "KeywordAddViewModel",
                     _keywordSearchList.data.toString()
@@ -63,8 +61,7 @@ class KeywordViewModel @Inject constructor(
     fun getSiteSearchList(site: String) {
         viewModelScope.launch {
             when (val _keywordSiteSearchList = getSiteSearchUseCase(site)) {
-                is Result.Success<*> -> uiState =
-                    uiState.copy(searchList = _keywordSiteSearchList.data as List<String>)
+                is Result.Success<*> -> uiState = uiState.copy(searchList = _keywordSiteSearchList.data as List<String>)
                 is Result.Fail<*> -> Log.d(
                     "KeywordAddViewModel",
                     _keywordSiteSearchList.data.toString()
@@ -81,12 +78,8 @@ class KeywordViewModel @Inject constructor(
     fun getSiteRecommendation() {
         viewModelScope.launch {
             when (val _keywordSiteRecommendationList = getSiteRecommendationUseCase()) {
-                is Result.Success<*> -> uiState =
-                    uiState.copy(recommendationList = _keywordSiteRecommendationList.data as List<String>)
-                is Result.Fail<*> -> Log.d(
-                    "KeywordAddViewModel",
-                    _keywordSiteRecommendationList.data.toString()
-                )
+                is Result.Success<*> -> uiState = uiState.copy(recommendationList = _keywordSiteRecommendationList.data as List<String>)
+                is Result.Fail<*> -> Log.d("KeywordAddViewModel", _keywordSiteRecommendationList.data.toString())
             }
         }
     }
@@ -94,12 +87,8 @@ class KeywordViewModel @Inject constructor(
     fun getKeywordRecommendation() {
         viewModelScope.launch {
             when (val _keywordRecommendationList = getKeywordRecommendationUseCase()) {
-                is Result.Success<*> -> uiState =
-                    uiState.copy(recommendationList = _keywordRecommendationList.data as List<String>)
-                is Result.Fail<*> -> Log.d(
-                    "KeywordAddViewModel",
-                    _keywordRecommendationList.data.toString()
-                )
+                is Result.Success<*> -> uiState = uiState.copy(recommendationList = _keywordRecommendationList.data as List<String>)
+                is Result.Fail<*> -> Log.d("KeywordAddViewModel", _keywordRecommendationList.data.toString())
             }
         }
     }
@@ -229,8 +218,7 @@ class KeywordViewModel @Inject constructor(
             "isNotImportant" -> uiState = uiState.copy(isImportant = false)
             "silentMode" -> uiState = uiState.copy(silentMode = !uiState.silentMode)
             "vibrationMode" -> uiState = uiState.copy(vibrationMode = !uiState.vibrationMode)
-            "untilPressOkButton" -> uiState =
-                uiState.copy(untilPressOkButton = !uiState.untilPressOkButton)
+            "untilPressOkButton" -> uiState = uiState.copy(untilPressOkButton = !uiState.untilPressOkButton)
         }
     }
 
@@ -255,7 +243,7 @@ class KeywordViewModel @Inject constructor(
         delay 를 안하면 수정화면 세팅이 안된다.
     */
 
-    fun getKeywordDetails(keyword: String, navController:NavController) {
+    fun getKeywordDetails(keyword: String, navController: NavController) {
         viewModelScope.launch {
             when (val _keywordDetails = getKeywordDetailsUseCase(keyword)) {
                 is Result.Success<*> -> {
@@ -263,7 +251,7 @@ class KeywordViewModel @Inject constructor(
                         _keywordDetails.data as KeywordAddResponseUi
                     Log.d(
                         "KeywordAddViewModel",
-                        "keywordDetails: ${_keywordDetails.data.toString()}"
+                        "keywordDetails: ${_keywordDetails.data}"
                     )
                     navController.navigate(NavScreen.KeywordEdit.route)
                     delay(500)
@@ -280,7 +268,7 @@ class KeywordViewModel @Inject constructor(
                 }
                 is Result.Fail<*> -> Log.d(
                     "KeywordAddViewModel",
-                    "keywordDetails: ${_keywordDetails.data.toString()}"
+                    "keywordDetails: ${_keywordDetails.data}"
                 )
             }
         }

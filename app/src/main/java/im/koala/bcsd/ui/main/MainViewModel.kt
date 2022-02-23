@@ -123,11 +123,11 @@ class MainViewModel @Inject constructor(
                 )
             ) {
                 is Result.Success<*> -> {
-                    Log.d("KeywordAddViewModel", "pushKeyword: ${pushKeywordResponse.data.toString()}")
+                    Log.d("KeywordAddViewModel", "pushKeyword: ${pushKeywordResponse.data}")
                     reloadKeywordList()
                     executeGetKeywordList()
                 }
-                is Result.Fail<*> -> Log.d("KeywordAddViewModel", "pushKeyword: ${pushKeywordResponse.data.toString()}")
+                is Result.Fail<*> -> Log.d("KeywordAddViewModel", "pushKeyword: ${pushKeywordResponse.data}")
             }
         }
     }
@@ -156,11 +156,11 @@ class MainViewModel @Inject constructor(
                 )
             ) {
                 is Result.Success<*> -> {
-                    Log.d("KeywordAddViewModel", "editKeyword: ${editKeywordResponse.data.toString()}")
+                    Log.d("KeywordAddViewModel", "editKeyword: ${editKeywordResponse.data}")
                     reloadKeywordList()
                     executeGetKeywordList()
                 }
-                is Result.Fail<*> -> Log.d("KeywordAddViewModel", "editKeyword: ${editKeywordResponse.data.toString()}")
+                is Result.Fail<*> -> Log.d("KeywordAddViewModel", "editKeyword: ${editKeywordResponse.data}")
             }
         }
     }
@@ -169,11 +169,11 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             when (val deleteKeywordResponse = deleteKeywordUseCase(keyword)) {
                 is Result.Success<*> -> {
-                    Log.d("mainViewModel", "deleteKeyword: ${deleteKeywordResponse.data.toString()}")
+                    Log.d("mainViewModel", "deleteKeyword: ${deleteKeywordResponse.data}")
                     reloadKeywordList()
                     executeGetKeywordList()
                 }
-                is Result.Fail<*> -> Log.d("mainViewModel", "deleteKeyword: ${deleteKeywordResponse.data.toString()}")
+                is Result.Fail<*> -> Log.d("mainViewModel", "deleteKeyword: ${deleteKeywordResponse.data}")
             }
         }
     }

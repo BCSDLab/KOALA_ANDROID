@@ -108,7 +108,7 @@ class KeywordAddRepositoryImpl @Inject constructor(
             vibrationMode,
             alarmSiteList
         )
-        Log.d("KeywordAddViewModel","keyword: $keyword response: msg: $keywordResponse")
+        Log.d("KeywordAddViewModel", "keyword: $keyword response: msg: $keywordResponse")
         val response = keywordAddRemoteDataSource.editKeyword(keyword, keywordResponse)
         return if (response.isSuccessful) {
             val msg = "msg: ${response.body()?.body} code: ${response.body()?.code}"
@@ -143,9 +143,9 @@ class KeywordAddRepositoryImpl @Inject constructor(
         val response = keywordAddRemoteDataSource.getKeywordDetails(keyword)
 
         return if (response.isSuccessful) {
-            Log.d("tststststst","keyword name: $keyword body: ${response.body().toString()}")
+            Log.d("tststststst", "keyword name: $keyword body: ${response.body()}")
             val responseUi = changeKeywordResponseIntToBoolean(response.body()!!)
-            Log.d("tststststst","keyword name: $keyword body: $responseUi")
+            Log.d("tststststst", "keyword name: $keyword body: $responseUi")
             Result.Success(responseUi)
         } else {
             val errorMsg = "code: ${response.code()}, msg: ${response.errorBody()?.string()}"

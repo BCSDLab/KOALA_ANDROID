@@ -1,6 +1,5 @@
 package im.koala.bcsd.ui.main
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -24,7 +23,6 @@ import im.koala.bcsd.ui.keyword.KeywordDetailScreen
 import im.koala.bcsd.ui.keywordadd.KeywordAddInputScreen
 import im.koala.bcsd.ui.keywordadd.KeywordAddScreen
 import im.koala.bcsd.ui.keywordadd.KeywordViewModel
-import im.koala.data.api.response.keywordadd.KeywordAddResponseUi
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi

@@ -42,7 +42,6 @@ import androidx.navigation.NavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import im.koala.bcsd.R
 import im.koala.bcsd.navigation.NavScreen
-import im.koala.bcsd.ui.keywordadd.KeywordViewModel
 import im.koala.bcsd.ui.login.DrawImageView
 import im.koala.bcsd.ui.main.MainScreenBottomTab
 import im.koala.bcsd.ui.main.MainViewModel

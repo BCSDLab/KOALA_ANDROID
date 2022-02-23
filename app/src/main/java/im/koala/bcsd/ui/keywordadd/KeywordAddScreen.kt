@@ -116,7 +116,7 @@ fun KeywordAddScreen(
 
 @Composable
 fun KeywordAddScreenTopBar(
-    keywordViewModel:KeywordViewModel,
+    keywordViewModel: KeywordViewModel,
     screenName: String,
     isSiteError: MutableState<Boolean>,
     isKeywordError: MutableState<Boolean>,
@@ -155,7 +155,8 @@ fun KeywordAddScreenTopBar(
                 ).show()
                 else {
                     isSiteError.value = keywordViewModel.uiState.siteList.isEmpty()
-                    isKeywordError.value = keywordViewModel.uiState.keyword in keywordViewModel.uiState.nameList
+                    isKeywordError.value =
+                        keywordViewModel.uiState.keyword in keywordViewModel.uiState.nameList
                     if (!isSiteError.value && !isKeywordError.value) {
                         pushOrEditKeyword()
                         navController.navigateUp()
@@ -174,7 +175,7 @@ fun KeywordAddScreenTopBar(
 
 @Composable
 fun KeywordInputTextField(
-    keywordViewModel:KeywordViewModel,
+    keywordViewModel: KeywordViewModel,
     navController: NavController,
     isKeywordError: MutableState<Boolean>,
 ) {
@@ -235,7 +236,8 @@ fun SearchForNotificationsTextField(
         Column(modifier = Modifier.padding(bottom = bottomPadding)) {
             Box(Modifier.fillMaxWidth()) {
                 KoalaTextField(
-                    value = keywordViewModel.uiState.site, onValueChange = { keywordViewModel.changeState("site", stringData = it) },
+                    value = keywordViewModel.uiState.site,
+                    onValueChange = { keywordViewModel.changeState("site", stringData = it) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
@@ -335,7 +337,7 @@ fun SearchForNotificationsItem(
 @ExperimentalMaterialApi
 @Composable
 fun NotificationsBox(
-    keywordViewModel:KeywordViewModel,
+    keywordViewModel: KeywordViewModel,
     selectAlarmCycle: Int,
     alarmCycleList: Array<String>,
 ) {
@@ -408,7 +410,7 @@ fun NotificationsBox(
 @ExperimentalMaterialApi
 @Composable
 fun ImportantNotificationBox(
-    keywordViewModel:KeywordViewModel,
+    keywordViewModel: KeywordViewModel,
     selectAlarmCycle: Int,
     alarmCycleList: Array<String>,
 ) {
@@ -487,7 +489,12 @@ fun GeneralNotificationBox(keywordViewModel: KeywordViewModel) {
 
 @ExperimentalMaterialApi
 @Composable
-fun NotificationLine(keywordViewModel: KeywordViewModel,text: @Composable () -> Unit, isChecked: Boolean, commend: String) {
+fun NotificationLine(
+    keywordViewModel: KeywordViewModel,
+    text: @Composable () -> Unit,
+    isChecked: Boolean,
+    commend: String
+) {
     val paddingStart: Dp by animateDpAsState(targetValue = if (isChecked) 24.dp else 1.dp)
     ListItem(
         text = text,
