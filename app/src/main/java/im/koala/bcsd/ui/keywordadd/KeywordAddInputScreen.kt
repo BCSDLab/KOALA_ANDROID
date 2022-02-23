@@ -192,7 +192,8 @@ fun KeyWordAddInputTabBar(pagerState: PagerState, tabDataList: List<String>) {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(index)
                     }
-                }, text = {
+                },
+                text = {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = text,
