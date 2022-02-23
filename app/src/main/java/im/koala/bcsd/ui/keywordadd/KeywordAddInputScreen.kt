@@ -57,24 +57,24 @@ fun KeywordAddInputScreen(
     errorMessage: String,
     tabDataList: List<String>,
     searchingText: MutableState<String>,
-    searchText: MutableState<String>,
     recommendationList: List<String>,
     recentSearchList: List<String>,
     searchList: List<String>,
     getSearchList: () -> Unit,
     setRecentSearchList: () -> Unit,
+    setKeyword: () -> Unit,
 ) {
     val pagerState = rememberPagerState()
     Column(
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
         KeywordAddInputScreenTopBar(
-            keywordText = searchText,
             searchingText = searchingText,
             navController = navController,
             textFieldPlaceholder = textFieldPlaceholder,
             errorMessage = errorMessage,
-            setRecentSearchList = { setRecentSearchList() }
+            setRecentSearchList = { setRecentSearchList() },
+            setKeyword = { setKeyword() }
         )
         if (searchingText.value.isEmpty()) {
             KeyWordAddInputTabBar(
@@ -96,12 +96,12 @@ fun KeywordAddInputScreen(
 
 @Composable
 fun KeywordAddInputScreenTopBar(
-    keywordText: MutableState<String>,
     searchingText: MutableState<String>,
     navController: NavController,
     textFieldPlaceholder: String,
     errorMessage: String,
-    setRecentSearchList: () -> Unit
+    setRecentSearchList: () -> Unit,
+    setKeyword: () -> Unit,
 ) {
     val context = LocalContext.current
     KoalaTheme {
@@ -141,7 +141,7 @@ fun KeywordAddInputScreenTopBar(
                     if (searchingText.value.isEmpty()) {
                         Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                     } else {
-                        keywordText.value = searchingText.value
+                        setKeyword()
                         setRecentSearchList()
                         navController.navigateUp()
                     }
@@ -193,13 +193,13 @@ fun KeyWordAddInputTabBar(pagerState: PagerState, tabDataList: List<String>) {
                         pagerState.animateScrollToPage(index)
                     }
                 }, text = {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = text,
-                    color = Black,
-                    textAlign = TextAlign.Left
-                )
-            }
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = text,
+                        color = Black,
+                        textAlign = TextAlign.Left
+                    )
+                }
             )
         }
     }

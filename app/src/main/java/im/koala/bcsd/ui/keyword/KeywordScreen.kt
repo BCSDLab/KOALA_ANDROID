@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import im.koala.bcsd.R
 import im.koala.bcsd.navigation.NavScreen
+import im.koala.bcsd.ui.keywordadd.KeywordViewModel
 import im.koala.bcsd.ui.login.DrawImageView
 import im.koala.bcsd.ui.main.MainScreenBottomTab
 import im.koala.bcsd.ui.main.MainViewModel
@@ -55,7 +56,8 @@ fun KeywordScreen(
     lazyListState: LazyListState,
     viewModel: MainViewModel,
     selectKeyword: (MainScreenBottomTab, Int) -> Unit,
-    navController: NavController
+    navController: NavController,
+    keywordViewModel: KeywordViewModel
 ) {
     val keywordUi = viewModel.keywordUi
 
@@ -123,6 +125,7 @@ fun KeywordScreen(
                 selectKeyword = selectKeyword,
                 deleteKeyword = { viewModel.deleteKeyword(it) },
                 navController = navController,
+                keywordViewModel = keywordViewModel
             )
         }
     }
@@ -167,6 +170,7 @@ fun DrawLazyColumView(
     selectKeyword: (MainScreenBottomTab, Int) -> Unit,
     deleteKeyword: (keyword: String) -> Unit,
     navController: NavController,
+    keywordViewModel: KeywordViewModel
 ) {
     LazyColumn(
         modifier = modifier,
@@ -214,7 +218,7 @@ fun DrawLazyColumView(
                     }
                 },
                 dismissContent = {
-                    DrawKeywordItem(keyword = item, selectKeyword)
+                    DrawKeywordItem(keyword = item, selectKeyword,navController, keywordViewModel = keywordViewModel)
                 },
                 directions = setOf(DismissDirection.EndToStart),
             )
@@ -226,7 +230,7 @@ fun DrawLazyColumView(
 }
 
 @Composable
-fun DrawKeywordItem(keyword: KeywordResponse, selectKeyword: (MainScreenBottomTab, Int) -> Unit) {
+fun DrawKeywordItem(keyword: KeywordResponse, selectKeyword: (MainScreenBottomTab, Int) -> Unit, navController:NavController, keywordViewModel:KeywordViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -235,8 +239,11 @@ fun DrawKeywordItem(keyword: KeywordResponse, selectKeyword: (MainScreenBottomTa
             // .padding(horizontal = 24.dp)
             .clickable(
                 onClick = {
-                    selectKeyword(MainScreenBottomTab.KEYWORD, keyword.id)
-                    Log.e("asdfasdf", keyword.id.toString())
+                    Log.d("KeywordAddViewModel","keywordName: ${keyword.name}")
+                    keywordViewModel.getKeywordDetails(keyword.name)
+                    navController.navigate(NavScreen.KeywordEdit.route)
+//                    selectKeyword(MainScreenBottomTab.KEYWORD, keyword.id)
+//                    Log.e("asdfasdf", keyword.id.toString())
                 }
             ),
         verticalAlignment = Alignment.CenterVertically

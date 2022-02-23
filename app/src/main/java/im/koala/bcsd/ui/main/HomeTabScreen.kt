@@ -23,6 +23,7 @@ import im.koala.bcsd.ui.setting.SettingScreen
 import androidx.compose.animation.Crossfade
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.NavController
+import im.koala.bcsd.ui.keywordadd.KeywordViewModel
 
 @ExperimentalMaterialApi
 @Composable
@@ -30,7 +31,8 @@ fun HomeTabScreen(
     viewModel: MainViewModel,
     tabStateHolder: HomeTabStateHolder,
     selectItem: (MainScreenBottomTab, Int) -> Unit,
-    navController: NavController
+    navController: NavController,
+    keywordViewModel:KeywordViewModel
 ) {
     val selectedTab by viewModel.selectedTab
     val tabs = MainScreenBottomTab.values()
@@ -83,7 +85,8 @@ fun HomeTabScreen(
                     tabStateHolder.keywordLazyListState,
                     viewModel,
                     selectItem,
-                    navController
+                    navController,
+                    keywordViewModel = keywordViewModel
                 )
                 MainScreenBottomTab.HISTORY -> HistoryScreen(
                     modifier

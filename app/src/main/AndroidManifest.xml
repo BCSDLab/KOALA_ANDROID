@@ -15,9 +15,10 @@
         android:theme="@style/Theme.Koala.NoActionBar">
         <activity
             android:name=".ui.keywordedit.KeywordEditActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_keyword_edit"
-            android:theme="@style/Theme.Koala.NoActionBar" />
+            android:theme="@style/Theme.Koala.NoActionBar" >
+        </activity>
         <activity
             android:name=".ui.tutorial.TutorialActivity"
             android:exported="false" />

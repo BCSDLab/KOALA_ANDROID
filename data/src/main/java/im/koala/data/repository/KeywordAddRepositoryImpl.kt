@@ -1,10 +1,12 @@
 package im.koala.data.repository
 
+import android.util.Log
 import im.koala.data.repository.local.KeywordAddLocalDataSource
 import im.koala.data.repository.remote.KeywordAddRemoteDataSource
 import im.koala.domain.state.Result
 import im.koala.data.api.response.keywordadd.KeywordAddResponse
 import im.koala.data.api.response.keywordadd.KeywordAddResponseUi
+import im.koala.data.api.response.keywordadd.KeywordAddResponseEntity
 import im.koala.domain.repository.KeywordAddRepository
 import javax.inject.Inject
 
@@ -106,14 +108,13 @@ class KeywordAddRepositoryImpl @Inject constructor(
             vibrationMode,
             alarmSiteList
         )
-
+        Log.d("KeywordAddViewModel","keyword: $keyword response: msg: $keywordResponse")
         val response = keywordAddRemoteDataSource.editKeyword(keyword, keywordResponse)
-
         return if (response.isSuccessful) {
             val msg = "msg: ${response.body()?.body} code: ${response.body()?.code}"
             Result.Success(msg)
         } else {
-            val msg = "msg: ${response.errorBody()?.string()}, code: ${response.body()?.code}"
+            val msg = "errorMsg: ${response.errorBody()?.string()}, code: ${response.body()?.code}, body: ${response.body()}"
             Result.Fail(msg)
         }
     }
@@ -142,7 +143,9 @@ class KeywordAddRepositoryImpl @Inject constructor(
         val response = keywordAddRemoteDataSource.getKeywordDetails(keyword)
 
         return if (response.isSuccessful) {
+            Log.d("tststststst","keyword name: $keyword body: ${response.body().toString()}")
             val responseUi = changeKeywordResponseIntToBoolean(response.body()!!)
+            Log.d("tststststst","keyword name: $keyword body: $responseUi")
             Result.Success(responseUi)
         } else {
             val errorMsg = "code: ${response.code()}, msg: ${response.errorBody()?.string()}"
@@ -209,15 +212,15 @@ class KeywordAddRepositoryImpl @Inject constructor(
         )
     }
 
-    private fun changeKeywordResponseIntToBoolean(keywordAddResponse: KeywordAddResponse): KeywordAddResponseUi {
+    private fun changeKeywordResponseIntToBoolean(keywordAddResponse: KeywordAddResponseEntity): KeywordAddResponseUi {
         val response = KeywordAddResponseUi()
-        response.isImportant = keywordAddResponse.isImportant == 1
-        response.silentMode = keywordAddResponse.silentMode == 1
-        response.untilPressOkButton = keywordAddResponse.untilPressOkButton == 1
-        response.vibrationMode = keywordAddResponse.vibrationMode == 1
-        response.name = keywordAddResponse.name
+        response.isImportant = keywordAddResponse.body.isImportant == 1
+        response.silentMode = keywordAddResponse.body.silentMode == 1
+        response.untilPressOkButton = keywordAddResponse.body.untilPressOkButton == 1
+        response.vibrationMode = keywordAddResponse.body.vibrationMode == 1
+        response.name = keywordAddResponse.body.name
         response.alarmCycle = if (response.isImportant) {
-            when (keywordAddResponse.alarmCycle) {
+            when (keywordAddResponse.body.alarmCycle) {
                 5 -> 0
                 10 -> 1
                 15 -> 2
@@ -230,7 +233,7 @@ class KeywordAddRepositoryImpl @Inject constructor(
             }
         } else 0
         val siteList = mutableListOf<String>()
-        keywordAddResponse.siteList.onEach {
+        keywordAddResponse.body.siteList.onEach {
             when (it) {
                 "PORTAL" -> {
                     siteList.add("아우누리")

@@ -71,15 +71,16 @@ fun KeywordAddScreen(
     navController: NavController,
     selectAlarmCycle: MutableState<Int>,
     alarmDistinction: MutableState<Boolean>,
-    keywordSearchText: MutableState<String>,
-    alarmSiteText: MutableState<String>,
+    keywordSearchText: String,
+    alarmSiteText: String,
     deleteSite: MutableState<String>,
     alarmSiteList: List<String>,
     alarmCheckedList: List<MutableState<Boolean>>,
     keywordNameList: List<String>,
     addAlarmSiteList: () -> Unit,
     deleteAlarmSite: () -> Unit,
-    deleteAllAlarmSiteList: () -> Unit,
+    setKeyword: (String) -> Unit,
+    setSite: (String) -> Unit,
     pushKeyword: () -> Unit,
 ) {
     val isSiteError: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -97,7 +98,6 @@ fun KeywordAddScreen(
             navController = navController,
             keywordNameList = keywordNameList,
             pushKeyword = { pushKeyword() },
-            deleteAllSiteList = { deleteAllAlarmSiteList() },
         )
 
         Divider(
@@ -109,7 +109,8 @@ fun KeywordAddScreen(
         KeywordInputTextField(
             navController = navController,
             keywordText = keywordSearchText,
-            isKeywordError = isKeywordError
+            isKeywordError = isKeywordError,
+            setKeyword = { setKeyword(it) }
         )
 
         SearchForNotificationsTextField(
@@ -119,7 +120,8 @@ fun KeywordAddScreen(
             alarmSiteList = alarmSiteList,
             deleteSite = deleteSite,
             deleteAlarmSite = { deleteAlarmSite() },
-            addAlarmSiteList = { addAlarmSiteList() }
+            addAlarmSiteList = { addAlarmSiteList() },
+            setSite = { setSite(it) }
         )
 
         NotificationsBox(
@@ -136,12 +138,11 @@ fun KeywordAddScreenTopBar(
     screenName: String,
     isSiteError: MutableState<Boolean>,
     isKeywordError: MutableState<Boolean>,
-    keywordSearchText: MutableState<String>,
+    keywordSearchText: String,
     alarmSiteList: List<String>,
     navController: NavController,
     keywordNameList: List<String>,
     pushKeyword: () -> Unit,
-    deleteAllSiteList: () -> Unit,
 ) {
     val context = LocalContext.current
     val errorMsg = stringResource(id = R.string.keyword_search_empty)
@@ -153,11 +154,7 @@ fun KeywordAddScreenTopBar(
             .padding(horizontal = 8.dp)
     ) {
         IconButton(
-            onClick = {
-                deleteAllSiteList()
-                keywordSearchText.value = ""
-                navController.navigateUp()
-            }
+            onClick = { navController.navigateUp() }
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_nav_back),
@@ -172,18 +169,16 @@ fun KeywordAddScreenTopBar(
         )
         TextButton(
             onClick = {
-                if (keywordSearchText.value.isEmpty()) Toast.makeText(
+                if (keywordSearchText.isEmpty()) Toast.makeText(
                     context,
                     errorMsg,
                     Toast.LENGTH_SHORT
                 ).show()
                 else {
                     isSiteError.value = alarmSiteList.isEmpty()
-                    isKeywordError.value = keywordSearchText.value in keywordNameList
+                    isKeywordError.value = keywordSearchText in keywordNameList
                     if (!isSiteError.value && !isKeywordError.value) {
                         pushKeyword()
-                        deleteAllSiteList()
-                        keywordSearchText.value = ""
                         navController.navigateUp()
                     }
                 }
@@ -202,7 +197,8 @@ fun KeywordAddScreenTopBar(
 fun KeywordInputTextField(
     navController: NavController,
     isKeywordError: MutableState<Boolean>,
-    keywordText: MutableState<String>
+    keywordText: String,
+    setKeyword: (String) -> Unit
 ) {
     KoalaTheme {
         val bottomPadding: Dp = if (isKeywordError.value) 4.dp else 16.dp
@@ -211,12 +207,12 @@ fun KeywordInputTextField(
         ) {
             Box(Modifier.fillMaxWidth()) {
                 KoalaTextField(
-                    value = keywordText.value,
+                    value = keywordText,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
                         .padding(horizontal = 16.dp),
-                    onValueChange = { keywordText.value = it },
+                    onValueChange = { setKeyword(it) },
                     placeholder = { Text(text = stringResource(id = R.string.keyword_input)) },
                     leadingIcon = {
                         Icon(
@@ -250,12 +246,13 @@ fun KeywordInputTextField(
 @Composable
 fun SearchForNotificationsTextField(
     navController: NavController,
-    text: MutableState<String>,
+    text: String,
     isSiteError: MutableState<Boolean>,
     alarmSiteList: List<String>,
     deleteSite: MutableState<String>,
     addAlarmSiteList: () -> Unit,
-    deleteAlarmSite: () -> Unit
+    deleteAlarmSite: () -> Unit,
+    setSite: (String) -> Unit
 ) {
     KoalaTheme {
         val bottomPadding: Dp = if (isSiteError.value) 13.dp else 32.dp
@@ -264,9 +261,7 @@ fun SearchForNotificationsTextField(
         Column(modifier = Modifier.padding(bottom = bottomPadding)) {
             Box(Modifier.fillMaxWidth()) {
                 KoalaTextField(
-                    value = text.value, onValueChange = {
-                        text.value = it
-                    },
+                    value = text, onValueChange = { setSite(it) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
@@ -287,9 +282,9 @@ fun SearchForNotificationsTextField(
                         .clickable { navController.navigate(NavScreen.KeywordSiteAddInput.route) }
                 )
             }
-            if (text.value.isNotEmpty()) {
+            if (text.isNotEmpty()) {
                 addAlarmSiteList()
-                text.value = ""
+                setSite("")
             }
 
             if (isSiteError.value) {
