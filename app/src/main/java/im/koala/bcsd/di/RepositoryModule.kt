@@ -7,9 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import im.koala.data.api.AuthApi
-import im.koala.data.api.GooglePostTokenApi
 import im.koala.data.api.NoAuthApi
-import im.koala.data.repository.GooglePostTokenRepositoryImpl
 import im.koala.data.repository.KeywordAddRepositoryImpl
 import im.koala.data.repository.KeywordRepositoryImpl
 import im.koala.data.repository.UserRepositoryImpl
@@ -27,13 +25,11 @@ import im.koala.data.repository.remote.KeywordRemoteDataSource
 import im.koala.data.repository.remote.KeywordRemoteDataSourceImpl
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.data.repository.remote.UserRemoteDataSourceImpl
-import im.koala.domain.repository.GooglePostTokenRepository
 import im.koala.domain.repository.KeywordAddRepository
 import im.koala.domain.repository.KeywordRepository
 import im.koala.domain.repository.UserRepository
 import im.koala.domain.usecase.GetFCMTokenUseCase
 import im.koala.domain.usecase.GetKeywordListUseCase
-import im.koala.domain.usecase.GooglePostAccessTokenUseCase
 import im.koala.domain.usecase.SnsLoginUseCase
 import javax.inject.Singleton
 
@@ -65,14 +61,6 @@ object RepositoryModule {
         return UserRepositoryImpl(authRemoteDataSource, noAuthLocalDataSource)
     }
 
-    @Singleton
-    @Provides
-    fun provideGooglePostAccessTokenRepository(
-        @GOOGLE googlePostTokenApi: GooglePostTokenApi
-    ): GooglePostTokenRepository {
-        return GooglePostTokenRepositoryImpl(googlePostTokenApi)
-    }
-
     @Provides
     @Singleton
     fun provideSnsUseCase(
@@ -95,14 +83,6 @@ object RepositoryModule {
         userRepository: UserRepository
     ): GetFCMTokenUseCase {
         return GetFCMTokenUseCase(userRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideGooglePostAccessTokenUseCase(
-        googlePostTokenRepository: GooglePostTokenRepository
-    ): GooglePostAccessTokenUseCase {
-        return GooglePostAccessTokenUseCase(googlePostTokenRepository)
     }
 
     @Provides

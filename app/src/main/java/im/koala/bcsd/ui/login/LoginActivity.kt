@@ -3,7 +3,6 @@ package im.koala.bcsd.ui.login
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -12,8 +11,26 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +55,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.kakao.sdk.user.UserApiClient
@@ -48,7 +64,14 @@ import im.koala.bcsd.ui.findid.FindIdActivity
 import im.koala.bcsd.ui.findpassword.FindPasswordActivity
 import im.koala.bcsd.ui.main.MainActivity
 import im.koala.bcsd.ui.signup.SignUpContract
-import im.koala.data.api.response.toErrorResponse
+import im.koala.bcsd.ui.theme.Black
+import im.koala.bcsd.ui.theme.GrayBorder
+import im.koala.bcsd.ui.theme.GrayDisabled
+import im.koala.bcsd.ui.theme.GrayNormal
+import im.koala.bcsd.ui.theme.Green
+import im.koala.bcsd.ui.theme.KoalaTheme
+import im.koala.bcsd.ui.theme.White
+import im.koala.bcsd.ui.theme.Yellow2
 import im.koala.domain.constants.GOOGLE
 import im.koala.domain.constants.KAKAO
 import im.koala.domain.constants.NAVER
@@ -67,11 +90,7 @@ class LoginActivity : ComponentActivity() {
         try {
             val account = task.getResult(ApiException::class.java)!!
             lifecycleScope.launch { viewModel.snsTokenFlow.emit(account.idToken!!) }
-
-            Log.e("result", "${account.id} / ${account.idToken}")
-            // firebaseAuthWithGoogle(account.idToken!!)
         } catch (e: Exception) {
-            Log.e("result", "${e.message} / ${e.toErrorResponse()}")
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,21 +105,6 @@ class LoginActivity : ComponentActivity() {
             }
         }
     }
-    private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.e("LoginActivity", "signInWithCredential:success")
-                    val user = auth.currentUser
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.e("LoginActivity", "signInWithCredential:failure", task.exception)
-                }
-            }
-    }
-
     private fun initObserver() {
         lifecycleScope.launchWhenStarted {
             viewModel.uiEvent.collect { uiEvent ->

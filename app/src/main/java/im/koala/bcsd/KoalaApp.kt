@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import com.kakao.sdk.common.KakaoSdk
-import com.navercorp.nid.NaverIdLoginSDK
 import com.orhanobut.hawk.Hawk
 import dagger.hilt.android.HiltAndroidApp
 
@@ -20,12 +19,15 @@ class KoalaApp : Application() {
         instance = this
         Hawk.init(appContext).build()
         KakaoSdk.init(this, this.resources.getString(R.string.KAKAO_KEY))
+        /*
         NaverIdLoginSDK.initialize(
             this,
             this.resources.getString(R.string.naver_client_id),
             this.resources.getString(R.string.naver_client_secret),
             this.resources.getString(R.string.app_name),
         )
+
+         */
     }
 
     /**

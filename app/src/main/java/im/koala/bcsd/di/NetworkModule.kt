@@ -7,11 +7,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import im.koala.bcsd.KoalaApp
 import im.koala.data.api.AuthApi
-import im.koala.data.api.GooglePostTokenApi
 import im.koala.data.api.NoAuthApi
 import im.koala.data.constants.ACCESS_TOKEN
 import im.koala.data.constants.BASE_URL
-import im.koala.data.constants.GOOGLE_OAUTH
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -29,10 +27,6 @@ annotation class AUTH
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class NOAUTH
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class GOOGLE
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -117,35 +111,5 @@ object NetworkModule {
     @Singleton
     fun provideAuthApi(@AUTH retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
-    }
-
-    @GOOGLE
-    @Provides
-    @Singleton
-    fun provideGoogleOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder().apply {
-            connectTimeout(10, TimeUnit.SECONDS)
-            readTimeout(30, TimeUnit.SECONDS)
-            writeTimeout(15, TimeUnit.SECONDS)
-            addInterceptor(httpLoggingInterceptor)
-        }.build()
-    }
-
-    @GOOGLE
-    @Provides
-    @Singleton
-    fun provideGoogleRetrofit(@GOOGLE okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(GOOGLE_OAUTH)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-    @GOOGLE
-    @Provides
-    @Singleton
-    fun provideGooglePostTokenApi(@GOOGLE retrofit: Retrofit): GooglePostTokenApi {
-        return retrofit.create(GooglePostTokenApi::class.java)
     }
 }
