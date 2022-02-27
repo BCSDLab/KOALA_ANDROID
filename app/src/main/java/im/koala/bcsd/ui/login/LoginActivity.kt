@@ -80,6 +80,7 @@ class LoginActivity : ComponentActivity() {
             }
         }
     }
+
     private fun goToMainActivity() {
         Intent(this, MainActivity::class.java).run {
             startActivity(this)
@@ -130,7 +131,8 @@ fun LoginScreen(context: Context, viewModel: LoginViewModel) {
                     height = Dimension.fillToConstraints
                     width = Dimension.fillToConstraints
                 },
-                context = context
+                context = context,
+                viewModel = viewModel
             )
         } else {
             SnsLoginScreen(
@@ -237,10 +239,23 @@ fun LoginTypeTabScreen(
 @Composable
 fun NormalScreen(
     modifier: Modifier,
-    context: Context
+    context: Context,
+    viewModel: LoginViewModel
 ) {
     val signUpContract = rememberLauncherForActivityResult(contract = SignUpContract()) {
         // 회원가입 성공하면 회원가입 때 사용한 id 반환, 아니면 null
+    }
+
+    val deviceTokenState = viewModel.uiState
+
+    if (deviceTokenState.value.errorMesage.isNotEmpty()) {
+        CallToastMessage(context = context, message = deviceTokenState.value.errorMesage)
+    }
+    if (deviceTokenState.value.goToMainActivity) {
+        Intent(context, MainActivity::class.java).run {
+            context.startActivity(this)
+        }
+        (context as? Activity)?.finish()
     }
 
     ConstraintLayout(modifier = modifier) {
@@ -320,7 +335,12 @@ fun NormalScreen(
             style = MaterialTheme.typography.body2
         )
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                viewModel.login(
+                    id = idTextState.value.text,
+                    password = pwTextState.value.text
+                )
+            },
             modifier = Modifier
                 .size(0.dp, 48.dp)
                 .constrainAs(loginButton) {
@@ -410,7 +430,9 @@ fun NormalScreen(
             }
         }
         TextButton(
-            onClick = {},
+            onClick = {
+                viewModel.loginNonMember()
+            },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent,
             ),
@@ -435,8 +457,6 @@ fun SnsLoginScreen(
     modifier: Modifier,
     viewModel: LoginViewModel
 ) {
-    val deviceTokenState = viewModel.uiState
-
     ConstraintLayout(modifier = modifier) {
         val (googleButton, googleIcon, naverButton, naverIcon, kakaoButton, kakaoIcon) = createRefs()
         /*구글버튼*/
@@ -528,16 +548,8 @@ fun SnsLoginScreen(
             drawableId = R.drawable.ic_kakao_logo
         )
     }
-    if (deviceTokenState.value.errorMesage.isNotEmpty()) {
-        CallToastMessage(context = context, message = deviceTokenState.value.errorMesage)
-    }
-    if (deviceTokenState.value.goToMainActivity) {
-        Intent(context, MainActivity::class.java).run {
-            context.startActivity(this)
-        }
-        (context as? Activity)?.finish()
-    }
 }
+
 @Composable
 fun CallToastMessage(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

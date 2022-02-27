@@ -15,21 +15,24 @@ import com.nhn.android.naverlogin.data.OAuthLoginPreferenceManager
 import com.nhn.android.naverlogin.data.OAuthLoginState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.koala.bcsd.R
-import im.koala.domain.state.Result
 import im.koala.bcsd.ui.BaseViewModel
 import im.koala.domain.constants.GOOGLE
 import im.koala.domain.constants.KAKAO
 import im.koala.domain.constants.NAVER
 import im.koala.domain.model.CommonResponse
+import im.koala.domain.state.Result
 import im.koala.domain.usecase.GetDeviceTokenUseCase
 import im.koala.domain.usecase.GooglePostAccessTokenUseCase
 import im.koala.domain.usecase.SnsLoginUseCase
+import im.koala.domain.usecase.user.LoginWithIdPasswordUseCase
+import im.koala.domain.usecase.user.LoginWithoutIdPasswordUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -41,7 +44,9 @@ import javax.inject.Inject
 class LoginViewModel@Inject constructor(
     private val snsLoginUseCase: SnsLoginUseCase,
     private val getDeviceTokenUseCase: GetDeviceTokenUseCase,
-    private val googlePostAccessTokenUseCase: GooglePostAccessTokenUseCase
+    private val googlePostAccessTokenUseCase: GooglePostAccessTokenUseCase,
+    private val loginWithIdPasswordUseCase: LoginWithIdPasswordUseCase,
+    private val loginWithoutIdPasswordUseCase: LoginWithoutIdPasswordUseCase
 ) : BaseViewModel() {
     private var context: Context? = null
 
@@ -132,6 +137,41 @@ class LoginViewModel@Inject constructor(
             it.collectLatest { snsLoginState.emit(it) }
         }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
     }
+
+    fun login(id: String, password: String) = viewModelScope.launch(vmExceptionHandler) {
+        isLoading = true
+        getDeviceTokenUseCase().flatMapLatest {
+            loginWithIdPasswordUseCase(
+                deviceToken = it,
+                id = id,
+                password = password
+            )
+        }.collectLatest {
+            isLoading = false
+            if(it.isSuccess) {
+                _uiState.value = uiState.value.copy(goToMainActivity = true)
+            } else {
+                _uiState.value = uiState.value.copy(errorMesage = it.exceptionOrNull()?.message ?: "")
+            }
+        }
+    }
+
+    fun loginNonMember() = viewModelScope.launch(vmExceptionHandler) {
+        isLoading = true
+        getDeviceTokenUseCase().flatMapLatest {
+            loginWithoutIdPasswordUseCase(
+                deviceToken = it
+            )
+        }.collectLatest {
+            isLoading = false
+            if(it.isSuccess) {
+                _uiState.value = uiState.value.copy(goToMainActivity = true)
+            } else {
+                _uiState.value = uiState.value.copy(errorMesage = it.exceptionOrNull()?.message ?: "")
+            }
+        }
+    }
+
     private fun naverToken(): Flow<String> = callbackFlow {
         context?.let {
             val oAuthLoginHandler = object : OAuthLoginHandler(Looper.getMainLooper()) {

@@ -9,6 +9,7 @@ import im.koala.data.constant.KOALA_API_URL_EMAIL_CHECK
 import im.koala.data.constant.KOALA_API_URL_NICKNAME_CHECK
 import im.koala.data.constant.KOALA_API_URL_SIGN_UP
 import im.koala.data.constant.KOALA_API_URL_USER_LOGIN
+import im.koala.data.constant.KOALA_API_URL_USER_NON_MEMBER_LOGIN
 import im.koala.data.constants.SNSLOGIN
 import im.koala.data.entity.TokenBodyEntity
 import im.koala.domain.model.TokenResponse
@@ -54,7 +55,7 @@ interface NoAuthApi {
         @Body userRequest: UserRequest
     ): Response<TokenResponse>
 
-    @POST(KOALA_API_URL_USER_LOGIN)
+    @POST(KOALA_API_URL_USER_NON_MEMBER_LOGIN)
     suspend fun loginNonMember(
         @Query("device_token") deviceToken: String
     ): Response<TokenResponse>

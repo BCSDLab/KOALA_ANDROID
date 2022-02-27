@@ -39,11 +39,11 @@ class UserRepositoryImpl @Inject constructor(
         return result
     }
 
-    override suspend fun login(id: String, password: String): kotlin.Result<TokenResponse> {
+    override suspend fun login(deviceToken: String, id: String, password: String): kotlin.Result<TokenResponse> {
         val result = userRemoteDataSource.login(
             accountId = id,
             password = password,
-            deviceToken = userLocalDataSource.getDeviceToken()
+            deviceToken = deviceToken
         )
 
         return try {
@@ -57,13 +57,13 @@ class UserRepositoryImpl @Inject constructor(
                 kotlin.Result.failure(RuntimeException(errorMessage.getOrDefault("")))
             }
         } catch (e: Exception) {
-            kotlin.Result.failure(RuntimeException(result.errorBody()?.string()))
+            kotlin.Result.failure(e)
         }
     }
 
-    override suspend fun loginWithoutSignUp(): kotlin.Result<TokenResponse> {
+    override suspend fun loginWithoutSignUp(deviceToken: String): kotlin.Result<TokenResponse> {
         val result = userRemoteDataSource.loginWithoutSignUp(
-            deviceToken = userLocalDataSource.getDeviceToken()
+            deviceToken = deviceToken
         )
 
         return try {

@@ -8,10 +8,11 @@ interface UserRepository {
     suspend fun getKeyword(): Result
     suspend fun postSnsLogin(snsType: String, accessToken: String, deviceToken: String): Result
     suspend fun login(
+        deviceToken: String,
         id: String,
         password: String
     ) : kotlin.Result<TokenResponse>
-    suspend fun loginWithoutSignUp(): kotlin.Result<TokenResponse>
+    suspend fun loginWithoutSignUp(deviceToken: String): kotlin.Result<TokenResponse>
 
     /**
      * @return true if id is duplicated, false if id is not duplicated
