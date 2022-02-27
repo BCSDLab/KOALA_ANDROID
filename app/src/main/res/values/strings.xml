@@ -131,4 +131,7 @@
     <string name="keyword_search_fail">검색 결과가 없습니다.</string>
     <string name="keyword_search_empty">키워드를 입력해주세요.</string>
     <string name="site_search_empty">알림받을 사이트를 입력해주세요.</string>
+    <string name="title_activity_keyword_edit">KeywordEditActivity</string>
+
+    <string name="edit_keyword">키워드 수정하기</string>
 </resources>

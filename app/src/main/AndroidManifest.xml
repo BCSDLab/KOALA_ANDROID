@@ -4,6 +4,7 @@
     package="im.koala.bcsd">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".KoalaApp"
         android:allowBackup="true"
@@ -65,11 +66,11 @@
         <activity
             android:name="com.nhn.android.naverlogin.ui.OAuthLoginActivity"
             android:exported="true"
-            tools:node="merge"></activity>
+            tools:node="merge" />
         <activity
             android:name="com.nhn.android.naverlogin.ui.OAuthLoginInAppBrowserActivity"
             android:exported="true"
-            tools:node="merge"></activity>
+            tools:node="merge" />
         <activity
             android:name="com.nhn.android.naverlogin.ui.OAuthCustomTabActivity"
             android:exported="true"
@@ -78,5 +79,4 @@
             android:name=".ui.keyworddetail.KeywordDetailActivity"
             android:exported="true" />
     </application>
-
 </manifest>

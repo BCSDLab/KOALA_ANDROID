@@ -13,6 +13,17 @@ interface KeywordAddRepository {
         alarmSiteList: List<String>?
     ): Result
 
+    suspend fun editKeyword(
+        keyword: String,
+        alarmCycle: Int,
+        alarmMode: Boolean,
+        isImportant: Boolean,
+        name: String,
+        untilPressOkButton: Boolean,
+        vibrationMode: Boolean,
+        alarmSiteList: List<String>?
+    ): Result
+
     suspend fun deleteKeyword(keyword: String): Result
     suspend fun getKeywordRecommendation(): Result
     suspend fun getKeywordSiteRecommendation(): Result
@@ -20,4 +31,5 @@ interface KeywordAddRepository {
     suspend fun getKeywordSearch(keyword: String): Result
     suspend fun getRecentSearchList(key: String): List<String>
     suspend fun setRecentSearchList(key: String, recentSearchList: List<String>)
+    suspend fun getKeywordDetails(keyword: String): Result
 }
