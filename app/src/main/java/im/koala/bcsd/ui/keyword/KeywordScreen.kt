@@ -55,7 +55,7 @@ fun KeywordScreen(
     lazyListState: LazyListState,
     viewModel: MainViewModel,
     selectKeyword: (MainScreenBottomTab, Int) -> Unit,
-    navController: NavController
+    navController: NavController,
 ) {
     val keywordUi = viewModel.keywordUi
 
@@ -235,6 +235,7 @@ fun DrawKeywordItem(keyword: KeywordResponse, selectKeyword: (MainScreenBottomTa
             // .padding(horizontal = 24.dp)
             .clickable(
                 onClick = {
+                    /* TODO KeywordDetail 화면 전환 */
                     selectKeyword(MainScreenBottomTab.KEYWORD, keyword.id)
                     Log.e("asdfasdf", keyword.id.toString())
                 }
