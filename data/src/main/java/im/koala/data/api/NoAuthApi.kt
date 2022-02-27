@@ -12,7 +12,6 @@ import im.koala.data.constant.KOALA_API_URL_USER_LOGIN
 import im.koala.data.constant.KOALA_API_URL_USER_NON_MEMBER_LOGIN
 import im.koala.data.constants.SNSLOGIN
 import im.koala.data.entity.TokenBodyEntity
-import im.koala.domain.model.TokenResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -53,13 +52,10 @@ interface NoAuthApi {
     suspend fun login(
         @Query("device_token") deviceToken: String,
         @Body userRequest: UserRequest
-    ): Response<TokenResponse>
+    ): TokenBodyEntity
 
     @POST(KOALA_API_URL_USER_NON_MEMBER_LOGIN)
     suspend fun loginNonMember(
         @Query("device_token") deviceToken: String
-    ): Response<TokenResponse>
-
-    @POST(KOALA_API_URL_USER_LOGIN)
-    suspend fun refresh(): Response<TokenResponse>
+    ): TokenBodyEntity
 }

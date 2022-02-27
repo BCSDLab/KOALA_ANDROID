@@ -1,5 +1,7 @@
 package im.koala.data.repository
 
+import android.util.Log
+import im.koala.data.mapper.user.toTokenResponse
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.domain.entity.signup.SignUpResult
@@ -23,12 +25,12 @@ class UserRepositoryImpl @Inject constructor(
         val response = userRemoteDataSource.postSnsLogin(snsType, snsAccessToken, deviceToken)
         var result: Result = Result.Uninitialized
         if (response.isSuccessful) {
-            TokenResponse().apply {
+            TokenResponse(
                 accessToken = response.body()?.body?.accessToken ?: run {
                     return Result.Fail(CommonResponse.UNKOWN)
-                }
+                },
                 refreshToken = response.body()?.body?.refreshToken!!
-            }.run {
+            ).run {
                 userLocalDataSource.saveToken(this)
                 result = Result.Success(this)
             }
@@ -39,42 +41,38 @@ class UserRepositoryImpl @Inject constructor(
         return result
     }
 
-    override suspend fun login(deviceToken: String, id: String, password: String): kotlin.Result<TokenResponse> {
-        val result = userRemoteDataSource.login(
-            accountId = id,
-            password = password,
-            deviceToken = deviceToken
-        )
-
+    override suspend fun login(
+        deviceToken: String,
+        id: String,
+        password: String
+    ): kotlin.Result<TokenResponse> {
         return try {
-            if (result.isSuccessful) {
-                val tokenResponse = result.body()!!
-                userLocalDataSource.saveToken(tokenResponse)
+            val tokenEntity = userRemoteDataSource.login(
+                accountId = id,
+                password = password,
+                deviceToken = deviceToken
+            )
 
-                kotlin.Result.success(result.body()!!)
-            } else {
-                val errorMessage = kotlin.runCatching { result.errorBody()?.string() }
-                kotlin.Result.failure(RuntimeException(errorMessage.getOrDefault("")))
-            }
+            Log.d("Access token", tokenEntity.accessToken)
+            userLocalDataSource.saveToken(tokenEntity.toTokenResponse())
+
+            kotlin.Result.success(tokenEntity.toTokenResponse())
         } catch (e: Exception) {
             kotlin.Result.failure(e)
         }
     }
 
     override suspend fun loginWithoutSignUp(deviceToken: String): kotlin.Result<TokenResponse> {
-        val result = userRemoteDataSource.loginWithoutSignUp(
-            deviceToken = deviceToken
-        )
-
         return try {
-            if (result.isSuccessful) {
-                kotlin.Result.success(result.body()!!)
-            } else {
-                val errorMessage = kotlin.runCatching { result.errorBody()?.string() }
-                kotlin.Result.failure(RuntimeException(errorMessage.getOrDefault("")))
-            }
+            val tokenEntity = userRemoteDataSource.loginWithoutSignUp(
+                deviceToken = deviceToken
+            )
+
+            userLocalDataSource.saveToken(tokenEntity.toTokenResponse())
+
+            kotlin.Result.success(tokenEntity.toTokenResponse())
         } catch (e: Exception) {
-            kotlin.Result.failure(RuntimeException(result.errorBody()?.string()))
+            kotlin.Result.failure(e)
         }
     }
 
@@ -121,6 +119,11 @@ class UserRepositoryImpl @Inject constructor(
         accountEmail: String,
         accountNickname: String
     ): SignUpResult {
-        return userRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password.toSHA256())
+        return userRemoteDataSource.signUp(
+            accountId,
+            accountEmail,
+            accountNickname,
+            password.toSHA256()
+        )
     }
 }

@@ -12,9 +12,11 @@ import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE_READING_CHECK
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_SEARCH
+import im.koala.data.constant.KOALA_API_URL_USER_REFRESH
 import im.koala.data.constants.KEYWORD
 import im.koala.data.entity.CommonEntity
 import im.koala.data.entity.KeywordBodyEntity
+import im.koala.domain.model.TokenResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -74,4 +76,7 @@ interface AuthApi {
     suspend fun deleteKeyword(
         @Query("keyword-name") keyword: String
     ): Response<ResponseWrapper<String>>
+
+    @POST(KOALA_API_URL_USER_REFRESH)
+    suspend fun refresh(): Response<TokenResponse>
 }

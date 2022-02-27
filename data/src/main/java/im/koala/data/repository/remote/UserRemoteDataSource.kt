@@ -2,8 +2,8 @@ package im.koala.data.repository.remote
 
 import im.koala.data.entity.KeywordBodyEntity
 import im.koala.data.entity.TokenBodyEntity
+import im.koala.data.entity.TokenEntity
 import im.koala.domain.entity.signup.SignUpResult
-import im.koala.domain.model.TokenResponse
 import retrofit2.Response
 
 interface UserRemoteDataSource {
@@ -28,9 +28,9 @@ interface UserRemoteDataSource {
         accountId: String,
         password: String,
         deviceToken: String
-    ): Response<TokenResponse>
+    ): TokenEntity
 
     suspend fun loginWithoutSignUp(
         deviceToken: String
-    ): Response<TokenResponse>
+    ): TokenEntity
 }
