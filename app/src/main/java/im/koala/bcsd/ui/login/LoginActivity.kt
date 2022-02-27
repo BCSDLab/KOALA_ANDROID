@@ -337,6 +337,7 @@ fun NormalScreen(
         Button(
             onClick = {
                 viewModel.login(
+                    autoLogin = isAutoLoginState.value,
                     id = idTextState.value.text,
                     password = pwTextState.value.text
                 )
@@ -431,7 +432,7 @@ fun NormalScreen(
         }
         TextButton(
             onClick = {
-                viewModel.loginNonMember()
+                viewModel.loginNonMember(autoLogin = isAutoLoginState.value)
             },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent,

@@ -24,8 +24,10 @@ import im.koala.domain.state.Result
 import im.koala.domain.usecase.GetDeviceTokenUseCase
 import im.koala.domain.usecase.GooglePostAccessTokenUseCase
 import im.koala.domain.usecase.SnsLoginUseCase
+import im.koala.domain.usecase.user.GetAutoLoginStateUseCase
 import im.koala.domain.usecase.user.LoginWithIdPasswordUseCase
 import im.koala.domain.usecase.user.LoginWithoutIdPasswordUseCase
+import im.koala.domain.usecase.user.SetAutoLoginStateUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -41,12 +43,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel@Inject constructor(
+class LoginViewModel @Inject constructor(
     private val snsLoginUseCase: SnsLoginUseCase,
     private val getDeviceTokenUseCase: GetDeviceTokenUseCase,
     private val googlePostAccessTokenUseCase: GooglePostAccessTokenUseCase,
     private val loginWithIdPasswordUseCase: LoginWithIdPasswordUseCase,
-    private val loginWithoutIdPasswordUseCase: LoginWithoutIdPasswordUseCase
+    private val loginWithoutIdPasswordUseCase: LoginWithoutIdPasswordUseCase,
+    private val getAutoLoginStateUseCase: GetAutoLoginStateUseCase,
+    private val setAutoLoginStateUseCase: SetAutoLoginStateUseCase
 ) : BaseViewModel() {
     private var context: Context? = null
 
@@ -58,6 +62,9 @@ class LoginViewModel@Inject constructor(
 
     init {
         viewModelScope.launch(vmExceptionHandler) {
+            if(getAutoLoginStateUseCase()) {
+                _uiState.value = _uiState.value.copy(goToMainActivity = true)
+            }
             snsLoginState.collectLatest {
                 when (it) {
                     is Result.Success<*> -> {
@@ -71,9 +78,14 @@ class LoginViewModel@Inject constructor(
             }
         }
     }
+
     fun onClickKakaoLoginButton() {
         kakaoToken().zip(getDeviceTokenUseCase()) { accessToken, deviceToken ->
-            return@zip snsLoginUseCase(snsType = KAKAO, accessToken = accessToken, deviceToken = deviceToken)
+            return@zip snsLoginUseCase(
+                snsType = KAKAO,
+                accessToken = accessToken,
+                deviceToken = deviceToken
+            )
         }.onEach {
             it.collectLatest { snsLoginState.emit(it) }
         }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
@@ -82,6 +94,7 @@ class LoginViewModel@Inject constructor(
     fun setActivityContext(context: Context?) {
         this.context = context
     }
+
     fun kakaoToken(): Flow<String> = callbackFlow {
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
@@ -104,11 +117,16 @@ class LoginViewModel@Inject constructor(
 
     fun googleLogin(authCode: String?) {
         googleToken(authCode).zip(getDeviceTokenUseCase()) { accessToken, deviceToken ->
-            return@zip snsLoginUseCase(snsType = GOOGLE, accessToken = accessToken, deviceToken = deviceToken)
+            return@zip snsLoginUseCase(
+                snsType = GOOGLE,
+                accessToken = accessToken,
+                deviceToken = deviceToken
+            )
         }.onEach {
             it.collectLatest { snsLoginState.emit(it) }
         }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
     }
+
     private fun googleToken(authCode: String?): Flow<String> = callbackFlow {
         context?.let {
             if (authCode != null) {
@@ -120,43 +138,56 @@ class LoginViewModel@Inject constructor(
                 if (token != null) {
                     trySend(token)
                 } else {
-                    _uiState.value = _uiState.value.copy(errorMesage = it.getString(R.string.google_login_fail))
+                    _uiState.value =
+                        _uiState.value.copy(errorMesage = it.getString(R.string.google_login_fail))
                     close()
                 }
             } else {
-                _uiState.value = _uiState.value.copy(errorMesage = it.getString(R.string.google_login_fail))
+                _uiState.value =
+                    _uiState.value.copy(errorMesage = it.getString(R.string.google_login_fail))
                 close()
             }
         }
         awaitClose { _uiState.value = _uiState.value.copy(errorMesage = "") }
     }
+
     fun onClickNaverLoginButton() {
         naverToken().zip(getDeviceTokenUseCase()) { accessToken, deviceToken ->
-            return@zip snsLoginUseCase(snsType = NAVER, accessToken = accessToken, deviceToken = deviceToken)
+            return@zip snsLoginUseCase(
+                snsType = NAVER,
+                accessToken = accessToken,
+                deviceToken = deviceToken
+            )
         }.onEach {
             it.collectLatest { snsLoginState.emit(it) }
         }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
     }
 
-    fun login(id: String, password: String) = viewModelScope.launch(vmExceptionHandler) {
-        isLoading = true
-        getDeviceTokenUseCase().flatMapLatest {
-            loginWithIdPasswordUseCase(
-                deviceToken = it,
-                id = id,
-                password = password
-            )
-        }.collectLatest {
-            isLoading = false
-            if (it.isSuccess) {
-                _uiState.value = uiState.value.copy(goToMainActivity = true)
-            } else {
-                _uiState.value = uiState.value.copy(errorMesage = it.exceptionOrNull()?.message ?: "")
+    fun login(
+        autoLogin: Boolean,
+        id: String,
+        password: String
+    ) = viewModelScope.launch(vmExceptionHandler) {
+            isLoading = true
+            getDeviceTokenUseCase().flatMapLatest {
+                loginWithIdPasswordUseCase(
+                    deviceToken = it,
+                    id = id,
+                    password = password
+                )
+            }.collectLatest {
+                isLoading = false
+                if (it.isSuccess) {
+                    setAutoLoginStateUseCase(autoLogin)
+                    _uiState.value = uiState.value.copy(goToMainActivity = true)
+                } else {
+                    _uiState.value =
+                        uiState.value.copy(errorMesage = it.exceptionOrNull()?.message ?: "")
+                }
             }
         }
-    }
 
-    fun loginNonMember() = viewModelScope.launch(vmExceptionHandler) {
+    fun loginNonMember(autoLogin: Boolean) = viewModelScope.launch(vmExceptionHandler) {
         isLoading = true
         getDeviceTokenUseCase().flatMapLatest {
             loginWithoutIdPasswordUseCase(
@@ -165,9 +196,11 @@ class LoginViewModel@Inject constructor(
         }.collectLatest {
             isLoading = false
             if (it.isSuccess) {
+                setAutoLoginStateUseCase(autoLogin)
                 _uiState.value = uiState.value.copy(goToMainActivity = true)
             } else {
-                _uiState.value = uiState.value.copy(errorMesage = it.exceptionOrNull()?.message ?: "")
+                _uiState.value =
+                    uiState.value.copy(errorMesage = it.exceptionOrNull()?.message ?: "")
             }
         }
     }
@@ -179,7 +212,8 @@ class LoginViewModel@Inject constructor(
                     if (success) {
                         trySend(OAuthLogin.getInstance().getAccessToken(it))
                     } else {
-                        _uiState.value = _uiState.value.copy(errorMesage = it.getString(R.string.naver_login_fail))
+                        _uiState.value =
+                            _uiState.value.copy(errorMesage = it.getString(R.string.naver_login_fail))
                         close()
                     }
                 }
@@ -192,17 +226,20 @@ class LoginViewModel@Inject constructor(
                         it.applicationContext.resources.getString(R.string.naver_client_secret),
                         it.getString(R.string.app_name)
                     )
-                    OAuthLogin.getInstance().startOauthLoginActivity(it as Activity, oAuthLoginHandler)
+                    OAuthLogin.getInstance()
+                        .startOauthLoginActivity(it as Activity, oAuthLoginHandler)
                 }
                 OAuthLoginState.NEED_LOGIN -> {
-                    OAuthLogin.getInstance().startOauthLoginActivity(it as Activity, oAuthLoginHandler)
+                    OAuthLogin.getInstance()
+                        .startOauthLoginActivity(it as Activity, oAuthLoginHandler)
                 }
                 OAuthLoginState.NEED_REFRESH_TOKEN -> {
                     val accessToken = OAuthLogin.getInstance().refreshAccessToken(it)
                     if (accessToken != null) {
                         trySend(accessToken)
                     } else {
-                        OAuthLogin.getInstance().startOauthLoginActivity(it as Activity, oAuthLoginHandler)
+                        OAuthLogin.getInstance()
+                            .startOauthLoginActivity(it as Activity, oAuthLoginHandler)
                     }
                 }
                 OAuthLoginState.OK -> {
@@ -211,17 +248,20 @@ class LoginViewModel@Inject constructor(
                     if (accessToken != null) {
                         trySend(accessToken)
                     } else {
-                        OAuthLogin.getInstance().startOauthLoginActivity(it as Activity, oAuthLoginHandler)
+                        OAuthLogin.getInstance()
+                            .startOauthLoginActivity(it as Activity, oAuthLoginHandler)
                     }
                 }
             }
         }
         awaitClose { _uiState.value = _uiState.value.copy(errorMesage = "") }
     }
+
     companion object {
         val TAG = "LoginViewModel"
     }
 }
+
 data class DeviceTokenUiState(
     val goToMainActivity: Boolean = false,
     val errorMesage: String = ""

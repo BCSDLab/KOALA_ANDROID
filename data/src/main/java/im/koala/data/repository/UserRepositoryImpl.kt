@@ -126,4 +126,12 @@ class UserRepositoryImpl @Inject constructor(
             password.toSHA256()
         )
     }
+
+    override fun setAutoLogin(autoLogin: Boolean) {
+        userLocalDataSource.setAutoLoginState(autoLogin)
+    }
+
+    override fun isAutoLogin(): Boolean {
+        return userLocalDataSource.isAutoLogin()
+    }
 }

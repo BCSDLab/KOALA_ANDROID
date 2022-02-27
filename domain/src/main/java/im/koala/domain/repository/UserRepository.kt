@@ -35,4 +35,7 @@ interface UserRepository {
         accountEmail: String,
         accountNickname: String
     ): SignUpResult
+
+    fun setAutoLogin(autoLogin: Boolean)
+    fun isAutoLogin(): Boolean
 }
