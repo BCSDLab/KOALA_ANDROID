@@ -25,7 +25,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
@@ -45,7 +44,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -55,6 +53,7 @@ import im.koala.bcsd.ui.findid.FindIdActivity
 import im.koala.bcsd.ui.findpassword.FindPasswordActivity
 import im.koala.bcsd.ui.main.MainActivity
 import im.koala.bcsd.ui.signup.SignUpContract
+import im.koala.bcsd.ui.textfield.KoalaTextField
 import im.koala.bcsd.ui.theme.Black
 import im.koala.bcsd.ui.theme.GrayBorder
 import im.koala.bcsd.ui.theme.GrayDisabled
@@ -245,10 +244,10 @@ fun NormalScreen(
 
     ConstraintLayout(modifier = modifier) {
         val (idEditText, pwEditText, autoLoginSwitch, autoLoginText, loginButton, rowLayout, snsLoginText) = createRefs()
-        val idTextState = remember { mutableStateOf(TextFieldValue()) }
-        val pwTextState = remember { mutableStateOf(TextFieldValue()) }
+        val idTextState = remember { mutableStateOf("") }
+        val pwTextState = remember { mutableStateOf("") }
         val isAutoLoginState = remember { mutableStateOf(false) }
-        OutlinedTextField(
+        KoalaTextField(
             value = idTextState.value,
             onValueChange = { idTextState.value = it },
             modifier = Modifier
@@ -274,7 +273,7 @@ fun NormalScreen(
                 keyboardType = KeyboardType.Email
             )
         )
-        OutlinedTextField(
+        KoalaTextField(
             value = pwTextState.value,
             onValueChange = { pwTextState.value = it },
             modifier = Modifier
