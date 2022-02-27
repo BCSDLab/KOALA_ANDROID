@@ -62,7 +62,7 @@ class LoginViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(vmExceptionHandler) {
-            if(getAutoLoginStateUseCase()) {
+            if (getAutoLoginStateUseCase()) {
                 _uiState.value = _uiState.value.copy(goToMainActivity = true)
             }
             snsLoginState.collectLatest {
@@ -168,24 +168,24 @@ class LoginViewModel @Inject constructor(
         id: String,
         password: String
     ) = viewModelScope.launch(vmExceptionHandler) {
-            isLoading = true
-            getDeviceTokenUseCase().flatMapLatest {
-                loginWithIdPasswordUseCase(
-                    deviceToken = it,
-                    id = id,
-                    password = password
-                )
-            }.collectLatest {
-                isLoading = false
-                if (it.isSuccess) {
-                    setAutoLoginStateUseCase(autoLogin)
-                    _uiState.value = uiState.value.copy(goToMainActivity = true)
-                } else {
-                    _uiState.value =
-                        uiState.value.copy(errorMesage = it.exceptionOrNull()?.message ?: "")
-                }
+        isLoading = true
+        getDeviceTokenUseCase().flatMapLatest {
+            loginWithIdPasswordUseCase(
+                deviceToken = it,
+                id = id,
+                password = password
+            )
+        }.collectLatest {
+            isLoading = false
+            if (it.isSuccess) {
+                setAutoLoginStateUseCase(autoLogin)
+                _uiState.value = uiState.value.copy(goToMainActivity = true)
+            } else {
+                _uiState.value =
+                    uiState.value.copy(errorMesage = it.exceptionOrNull()?.message ?: "")
             }
         }
+    }
 
     fun loginNonMember(autoLogin: Boolean) = viewModelScope.launch(vmExceptionHandler) {
         isLoading = true

@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class AUTH
@@ -120,9 +119,9 @@ object NetworkModule {
     @REFRESH
     @Provides
     @Singleton
-    fun provideRefreshOkHttpClient (
+    fun provideRefreshOkHttpClient(
         @REFRESH refreshAuthInterceptor: Interceptor
-    ) : OkHttpClient{
+    ): OkHttpClient {
         return OkHttpClient.Builder().apply {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
@@ -182,7 +181,7 @@ object NetworkModule {
     @REFRESH
     @Provides
     @Singleton
-    fun provideRefreshApi(@REFRESH retrofit: Retrofit) : AuthApi {
+    fun provideRefreshApi(@REFRESH retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
     }
 

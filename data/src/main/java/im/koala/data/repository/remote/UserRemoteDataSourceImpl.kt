@@ -107,7 +107,11 @@ class UserRemoteDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun login(accountId: String, password: String, deviceToken: String): TokenEntity {
+    override suspend fun login(
+        accountId: String,
+        password: String,
+        deviceToken: String
+    ): TokenEntity {
         val tokenBodyEntity = noAuthApi.login(
             deviceToken = deviceToken,
             userRequest = UserRequest(
@@ -115,7 +119,7 @@ class UserRemoteDataSourceImpl @Inject constructor(
             )
         )
 
-        if(tokenBodyEntity.body == null)
+        if (tokenBodyEntity.body == null)
             throw RuntimeException("Token body is null!")
 
         return TokenEntity(
@@ -127,7 +131,7 @@ class UserRemoteDataSourceImpl @Inject constructor(
     override suspend fun loginWithoutSignUp(deviceToken: String): TokenEntity {
         val tokenBodyEntity = noAuthApi.loginNonMember(deviceToken)
 
-        if(tokenBodyEntity.body == null)
+        if (tokenBodyEntity.body == null)
             throw RuntimeException("Token body is null!")
 
         return TokenEntity(
