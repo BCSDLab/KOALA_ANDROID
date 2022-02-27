@@ -148,7 +148,7 @@ class LoginViewModel@Inject constructor(
             )
         }.collectLatest {
             isLoading = false
-            if(it.isSuccess) {
+            if (it.isSuccess) {
                 _uiState.value = uiState.value.copy(goToMainActivity = true)
             } else {
                 _uiState.value = uiState.value.copy(errorMesage = it.exceptionOrNull()?.message ?: "")
@@ -164,7 +164,7 @@ class LoginViewModel@Inject constructor(
             )
         }.collectLatest {
             isLoading = false
-            if(it.isSuccess) {
+            if (it.isSuccess) {
                 _uiState.value = uiState.value.copy(goToMainActivity = true)
             } else {
                 _uiState.value = uiState.value.copy(errorMesage = it.exceptionOrNull()?.message ?: "")

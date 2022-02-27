@@ -13,7 +13,7 @@ class LoginWithIdPasswordUseCase @Inject constructor(
         deviceToken: String,
         id: String,
         password: String
-    ) : Flow<Result<TokenResponse>> = flow {
+    ): Flow<Result<TokenResponse>> = flow {
         emit(userRepository.login(deviceToken, id, password))
     }
 }

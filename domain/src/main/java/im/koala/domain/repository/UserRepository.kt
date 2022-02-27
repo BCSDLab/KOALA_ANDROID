@@ -11,7 +11,7 @@ interface UserRepository {
         deviceToken: String,
         id: String,
         password: String
-    ) : kotlin.Result<TokenResponse>
+    ): kotlin.Result<TokenResponse>
     suspend fun loginWithoutSignUp(deviceToken: String): kotlin.Result<TokenResponse>
 
     /**

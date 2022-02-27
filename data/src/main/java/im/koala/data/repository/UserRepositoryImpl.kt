@@ -47,12 +47,12 @@ class UserRepositoryImpl @Inject constructor(
         )
 
         return try {
-            if(result.isSuccessful) {
+            if (result.isSuccessful) {
                 val tokenResponse = result.body()!!
                 userLocalDataSource.saveToken(tokenResponse)
 
                 kotlin.Result.success(result.body()!!)
-            }  else {
+            } else {
                 val errorMessage = kotlin.runCatching { result.errorBody()?.string() }
                 kotlin.Result.failure(RuntimeException(errorMessage.getOrDefault("")))
             }
@@ -67,9 +67,9 @@ class UserRepositoryImpl @Inject constructor(
         )
 
         return try {
-            if(result.isSuccessful) {
+            if (result.isSuccessful) {
                 kotlin.Result.success(result.body()!!)
-            }  else {
+            } else {
                 val errorMessage = kotlin.runCatching { result.errorBody()?.string() }
                 kotlin.Result.failure(RuntimeException(errorMessage.getOrDefault("")))
             }

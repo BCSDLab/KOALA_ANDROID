@@ -9,7 +9,7 @@ import javax.inject.Inject
 class LoginWithoutIdPasswordUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(deviceToken: String) : Flow<Result<TokenResponse>> = flow {
-            emit(userRepository.loginWithoutSignUp(deviceToken))
+    operator fun invoke(deviceToken: String): Flow<Result<TokenResponse>> = flow {
+        emit(userRepository.loginWithoutSignUp(deviceToken))
     }
 }
