@@ -58,6 +58,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
 import dagger.hilt.android.AndroidEntryPoint
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.findid.FindIdActivity
@@ -89,7 +90,7 @@ class LoginActivity : ComponentActivity() {
         val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
         try {
             val account = task.getResult(ApiException::class.java)!!
-            lifecycleScope.launch { viewModel.snsTokenFlow.emit(account.idToken!!) }
+            viewModel.emitSnsToken(account.idToken!!)
         } catch (e: Exception) {
         }
     }
@@ -126,7 +127,7 @@ class LoginActivity : ComponentActivity() {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
     private fun proceedNaverLogin() {
-        // NaverIdLoginSDK.authenticate(this@LoginActivity, viewModel.naverLoginCallback)
+        NaverIdLoginSDK.authenticate(this@LoginActivity, viewModel.naverLoginCallback)
     }
     private fun proceedKakaoLogin() {
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {

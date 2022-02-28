@@ -33,6 +33,7 @@ class UserRepositoryImpl @Inject constructor(
                 refreshToken = response.body()?.body?.refreshToken!!
             }.run {
                 userLocalDataSource.saveToken(this)
+                userLocalDataSource.saveSnsToken(snsType, snsAccessToken)
                 result = Result.Success(this)
             }
         } else {

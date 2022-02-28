@@ -1,6 +1,5 @@
 package im.koala.bcsd.ui.login
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -8,11 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.kakao.sdk.auth.model.OAuthToken
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.OAuthLoginCallback
-import com.orhanobut.hawk.Hawk
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.koala.bcsd.ui.BaseViewModel
-import im.koala.data.constants.KAKAO_TOKEN
-import im.koala.data.constants.NAVER_TOKEEN
 import im.koala.domain.constants.GOOGLE
 import im.koala.domain.constants.KAKAO
 import im.koala.domain.constants.NAVER
@@ -48,15 +44,15 @@ class LoginViewModel @Inject constructor(
 
     val naverLoginCallback = object : OAuthLoginCallback {
         override fun onError(errorCode: Int, message: String) {
+            viewModelScope.launch { _uiEvent.emit(LoginViewUIEvent.ShowErrorMessage(message)) }
         }
 
         override fun onFailure(httpStatus: Int, message: String) {
+            viewModelScope.launch { _uiEvent.emit(LoginViewUIEvent.ShowErrorMessage(message)) }
         }
 
         override fun onSuccess() {
-            Hawk.put(NAVER_TOKEEN, NaverIdLoginSDK.getAccessToken())
             viewModelScope.launch {
-                Log.e("token", NaverIdLoginSDK.getAccessToken()!!)
                 snsTokenFlow.emit(NaverIdLoginSDK.getAccessToken()!!)
             }
         }
@@ -65,7 +61,6 @@ class LoginViewModel @Inject constructor(
     val kakaoCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
         } else if (token != null) {
-            Hawk.put(KAKAO_TOKEN, token.accessToken)
             viewModelScope.launch {
                 snsTokenFlow.emit(token.accessToken)
             }
@@ -81,19 +76,16 @@ class LoginViewModel @Inject constructor(
                 when (it) {
                     is Result.Success<*> -> {
                         _uiEvent.emit(LoginViewUIEvent.GoToMainActivity)
-                        // _uiState.value = _uiState.value.copy(goToMainActivity = true)
                     }
                     is Result.Fail<*> -> {
 
                         val response = it.data as CommonResponse
                         _uiEvent.emit(LoginViewUIEvent.ShowErrorMessage(response.errorMessage!!))
-                        // _uiState.value = _uiState.value.copy(errorMesage = response.errorMessage!!)
                     }
                 }
             }
         }
         snsTokenFlow.zip(getFCMTokenUseCase()) { accessToken, FCMToken ->
-            Log.e("sdf", "$snsType / $accessToken / $FCMToken")
             return@zip snsLoginUseCase(
                 snsType = snsType,
                 accessToken = accessToken,
@@ -110,6 +102,11 @@ class LoginViewModel @Inject constructor(
                 NAVER -> _uiEvent.emit(LoginViewUIEvent.ProceedNaverLogin)
                 GOOGLE -> _uiEvent.emit(LoginViewUIEvent.ProceedGoogleLogin)
             }
+        }
+    }
+    fun emitSnsToken(token: String) {
+        viewModelScope.launch {
+            snsTokenFlow.emit(token)
         }
     }
 
