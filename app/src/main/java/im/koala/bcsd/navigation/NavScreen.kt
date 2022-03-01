@@ -36,6 +36,8 @@ sealed class NavScreen(val route: String) {
 
     object KeywordSiteAddInput : NavScreen("KeywordTargetInput")
 
+    object KeywordEdit : NavScreen("KeywordEdit")
+
     object HistoryDetails : NavScreen("HistoryDetail") {
 
         const val routeWithArgument: String = "HistoryDetails/{HistoryId}"

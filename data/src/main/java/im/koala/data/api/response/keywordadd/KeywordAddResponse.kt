@@ -18,3 +18,10 @@ data class KeywordAddResponse(
     @SerializedName("vibrationMode")
     val vibrationMode: Int,
 )
+
+data class KeywordAddResponseEntity(
+    @SerializedName("body")
+    val body: KeywordAddResponse,
+    @SerializedName("code")
+    val code: Int
+)

@@ -3,6 +3,7 @@ package im.koala.data.repository.remote
 import im.koala.data.api.AuthApi
 import im.koala.data.api.response.ResponseWrapper
 import im.koala.data.api.response.keywordadd.KeywordAddResponse
+import im.koala.data.api.response.keywordadd.KeywordAddResponseEntity
 import javax.inject.Inject
 import retrofit2.Response
 
@@ -11,6 +12,13 @@ class KeywordAddRemoteDataSourceImpl @Inject constructor(
 ) : KeywordAddRemoteDataSource {
     override suspend fun pushKeyword(keywordAddResponse: KeywordAddResponse): Response<ResponseWrapper<String>> {
         return authApi.pushKeyword(keywordAddResponse)
+    }
+
+    override suspend fun editKeyword(
+        keyword: String,
+        keywordAddResponse: KeywordAddResponse
+    ): Response<ResponseWrapper<String>> {
+        return authApi.editKeyword(keyword, keywordAddResponse)
     }
 
     override suspend fun deleteKeyword(keyword: String): Response<ResponseWrapper<String>> {
@@ -31,5 +39,9 @@ class KeywordAddRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getKeywordSearch(keyword: String): Response<ResponseWrapper<List<String>>> {
         return authApi.getKeywordSearch(keyword)
+    }
+
+    override suspend fun getKeywordDetails(keyword: String): Response<KeywordAddResponseEntity> {
+        return authApi.getKeywordDetails(keyword)
     }
 }
