@@ -337,8 +337,8 @@ fun NormalScreen(
             onClick = {
                 viewModel.login(
                     autoLogin = isAutoLoginState.value,
-                    id = idTextState.value.text,
-                    password = pwTextState.value.text
+                    id = idTextState.value,
+                    password = pwTextState.value
                 )
             },
             modifier = Modifier
