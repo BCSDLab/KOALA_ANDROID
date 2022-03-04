@@ -1,12 +1,20 @@
 package im.koala.domain.repository
 
-import im.koala.domain.state.Result
 import im.koala.domain.entity.signup.SignUpResult
+import im.koala.domain.model.TokenResponse
+import im.koala.domain.state.Result
 
 interface UserRepository {
     suspend fun getKeyword(): Result
     suspend fun postSnsLogin(snsType: String, accessToken: String, deviceToken: String): Result
     fun getFCMToken(success: (String) -> Unit, fail: (String?) -> Unit)
+    suspend fun login(
+        deviceToken: String,
+        id: String,
+        password: String
+    ): Result
+    suspend fun loginWithoutSignUp(deviceToken: String): Result
+
     /**
      * @return true if id is duplicated, false if id is not duplicated
      */
@@ -28,4 +36,7 @@ interface UserRepository {
         accountEmail: String,
         accountNickname: String
     ): SignUpResult
+
+    fun setAutoLogin(autoLogin: Boolean)
+    fun isAutoLogin(): Boolean
 }

@@ -16,11 +16,16 @@ import im.koala.domain.model.CommonResponse
 import im.koala.domain.state.Result
 import im.koala.domain.usecase.GetFCMTokenUseCase
 import im.koala.domain.usecase.SnsLoginUseCase
+import im.koala.domain.usecase.user.GetAutoLoginStateUseCase
+import im.koala.domain.usecase.user.LoginWithIdPasswordUseCase
+import im.koala.domain.usecase.user.LoginWithoutIdPasswordUseCase
+import im.koala.domain.usecase.user.SetAutoLoginStateUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -32,10 +37,14 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val snsLoginUseCase: SnsLoginUseCase,
     private val getFCMTokenUseCase: GetFCMTokenUseCase,
+    private val loginWithIdPasswordUseCase: LoginWithIdPasswordUseCase,
+    private val loginWithoutIdPasswordUseCase: LoginWithoutIdPasswordUseCase,
+    private val getAutoLoginStateUseCase: GetAutoLoginStateUseCase,
+    private val setAutoLoginStateUseCase: SetAutoLoginStateUseCase
 ) : BaseViewModel() {
     private val _uiState: MutableState<DeviceTokenUiState> = mutableStateOf(DeviceTokenUiState())
     val uiState: State<DeviceTokenUiState> = _uiState
-    val snsTokenFlow = MutableSharedFlow<String>(replay = 0)
+    val loginTokenFlow = MutableSharedFlow<String>(replay = 0)
     private val _uiEvent = MutableSharedFlow<LoginViewUIEvent>(replay = 0)
     val uiEvent: SharedFlow<LoginViewUIEvent>
         get() = _uiEvent
@@ -53,7 +62,7 @@ class LoginViewModel @Inject constructor(
 
         override fun onSuccess() {
             viewModelScope.launch {
-                snsTokenFlow.emit(NaverIdLoginSDK.getAccessToken()!!)
+                loginTokenFlow.emit(NaverIdLoginSDK.getAccessToken()!!)
             }
         }
     }
@@ -62,7 +71,7 @@ class LoginViewModel @Inject constructor(
         if (error != null) {
         } else if (token != null) {
             viewModelScope.launch {
-                snsTokenFlow.emit(token.accessToken)
+                loginTokenFlow.emit(token.accessToken)
             }
         }
     }
@@ -85,7 +94,7 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
-        snsTokenFlow.zip(getFCMTokenUseCase()) { accessToken, FCMToken ->
+        loginTokenFlow.zip(getFCMTokenUseCase()) { accessToken, FCMToken ->
             return@zip snsLoginUseCase(
                 snsType = snsType,
                 accessToken = accessToken,
@@ -95,6 +104,7 @@ class LoginViewModel @Inject constructor(
             it.collectLatest { snsLoginState.emit(it) }
         }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
     }
+
     fun onClickSnsLoginButton(type: String) {
         viewModelScope.launch {
             when (type) {
@@ -104,12 +114,42 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
+
     fun emitSnsToken(token: String) {
         viewModelScope.launch {
-            snsTokenFlow.emit(token)
+            loginTokenFlow.emit(token)
+        }
+    }
+    fun login(
+        autoLogin: Boolean,
+        id: String,
+        password: String
+    ) = viewModelScope.launch(vmExceptionHandler) {
+        isLoading = true
+        getFCMTokenUseCase().flatMapLatest {
+            loginWithIdPasswordUseCase(
+                deviceToken = it,
+                id = id,
+                password = password
+            )
+        }.collectLatest {
+            isLoading = false
+            snsLoginState.emit(it)
         }
     }
 
+    fun loginNonMember(autoLogin: Boolean) = viewModelScope.launch(vmExceptionHandler) {
+        isLoading = true
+        getFCMTokenUseCase().flatMapLatest {
+            loginWithoutIdPasswordUseCase(
+                deviceToken = it
+            )
+        }.collectLatest {
+            isLoading = false
+            snsLoginState.emit(it)
+        }
+    }
     companion object {
         val TAG = "LoginViewModel"
     }

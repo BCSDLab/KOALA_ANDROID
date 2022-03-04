@@ -111,6 +111,7 @@ class LoginActivity : ComponentActivity() {
                 when (uiEvent) {
                     LoginViewUIEvent.GoToMainActivity -> {
                         goToMainActivity()
+                        finish()
                     }
                     LoginViewUIEvent.ProceedGoogleLogin -> { proceedGoogleLogin(this@LoginActivity) }
                     LoginViewUIEvent.ProceedNaverLogin -> { proceedNaverLogin() }
@@ -146,7 +147,6 @@ class LoginActivity : ComponentActivity() {
             .build()
         return GoogleSignIn.getClient(context, gso)
     }
-
     private fun goToMainActivity() {
         Intent(this, MainActivity::class.java).run {
             startActivity(this)
@@ -196,7 +196,8 @@ fun LoginScreen(viewModel: LoginViewModel) {
                     height = Dimension.fillToConstraints
                     width = Dimension.fillToConstraints
                 },
-                context = context
+                context = context,
+                viewModel = viewModel
             )
         } else {
             SnsLoginScreen(
@@ -303,12 +304,12 @@ fun LoginTypeTabScreen(
 @Composable
 fun NormalScreen(
     modifier: Modifier,
-    context: Context
+    context: Context,
+    viewModel: LoginViewModel
 ) {
     val signUpContract = rememberLauncherForActivityResult(contract = SignUpContract()) {
         // 회원가입 성공하면 회원가입 때 사용한 id 반환, 아니면 null
     }
-
     ConstraintLayout(modifier = modifier) {
         val (idEditText, pwEditText, autoLoginSwitch, autoLoginText, loginButton, rowLayout, snsLoginText) = createRefs()
         val idTextState = remember { mutableStateOf("") }
@@ -386,7 +387,13 @@ fun NormalScreen(
             style = MaterialTheme.typography.body2
         )
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                viewModel.login(
+                    autoLogin = isAutoLoginState.value,
+                    id = idTextState.value,
+                    password = pwTextState.value
+                )
+            },
             modifier = Modifier
                 .size(0.dp, 48.dp)
                 .constrainAs(loginButton) {
@@ -476,7 +483,9 @@ fun NormalScreen(
             }
         }
         TextButton(
-            onClick = {},
+            onClick = {
+                viewModel.loginNonMember(autoLogin = isAutoLoginState.value)
+            },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent,
             ),
@@ -501,7 +510,6 @@ fun SnsLoginScreen(
     modifier: Modifier,
     viewModel: LoginViewModel
 ) {
-
     ConstraintLayout(modifier = modifier) {
         val (googleButton, googleIcon, naverButton, naverIcon, kakaoButton, kakaoIcon) = createRefs()
         /*구글버튼*/
@@ -600,6 +608,7 @@ fun SnsLoginScreen(
         )
     }
 }
+
 @Composable
 fun CallToastMessage(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

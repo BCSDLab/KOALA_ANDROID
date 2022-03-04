@@ -6,10 +6,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import im.koala.bcsd.KoalaApp
+import im.koala.bcsd.util.TokenAuthenticator
 import im.koala.data.api.AuthApi
 import im.koala.data.api.NoAuthApi
 import im.koala.data.constants.ACCESS_TOKEN
 import im.koala.data.constants.BASE_URL
+import im.koala.data.constants.GOOGLE_OAUTH
+import im.koala.data.constants.REFRESH_TOKEN
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -27,6 +30,10 @@ annotation class AUTH
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class NOAUTH
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class REFRESH
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -52,6 +59,29 @@ object NetworkModule {
         }
     }
 
+    @AUTH
+    @Provides
+    @Singleton
+    fun provideTokenAuthenticator(@REFRESH refreshRetrofit: Retrofit): TokenAuthenticator {
+        return TokenAuthenticator(
+            KoalaApp.instance.applicationContext,
+            refreshRetrofit
+        )
+    }
+
+    @REFRESH
+    @Provides
+    @Singleton
+    fun provideRefreshInterceptor(): Interceptor {
+        return Interceptor { chain: Interceptor.Chain ->
+            val refreshToken = Hawk.get(REFRESH_TOKEN, "")
+            val newRequest: Request = chain.request().newBuilder()
+                .addHeader("RefreshToken", "Bearer $refreshToken")
+                .build()
+            chain.proceed(newRequest)
+        }
+    }
+
     @NOAUTH
     @Provides
     @Singleton
@@ -67,13 +97,32 @@ object NetworkModule {
     @AUTH
     @Provides
     @Singleton
-    fun provideAuthOkHttpClient(@AUTH authInterceptor: Interceptor): OkHttpClient {
+    fun provideAuthOkHttpClient(
+        @AUTH authInterceptor: Interceptor,
+        @AUTH tokenAuthenticator: TokenAuthenticator
+    ): OkHttpClient {
         return OkHttpClient.Builder().apply {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
             writeTimeout(15, TimeUnit.SECONDS)
             addInterceptor(httpLoggingInterceptor)
             addInterceptor(authInterceptor)
+            authenticator(tokenAuthenticator)
+        }.build()
+    }
+
+    @REFRESH
+    @Provides
+    @Singleton
+    fun provideRefreshOkHttpClient(
+        @REFRESH refreshAuthInterceptor: Interceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder().apply {
+            connectTimeout(10, TimeUnit.SECONDS)
+            readTimeout(30, TimeUnit.SECONDS)
+            writeTimeout(15, TimeUnit.SECONDS)
+            addInterceptor(httpLoggingInterceptor)
+            addInterceptor(refreshAuthInterceptor)
         }.build()
     }
 
@@ -99,6 +148,17 @@ object NetworkModule {
             .build()
     }
 
+    @REFRESH
+    @Provides
+    @Singleton
+    fun provideRefreshRetrofit(@REFRESH okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
     @NOAUTH
     @Provides
     @Singleton
@@ -110,6 +170,13 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAuthApi(@AUTH retrofit: Retrofit): AuthApi {
+        return retrofit.create(AuthApi::class.java)
+    }
+
+    @REFRESH
+    @Provides
+    @Singleton
+    fun provideRefreshApi(@REFRESH retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
     }
 }

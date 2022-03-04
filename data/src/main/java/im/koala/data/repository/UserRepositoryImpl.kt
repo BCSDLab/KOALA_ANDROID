@@ -5,6 +5,8 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.orhanobut.hawk.Hawk
 import im.koala.data.constants.FCM_TOKEN
 import im.koala.domain.state.Result
+import android.util.Log
+import im.koala.data.mapper.user.toTokenResponse
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.domain.entity.signup.SignUpResult
@@ -12,6 +14,7 @@ import im.koala.domain.model.CommonResponse
 import im.koala.domain.model.KeywordResponse
 import im.koala.domain.model.TokenResponse
 import im.koala.domain.repository.UserRepository
+import im.koala.domain.util.toSHA256
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -26,21 +29,67 @@ class UserRepositoryImpl @Inject constructor(
         val response = userRemoteDataSource.postSnsLogin(snsType, snsAccessToken, deviceToken)
         var result: Result = Result.Uninitialized
         if (response.isSuccessful) {
-            TokenResponse().apply {
+            TokenResponse(
                 accessToken = response.body()?.body?.accessToken ?: run {
                     return Result.Fail(CommonResponse.UNKOWN)
-                }
+                },
                 refreshToken = response.body()?.body?.refreshToken!!
-            }.run {
+            ).run {
                 userLocalDataSource.saveToken(this)
                 userLocalDataSource.saveSnsToken(snsType, snsAccessToken)
                 result = Result.Success(this)
             }
         } else {
-            CommonResponse.FAIL.apply { errorMessage = response.errorBody()?.source()?.buffer.toString() }
+            CommonResponse.FAIL.apply {
+                errorMessage = response.errorBody()?.source()?.buffer.toString()
+            }
                 .run { result = Result.Fail(this) }
         }
         return result
+    }
+
+    override suspend fun login(
+        deviceToken: String,
+        id: String,
+        password: String
+    ): Result {
+        var result: Result = Result.Uninitialized
+        try {
+            val tokenEntity = userRemoteDataSource.login(
+                accountId = id,
+                password = password,
+                deviceToken = deviceToken
+            )
+
+            Log.d("Access token", tokenEntity.accessToken)
+            userLocalDataSource.saveToken(tokenEntity.toTokenResponse())
+
+            result = Result.Success(tokenEntity.toTokenResponse())
+
+        } catch (e: Exception) {
+            CommonResponse.FAIL.apply {
+                errorMessage = e.message
+            }.run { result = Result.Fail(this) }
+        }
+        return result
+    }
+
+    override suspend fun loginWithoutSignUp(deviceToken: String): Result {
+        var result: Result = Result.Uninitialized
+        try {
+            val tokenEntity = userRemoteDataSource.loginWithoutSignUp(
+                deviceToken = deviceToken
+            )
+
+            userLocalDataSource.saveToken(tokenEntity.toTokenResponse())
+
+            result = Result.Success(tokenEntity.toTokenResponse())
+        } catch (e: Exception) {
+            CommonResponse.FAIL.apply {
+                errorMessage = e.message
+            }.run { result = Result.Fail(this) }
+        }
+        return  result
     }
 
     override suspend fun getKeyword(): Result {
@@ -86,7 +135,20 @@ class UserRepositoryImpl @Inject constructor(
         accountEmail: String,
         accountNickname: String
     ): SignUpResult {
-        return userRemoteDataSource.signUp(accountId, accountEmail, accountNickname, password)
+        return userRemoteDataSource.signUp(
+            accountId,
+            accountEmail,
+            accountNickname,
+            password.toSHA256()
+        )
+    }
+
+    override fun setAutoLogin(autoLogin: Boolean) {
+        userLocalDataSource.setAutoLoginState(autoLogin)
+    }
+
+    override fun isAutoLogin(): Boolean {
+        return userLocalDataSource.isAutoLogin()
     }
 
     override fun getFCMToken(success: (String) -> Unit, fail: (String?) -> Unit) {
