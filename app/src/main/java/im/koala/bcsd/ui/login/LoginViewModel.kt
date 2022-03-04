@@ -115,7 +115,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-
     fun emitSnsToken(token: String) {
         viewModelScope.launch {
             loginTokenFlow.emit(token)

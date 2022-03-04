@@ -11,7 +11,6 @@ import im.koala.data.api.AuthApi
 import im.koala.data.api.NoAuthApi
 import im.koala.data.constants.ACCESS_TOKEN
 import im.koala.data.constants.BASE_URL
-import im.koala.data.constants.GOOGLE_OAUTH
 import im.koala.data.constants.REFRESH_TOKEN
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient

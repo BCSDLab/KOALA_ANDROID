@@ -1,7 +1,6 @@
 package im.koala.domain.repository
 
 import im.koala.domain.entity.signup.SignUpResult
-import im.koala.domain.model.TokenResponse
 import im.koala.domain.state.Result
 
 interface UserRepository {

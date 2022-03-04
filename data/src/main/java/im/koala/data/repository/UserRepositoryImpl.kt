@@ -65,7 +65,6 @@ class UserRepositoryImpl @Inject constructor(
             userLocalDataSource.saveToken(tokenEntity.toTokenResponse())
 
             result = Result.Success(tokenEntity.toTokenResponse())
-
         } catch (e: Exception) {
             CommonResponse.FAIL.apply {
                 errorMessage = e.message
@@ -89,7 +88,7 @@ class UserRepositoryImpl @Inject constructor(
                 errorMessage = e.message
             }.run { result = Result.Fail(this) }
         }
-        return  result
+        return result
     }
 
     override suspend fun getKeyword(): Result {
