@@ -12,6 +12,7 @@ import im.koala.domain.model.CommonResponse
 import im.koala.domain.model.KeywordResponse
 import im.koala.domain.usecase.GetKeywordListUseCase
 import im.koala.domain.usecase.keywordadd.DeleteKeywordUseCase
+import im.koala.domain.usecase.keywordadd.EditKeywordUseCase
 import im.koala.domain.usecase.keywordadd.PushKeywordUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,8 +32,10 @@ class MainViewModel @Inject constructor(
     private val getKeywordListUseCase: GetKeywordListUseCase,
     private val deleteKeywordUseCase: DeleteKeywordUseCase,
     private val pushKeywordUseCase: PushKeywordUseCase,
+    private val editKeywordUseCase: EditKeywordUseCase,
 ) : ViewModel() {
-    private val _selectedTab: MutableState<MainScreenBottomTab> = mutableStateOf(MainScreenBottomTab.KEYWORD)
+    private val _selectedTab: MutableState<MainScreenBottomTab> =
+        mutableStateOf(MainScreenBottomTab.KEYWORD)
     val selectedTab: State<MainScreenBottomTab> get() = _selectedTab
 
     private val _keywordUi: MutableState<KeywordUi> = mutableStateOf(KeywordUi())
@@ -44,23 +47,30 @@ class MainViewModel @Inject constructor(
     fun selectTab(tab: MainScreenBottomTab) {
         _selectedTab.value = tab
     }
+
     init {
 
         val onGetKeywordListUseCase = domainKeywordSharedFlow.shareIn(
             viewModelScope,
             SharingStarted.Eagerly, 0
         )
-        keywordState = onGetKeywordListUseCase.stateIn(viewModelScope, SharingStarted.Eagerly, Result.Uninitialized)
+        keywordState = onGetKeywordListUseCase.stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            Result.Uninitialized
+        )
 
         viewModelScope.launch(Dispatchers.IO) {
             keywordState.collectLatest {
                 when (it) {
                     is Result.Success<*> -> {
-                        _keywordUi.value = _keywordUi.value.copy(keywordList = (it.data as MutableList<KeywordResponse>))
+                        _keywordUi.value =
+                            _keywordUi.value.copy(keywordList = (it.data as MutableList<KeywordResponse>))
                     }
                     is Result.Fail<*> -> {
                         val response = it.data as CommonResponse
-                        _keywordUi.value = _keywordUi.value.copy(errorMessage = response.errorMessage!!)
+                        _keywordUi.value =
+                            _keywordUi.value.copy(errorMessage = response.errorMessage!!)
                     }
                 }
             }
@@ -113,14 +123,44 @@ class MainViewModel @Inject constructor(
                 )
             ) {
                 is Result.Success<*> -> {
-                    Log.d("KeywordAddViewModel", pushKeywordResponse.data.toString())
+                    Log.d("KeywordAddViewModel", "pushKeyword: ${pushKeywordResponse.data}")
                     reloadKeywordList()
                     executeGetKeywordList()
                 }
-                is Result.Fail<*> -> Log.d(
-                    "KeywordAddViewModel",
-                    pushKeywordResponse.data.toString()
+                is Result.Fail<*> -> Log.d("KeywordAddViewModel", "pushKeyword: ${pushKeywordResponse.data}")
+            }
+        }
+    }
+
+    fun editKeyword(
+        keyword: String,
+        alarmCycle: Int,
+        alarmMode: Boolean,
+        isImportant: Boolean,
+        name: String,
+        untilPressOkButton: Boolean,
+        vibrationMode: Boolean,
+        alarmSiteList: List<String>
+    ) {
+        viewModelScope.launch {
+            when (
+                val editKeywordResponse = editKeywordUseCase(
+                    keyword,
+                    alarmCycle,
+                    alarmMode,
+                    isImportant,
+                    name,
+                    untilPressOkButton,
+                    vibrationMode,
+                    alarmSiteList
                 )
+            ) {
+                is Result.Success<*> -> {
+                    Log.d("KeywordAddViewModel", "editKeyword: ${editKeywordResponse.data}")
+                    reloadKeywordList()
+                    executeGetKeywordList()
+                }
+                is Result.Fail<*> -> Log.d("KeywordAddViewModel", "editKeyword: ${editKeywordResponse.data}")
             }
         }
     }
@@ -129,19 +169,16 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             when (val deleteKeywordResponse = deleteKeywordUseCase(keyword)) {
                 is Result.Success<*> -> {
-                    Log.d("mainViewModel", deleteKeywordResponse.data.toString())
+                    Log.d("mainViewModel", "deleteKeyword: ${deleteKeywordResponse.data}")
                     reloadKeywordList()
                     executeGetKeywordList()
-                    Log.d("mainViewModel", keywordUi.value.keywordList.toString())
                 }
-                is Result.Fail<*> -> Log.d(
-                    "mainViewModel",
-                    deleteKeywordResponse.data.toString()
-                )
+                is Result.Fail<*> -> Log.d("mainViewModel", "deleteKeyword: ${deleteKeywordResponse.data}")
             }
         }
     }
 }
+
 data class KeywordUi(
     val keywordList: MutableList<KeywordResponse> = mutableListOf(),
     var errorMessage: String = ""
