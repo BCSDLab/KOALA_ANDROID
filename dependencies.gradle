@@ -187,7 +187,8 @@ ext {
     def google_play_service_version = "20.0.0"
     googlePlayService = "com.google.android.gms:play-services-auth:$google_play_service_version"
 
-    firebaseCloudMessage = "com.google.firebase:firebase-messaging-ktx"
+    def firebase_messaging_version = "23.0.0"
+    firebaseCloudMessage = "com.google.firebase:firebase-messaging-ktx:$firebase_messaging_version"
 
     /* viewPager library */
     viewPager = "com.google.accompanist:accompanist-pager:0.22.0-rc"

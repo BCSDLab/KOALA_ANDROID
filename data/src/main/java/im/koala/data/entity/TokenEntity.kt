@@ -2,25 +2,28 @@ package im.koala.data.entity
 
 import com.google.gson.annotations.SerializedName
 
-class TokenEntity {
+data class TokenEntity(
     @SerializedName("access_token")
-    var accessToken: String? = null
+    val accessToken: String,
 
     @SerializedName("refresh_token")
-    var refreshToken: String? = null
-}
-class TokenBodyEntity : CommonEntity() {
+    val refreshToken: String
+)
+
+class TokenBodyEntity(
     @SerializedName("body")
-    var body: TokenEntity? = null
+    val body: TokenEntity?
+) : CommonEntity() {
     companion object {
-        val SUCCESS = TokenBodyEntity().apply {
-            code = 200
-            body = TokenEntity().apply {
-                accessToken = "accessToken"
+        val SUCCESS = TokenBodyEntity(
+            TokenEntity(
+                accessToken = "accessToken",
                 refreshToken = "refreshToken"
-            }
+            )
+        ).apply {
+            code = 200
         }
-        val FAIL = TokenBodyEntity().apply {
+        val FAIL = TokenBodyEntity(null).apply {
             code = 315
             errorMessage = "fail"
         }

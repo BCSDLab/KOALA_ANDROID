@@ -6,12 +6,14 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import im.koala.bcsd.KoalaApp
+import im.koala.bcsd.util.TokenAuthenticator
 import im.koala.data.api.AuthApi
 import im.koala.data.api.GooglePostTokenApi
 import im.koala.data.api.NoAuthApi
 import im.koala.data.constants.ACCESS_TOKEN
 import im.koala.data.constants.BASE_URL
 import im.koala.data.constants.GOOGLE_OAUTH
+import im.koala.data.constants.REFRESH_TOKEN
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -32,6 +34,10 @@ annotation class NOAUTH
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
+annotation class REFRESH
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
 annotation class GOOGLE
 
 @Module
@@ -44,27 +50,6 @@ object NetworkModule {
             HttpLoggingInterceptor.Level.HEADERS
         }
     }
-    /*
-    @Target(
-        AnnotationTarget.VALUE_PARAMETER,
-        AnnotationTarget.FUNCTION,
-        AnnotationTarget.EXPRESSION
-    )
-
-    @Qualifier
-    @Retention(AnnotationRetention.SOURCE)
-    annotation class NO_AUTH
-
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class AUTH
-
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class REFRESH_AUTH
-
-
-     */
 
     @AUTH
     @Provides
@@ -74,6 +59,29 @@ object NetworkModule {
             val accessToken = Hawk.get(ACCESS_TOKEN, "")
             val newRequest: Request = chain.request().newBuilder()
                 .addHeader("Authorization", "Bearer $accessToken")
+                .build()
+            chain.proceed(newRequest)
+        }
+    }
+
+    @AUTH
+    @Provides
+    @Singleton
+    fun provideTokenAuthenticator(@REFRESH refreshRetrofit: Retrofit): TokenAuthenticator {
+        return TokenAuthenticator(
+            KoalaApp.instance.applicationContext,
+            refreshRetrofit
+        )
+    }
+
+    @REFRESH
+    @Provides
+    @Singleton
+    fun provideRefreshInterceptor(): Interceptor {
+        return Interceptor { chain: Interceptor.Chain ->
+            val refreshToken = Hawk.get(REFRESH_TOKEN, "")
+            val newRequest: Request = chain.request().newBuilder()
+                .addHeader("RefreshToken", "Bearer $refreshToken")
                 .build()
             chain.proceed(newRequest)
         }
@@ -94,13 +102,32 @@ object NetworkModule {
     @AUTH
     @Provides
     @Singleton
-    fun provideAuthOkHttpClient(@AUTH authInterceptor: Interceptor): OkHttpClient {
+    fun provideAuthOkHttpClient(
+        @AUTH authInterceptor: Interceptor,
+        @AUTH tokenAuthenticator: TokenAuthenticator
+    ): OkHttpClient {
         return OkHttpClient.Builder().apply {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
             writeTimeout(15, TimeUnit.SECONDS)
             addInterceptor(httpLogginInterceptor)
             addInterceptor(authInterceptor)
+            authenticator(tokenAuthenticator)
+        }.build()
+    }
+
+    @REFRESH
+    @Provides
+    @Singleton
+    fun provideRefreshOkHttpClient(
+        @REFRESH refreshAuthInterceptor: Interceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder().apply {
+            connectTimeout(10, TimeUnit.SECONDS)
+            readTimeout(30, TimeUnit.SECONDS)
+            writeTimeout(15, TimeUnit.SECONDS)
+            addInterceptor(httpLogginInterceptor)
+            addInterceptor(refreshAuthInterceptor)
         }.build()
     }
 
@@ -126,6 +153,17 @@ object NetworkModule {
             .build()
     }
 
+    @REFRESH
+    @Provides
+    @Singleton
+    fun provideRefreshRetrofit(@REFRESH okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
     @NOAUTH
     @Provides
     @Singleton
@@ -137,6 +175,13 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAuthApi(@AUTH retrofit: Retrofit): AuthApi {
+        return retrofit.create(AuthApi::class.java)
+    }
+
+    @REFRESH
+    @Provides
+    @Singleton
+    fun provideRefreshApi(@REFRESH retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
     }
 
