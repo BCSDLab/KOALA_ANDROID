@@ -63,18 +63,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.nhn.android.naverlogin.ui.OAuthLoginActivity"
-            android:exported="true"
-            tools:node="merge"></activity>
-        <activity
-            android:name="com.nhn.android.naverlogin.ui.OAuthLoginInAppBrowserActivity"
-            android:exported="true"
-            tools:node="merge"></activity>
-        <activity
-            android:name="com.nhn.android.naverlogin.ui.OAuthCustomTabActivity"
-            android:exported="true"
-            tools:node="merge" />
-        <activity
             android:name=".ui.keyworddetail.KeywordDetailActivity"
             android:exported="true" />
     </application>
