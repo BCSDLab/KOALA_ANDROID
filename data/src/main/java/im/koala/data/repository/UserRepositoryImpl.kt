@@ -54,39 +54,51 @@ class UserRepositoryImpl @Inject constructor(
         password: String
     ): Result {
         var result: Result = Result.Uninitialized
-        try {
-            val tokenEntity = userRemoteDataSource.login(
-                accountId = id,
-                password = password,
-                deviceToken = deviceToken
-            )
-
-            Log.d("Access token", tokenEntity.accessToken)
-            userLocalDataSource.saveToken(tokenEntity.toTokenResponse())
-
-            result = Result.Success(tokenEntity.toTokenResponse())
-        } catch (e: Exception) {
+        val response = userRemoteDataSource.login(
+            accountId = id,
+            password = password,
+            deviceToken = deviceToken
+        )
+        if (response.isSuccessful) {
+            TokenResponse(
+                accessToken = response.body()?.body?.accessToken ?: run {
+                    return Result.Fail(CommonResponse.UNKOWN)
+                },
+                refreshToken = response.body()?.body?.refreshToken!!
+            ).run {
+                userLocalDataSource.saveToken(this)
+                result = Result.Success(this)
+            }
+        } else {
             CommonResponse.FAIL.apply {
-                errorMessage = e.message
-            }.run { result = Result.Fail(this) }
+                errorMessage = response.errorBody()?.source()?.buffer.toString()
+            }
+                .run { result = Result.Fail(this) }
         }
         return result
     }
 
     override suspend fun loginWithoutSignUp(deviceToken: String): Result {
         var result: Result = Result.Uninitialized
-        try {
-            val tokenEntity = userRemoteDataSource.loginWithoutSignUp(
-                deviceToken = deviceToken
-            )
 
-            userLocalDataSource.saveToken(tokenEntity.toTokenResponse())
-
-            result = Result.Success(tokenEntity.toTokenResponse())
-        } catch (e: Exception) {
+        val response = userRemoteDataSource.loginWithoutSignUp(
+            deviceToken = deviceToken
+        )
+        if (response.isSuccessful) {
+            TokenResponse(
+                accessToken = response.body()?.body?.accessToken ?: run {
+                    return Result.Fail(CommonResponse.UNKOWN)
+                },
+                refreshToken = response.body()?.body?.refreshToken!!
+            ).run {
+                userLocalDataSource.saveToken(this)
+                result = Result.Success(this)
+            }
+        } else {
             CommonResponse.FAIL.apply {
-                errorMessage = e.message
-            }.run { result = Result.Fail(this) }
+                errorMessage = response.errorBody()?.source()?.buffer.toString()
+            }
+                .run { result = Result.Fail(this) }
         }
         return result
     }

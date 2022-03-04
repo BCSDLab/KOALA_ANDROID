@@ -28,9 +28,9 @@ interface UserRemoteDataSource {
         accountId: String,
         password: String,
         deviceToken: String
-    ): TokenEntity
+    ): Response<TokenBodyEntity>
 
     suspend fun loginWithoutSignUp(
         deviceToken: String
-    ): TokenEntity
+    ): Response<TokenBodyEntity>
 }
