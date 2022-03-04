@@ -13,7 +13,6 @@ import im.koala.data.constant.KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE
 import im.koala.data.constant.KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE
 import im.koala.data.entity.KeywordBodyEntity
 import im.koala.data.entity.TokenBodyEntity
-import im.koala.data.entity.TokenEntity
 import im.koala.data.mapper.signup.toSignUpResult
 import im.koala.domain.entity.signup.SignUpResult
 import im.koala.domain.util.toSHA256
@@ -118,7 +117,6 @@ class UserRemoteDataSourceImpl @Inject constructor(
                 accountId, password
             )
         )
-
     }
 
     override suspend fun loginWithoutSignUp(deviceToken: String): Response<TokenBodyEntity> {

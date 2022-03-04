@@ -5,8 +5,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.orhanobut.hawk.Hawk
 import im.koala.data.constants.FCM_TOKEN
 import im.koala.domain.state.Result
-import android.util.Log
-import im.koala.data.mapper.user.toTokenResponse
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.domain.entity.signup.SignUpResult

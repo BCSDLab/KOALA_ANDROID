@@ -2,7 +2,6 @@ package im.koala.data.repository.remote
 
 import im.koala.data.entity.KeywordBodyEntity
 import im.koala.data.entity.TokenBodyEntity
-import im.koala.data.entity.TokenEntity
 import im.koala.domain.entity.signup.SignUpResult
 import retrofit2.Response
 
