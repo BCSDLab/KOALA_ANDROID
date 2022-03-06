@@ -60,4 +60,7 @@ dependencies {
     implementation project.coroutineAndroid
 
     implementation project.hawk
+
+    implementation platform(project.firebasePlatform)
+    implementation project.firebaseCloudMessage
 }

@@ -34,6 +34,9 @@
             android:name=".ui.main.MainActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.keyworddetail.KeywordDetailActivity"
+            android:exported="true" />
+        <activity
             android:name=".ui.signup.SignupActivity"
             android:exported="true"
             android:label="@string/app_bar_title_signup"
@@ -51,6 +54,7 @@
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -63,20 +67,6 @@
                     android:scheme="{kakao_oauth_key}" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.nhn.android.naverlogin.ui.OAuthLoginActivity"
-            android:exported="true"
-            tools:node="merge" />
-        <activity
-            android:name="com.nhn.android.naverlogin.ui.OAuthLoginInAppBrowserActivity"
-            android:exported="true"
-            tools:node="merge" />
-        <activity
-            android:name="com.nhn.android.naverlogin.ui.OAuthCustomTabActivity"
-            android:exported="true"
-            tools:node="merge" />
-        <activity
-            android:name=".ui.keyworddetail.KeywordDetailActivity"
-            android:exported="true" />
+
     </application>
 </manifest>

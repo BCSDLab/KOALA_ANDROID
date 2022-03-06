@@ -52,10 +52,10 @@ interface NoAuthApi {
     suspend fun login(
         @Query("device_token") deviceToken: String,
         @Body userRequest: UserRequest
-    ): TokenBodyEntity
+    ): Response<TokenBodyEntity>
 
     @POST(KOALA_API_URL_USER_NON_MEMBER_LOGIN)
     suspend fun loginNonMember(
         @Query("device_token") deviceToken: String
-    ): TokenBodyEntity
+    ): Response<TokenBodyEntity>
 }

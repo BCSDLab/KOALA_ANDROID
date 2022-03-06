@@ -1,6 +1,5 @@
 package im.koala.bcsd.ui.login
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
@@ -47,6 +47,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
 import dagger.hilt.android.AndroidEntryPoint
 import im.koala.bcsd.R
 import im.koala.bcsd.ui.findid.FindIdActivity
@@ -62,24 +72,81 @@ import im.koala.bcsd.ui.theme.Green
 import im.koala.bcsd.ui.theme.KoalaTheme
 import im.koala.bcsd.ui.theme.White
 import im.koala.bcsd.ui.theme.Yellow2
+import im.koala.domain.constants.GOOGLE
+import im.koala.domain.constants.KAKAO
+import im.koala.domain.constants.NAVER
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
+
     private val viewModel: LoginViewModel by viewModels()
+    private lateinit var auth: FirebaseAuth
+    private val googleSignInResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+        try {
+            val account = task.getResult(ApiException::class.java)!!
+            viewModel.emitSnsToken(account.idToken!!)
+        } catch (e: Exception) {
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
+        initObserver()
         setContent {
             KoalaTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    LoginScreen(context = this, viewModel = viewModel)
+                    LoginScreen(viewModel = viewModel)
                 }
             }
         }
     }
-
+    private fun initObserver() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.uiEvent.collect { uiEvent ->
+                when (uiEvent) {
+                    LoginViewUIEvent.GoToMainActivity -> {
+                        goToMainActivity()
+                        finish()
+                    }
+                    LoginViewUIEvent.ProceedGoogleLogin -> { proceedGoogleLogin(this@LoginActivity) }
+                    LoginViewUIEvent.ProceedNaverLogin -> { proceedNaverLogin() }
+                    LoginViewUIEvent.ProceedKakaoLogin -> { proceedKakaoLogin() }
+                    is LoginViewUIEvent.ShowErrorMessage -> {
+                        callToastMessage(context = this@LoginActivity, message = uiEvent.message)
+                    }
+                }
+            }
+        }
+    }
+    fun callToastMessage(context: Context, message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+    private fun proceedNaverLogin() {
+        NaverIdLoginSDK.authenticate(this@LoginActivity, viewModel.naverLoginCallback)
+    }
+    private fun proceedKakaoLogin() {
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
+            UserApiClient.instance.loginWithKakaoTalk(this, callback = viewModel.kakaoCallback)
+        } else {
+            UserApiClient.instance.loginWithKakaoAccount(this, callback = viewModel.kakaoCallback)
+        }
+    }
+    private fun proceedGoogleLogin(context: Context) {
+        var signInIntent = getGoogleClient(context).signInIntent
+        googleSignInResult.launch(signInIntent)
+    }
+    private fun getGoogleClient(context: Context): GoogleSignInClient {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.google_web_client_id))
+            .requestEmail()
+            .build()
+        return GoogleSignIn.getClient(context, gso)
+    }
     private fun goToMainActivity() {
         Intent(this, MainActivity::class.java).run {
             startActivity(this)
@@ -88,16 +155,15 @@ class LoginActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        viewModel.setActivityContext(null)
     }
 }
 
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @Composable
-fun LoginScreen(context: Context, viewModel: LoginViewModel) {
+fun LoginScreen(viewModel: LoginViewModel) {
     val context = LocalContext.current
-    var isNormalLoginState = remember { mutableStateOf(true) }
+    val isNormalLoginState = remember { mutableStateOf(true) }
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (logoImageView, loginRowLayout, normalLoginConstraintLyaout) = createRefs()
 
@@ -244,19 +310,6 @@ fun NormalScreen(
     val signUpContract = rememberLauncherForActivityResult(contract = SignUpContract()) {
         // 회원가입 성공하면 회원가입 때 사용한 id 반환, 아니면 null
     }
-
-    val deviceTokenState = viewModel.uiState
-
-    if (deviceTokenState.value.errorMesage.isNotEmpty()) {
-        CallToastMessage(context = context, message = deviceTokenState.value.errorMesage)
-    }
-    if (deviceTokenState.value.goToMainActivity) {
-        Intent(context, MainActivity::class.java).run {
-            context.startActivity(this)
-        }
-        (context as? Activity)?.finish()
-    }
-
     ConstraintLayout(modifier = modifier) {
         val (idEditText, pwEditText, autoLoginSwitch, autoLoginText, loginButton, rowLayout, snsLoginText) = createRefs()
         val idTextState = remember { mutableStateOf("") }
@@ -478,7 +531,10 @@ fun SnsLoginScreen(
             backgroundColor = White,
             textColor = Black,
             text = stringResource(id = R.string.google_login),
-            onClick = {}
+            onClick = {
+                viewModel.onClickSnsLoginButton(GOOGLE)
+                viewModel.snsType = GOOGLE
+            }
         )
 
         DrawImageView(
@@ -505,7 +561,10 @@ fun SnsLoginScreen(
             backgroundColor = Green,
             textColor = White,
             text = stringResource(id = R.string.naver_login),
-            onClick = {}
+            onClick = {
+                viewModel.snsType = NAVER
+                viewModel.onClickSnsLoginButton(NAVER)
+            }
         )
         DrawImageView(
             modifier = Modifier
@@ -533,8 +592,8 @@ fun SnsLoginScreen(
             textColor = Black,
             text = stringResource(id = R.string.kakao_login),
             onClick = {
-                viewModel.setActivityContext(context)
-                viewModel.onClickKakaoLoginButton()
+                viewModel.onClickSnsLoginButton(KAKAO)
+                viewModel.snsType = KAKAO
             }
         )
         DrawImageView(

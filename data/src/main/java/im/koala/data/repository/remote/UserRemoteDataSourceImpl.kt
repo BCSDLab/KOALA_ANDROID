@@ -13,7 +13,6 @@ import im.koala.data.constant.KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE
 import im.koala.data.constant.KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE
 import im.koala.data.entity.KeywordBodyEntity
 import im.koala.data.entity.TokenBodyEntity
-import im.koala.data.entity.TokenEntity
 import im.koala.data.mapper.signup.toSignUpResult
 import im.koala.domain.entity.signup.SignUpResult
 import im.koala.domain.util.toSHA256
@@ -111,32 +110,16 @@ class UserRemoteDataSourceImpl @Inject constructor(
         accountId: String,
         password: String,
         deviceToken: String
-    ): TokenEntity {
-        val tokenBodyEntity = noAuthApi.login(
+    ): Response<TokenBodyEntity> {
+        return noAuthApi.login(
             deviceToken = deviceToken,
             userRequest = UserRequest(
                 accountId, password
             )
         )
-
-        if (tokenBodyEntity.body == null)
-            throw RuntimeException("Token body is null!")
-
-        return TokenEntity(
-            tokenBodyEntity.body.accessToken,
-            tokenBodyEntity.body.refreshToken
-        )
     }
 
-    override suspend fun loginWithoutSignUp(deviceToken: String): TokenEntity {
-        val tokenBodyEntity = noAuthApi.loginNonMember(deviceToken)
-
-        if (tokenBodyEntity.body == null)
-            throw RuntimeException("Token body is null!")
-
-        return TokenEntity(
-            tokenBodyEntity.body.accessToken,
-            tokenBodyEntity.body.refreshToken
-        )
+    override suspend fun loginWithoutSignUp(deviceToken: String): Response<TokenBodyEntity> {
+        return noAuthApi.loginNonMember(deviceToken)
     }
 }

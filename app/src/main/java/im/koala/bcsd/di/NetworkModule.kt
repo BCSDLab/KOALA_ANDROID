@@ -8,11 +8,9 @@ import dagger.hilt.components.SingletonComponent
 import im.koala.bcsd.KoalaApp
 import im.koala.bcsd.util.TokenAuthenticator
 import im.koala.data.api.AuthApi
-import im.koala.data.api.GooglePostTokenApi
 import im.koala.data.api.NoAuthApi
 import im.koala.data.constants.ACCESS_TOKEN
 import im.koala.data.constants.BASE_URL
-import im.koala.data.constants.GOOGLE_OAUTH
 import im.koala.data.constants.REFRESH_TOKEN
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -36,14 +34,10 @@ annotation class NOAUTH
 @Retention(AnnotationRetention.BINARY)
 annotation class REFRESH
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class GOOGLE
-
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    val httpLogginInterceptor = HttpLoggingInterceptor().apply {
+    private val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
         level = if (KoalaApp.instance.isApplicationDebug) {
             HttpLoggingInterceptor.Level.BODY
         } else {
@@ -95,7 +89,7 @@ object NetworkModule {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
             writeTimeout(15, TimeUnit.SECONDS)
-            addInterceptor(httpLogginInterceptor)
+            addInterceptor(httpLoggingInterceptor)
         }.build()
     }
 
@@ -110,7 +104,7 @@ object NetworkModule {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
             writeTimeout(15, TimeUnit.SECONDS)
-            addInterceptor(httpLogginInterceptor)
+            addInterceptor(httpLoggingInterceptor)
             addInterceptor(authInterceptor)
             authenticator(tokenAuthenticator)
         }.build()
@@ -126,7 +120,7 @@ object NetworkModule {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
             writeTimeout(15, TimeUnit.SECONDS)
-            addInterceptor(httpLogginInterceptor)
+            addInterceptor(httpLoggingInterceptor)
             addInterceptor(refreshAuthInterceptor)
         }.build()
     }
@@ -183,35 +177,5 @@ object NetworkModule {
     @Singleton
     fun provideRefreshApi(@REFRESH retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
-    }
-
-    @GOOGLE
-    @Provides
-    @Singleton
-    fun provideGoogleOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder().apply {
-            connectTimeout(10, TimeUnit.SECONDS)
-            readTimeout(30, TimeUnit.SECONDS)
-            writeTimeout(15, TimeUnit.SECONDS)
-            addInterceptor(httpLogginInterceptor)
-        }.build()
-    }
-
-    @GOOGLE
-    @Provides
-    @Singleton
-    fun provideGoogleRetrofit(@GOOGLE okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(GOOGLE_OAUTH)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-    @GOOGLE
-    @Provides
-    @Singleton
-    fun provideGooglePostTokenApi(@GOOGLE retrofit: Retrofit): GooglePostTokenApi {
-        return retrofit.create(GooglePostTokenApi::class.java)
     }
 }
