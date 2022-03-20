@@ -131,4 +131,17 @@
     <string name="keyword_search_fail">검색 결과가 없습니다.</string>
     <string name="keyword_search_empty">키워드를 입력해주세요.</string>
     <string name="site_search_empty">알림받을 사이트를 입력해주세요.</string>
+
+    <!-- history -->
+    <string name="history_all_notice">전체알림</string>
+    <string name="history_storage">보관함</string>
+    <string name="history_all_choice">전체선택</string>
+    <string name="history_keep">보관</string>
+    <string name="history_delete">삭제</string>
+    <string name="history_read_notice">읽은 알림</string>
+    <string name="history_non_read_notice">읽지 않은 알림</string>
+    <string name="history_undo">실행 취소</string>
+    <string name="history_scrap_message">개의 알림을 이동하였습니다.</string>
+    <string name="history_undo_scrap_success_message">보관함 이동을 취소했습니다.</string>
+    <string name="history_undo_scrap_fail_message">보관함 이동 취소를 실패했습니다.</string>
 </resources>

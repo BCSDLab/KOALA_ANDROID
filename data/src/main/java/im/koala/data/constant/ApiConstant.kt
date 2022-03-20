@@ -26,3 +26,10 @@ const val KOALA_API_KEYWORD_SITE_SEARCH = "$KOALA_API_URL_KEYWORD/site/search"
 const val KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE = "존재하는 계정입니다"
 const val KOALA_API_SIGN_UP_CHECK_EMAIL_OK_MESSAGE = "사용 가능한 이메일입니다"
 const val KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE = "사용 가능한 닉네임입니다."
+
+const val KOALA_API_HISTORY = "history"
+const val KOALA_API_HISTORY_DELETE_UNDO = "$KOALA_API_HISTORY/undo"
+
+const val KOALA_API_SCRAP = "scrap"
+
+const val KOALA_API_MEMO = "memo"

@@ -22,6 +22,7 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.pager.ExperimentalPagerApi
 import im.koala.bcsd.R
 import im.koala.bcsd.navigation.NavScreen
+import im.koala.bcsd.ui.history.HistoryViewModel
 import im.koala.bcsd.ui.keyword.KeywordDetailScreen
 import im.koala.bcsd.ui.keywordadd.KeywordAddInputScreen
 import im.koala.bcsd.ui.keywordadd.KeywordAddScreen
@@ -32,7 +33,8 @@ import im.koala.bcsd.ui.keywordadd.KeywordViewModel
 @Composable
 fun MainScreen(
     keywordViewModel: KeywordViewModel = viewModel(),
-    viewModel: MainViewModel = viewModel()
+    viewModel: MainViewModel = viewModel(),
+    historyViewModel: HistoryViewModel
 ) {
     val navController = rememberNavController()
     val tabStateHolder = HomeTabStateHolder(
@@ -51,6 +53,7 @@ fun MainScreen(
             ) {
                 HomeTabScreen(
                     viewModel = viewModel,
+                    historyViewModel = historyViewModel,
                     tabStateHolder = tabStateHolder,
                     selectItem = { tab, index ->
                         when (tab) {

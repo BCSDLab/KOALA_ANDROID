@@ -1,26 +1,17 @@
 package im.koala.data.api
 
 import im.koala.data.api.response.ResponseWrapper
+import im.koala.data.api.response.history.HistoryResponse
+import im.koala.data.api.response.history.MemoResponse
+import im.koala.data.api.response.history.ScrapResponse
 import im.koala.data.api.response.keyword.KeywordNoticeResponse
 import im.koala.data.api.response.keywordadd.KeywordAddResponse
-import im.koala.data.constant.KOALA_API_KEYWORD_RECOMMENDATION
-import im.koala.data.constant.KOALA_API_KEYWORD_SEARCH
-import im.koala.data.constant.KOALA_API_KEYWORD_SITE_RECOMMENDATION
-import im.koala.data.constant.KOALA_API_KEYWORD_SITE_SEARCH
-import im.koala.data.constant.KOALA_API_URL_KEYWORD
-import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST
-import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE
-import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE_READING_CHECK
-import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_SEARCH
+import im.koala.data.constant.*
 import im.koala.data.constants.KEYWORD
 import im.koala.data.entity.CommonEntity
 import im.koala.data.entity.KeywordBodyEntity
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface AuthApi {
     @GET(KEYWORD)
@@ -74,4 +65,38 @@ interface AuthApi {
     suspend fun deleteKeyword(
         @Query("keyword-name") keyword: String
     ): Response<ResponseWrapper<String>>
+
+    @GET(KOALA_API_HISTORY)
+    suspend fun getHistory(): List<HistoryResponse>
+
+    @GET(KOALA_API_HISTORY)
+    suspend fun getHistoryByFilter(
+        @Query("is-read") isRead: Boolean
+    ): List<HistoryResponse>
+
+    @PATCH(KOALA_API_HISTORY)
+    suspend fun deleteHistory(
+        @Query("notice-id") noticeId: List<Int>
+    ): Response<ResponseWrapper<String>>
+
+    @PATCH(KOALA_API_HISTORY_DELETE_UNDO)
+    suspend fun undoDeleteHistory(
+        @Query("notice-id") noticeId: List<Int>
+    ): Response<ResponseWrapper<String>>
+
+    @POST(KOALA_API_SCRAP)
+    suspend fun scrapHistory(
+        @Query("crawling_id") crawlingId: Int
+    ): Response<ResponseWrapper<String>>
+
+    @DELETE(KOALA_API_SCRAP)
+    suspend fun deleteScrapHistory(
+        @Query("crawlingId") crawlingId: List<Int>
+    ): Response<ResponseWrapper<String>>
+
+    @GET(KOALA_API_SCRAP)
+    suspend fun getScrap(): List<ScrapResponse>
+
+    @GET(KOALA_API_MEMO)
+    suspend fun getMemo(): List<MemoResponse>
 }

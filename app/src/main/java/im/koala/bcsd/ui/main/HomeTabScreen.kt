@@ -23,11 +23,13 @@ import im.koala.bcsd.ui.setting.SettingScreen
 import androidx.compose.animation.Crossfade
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.NavController
+import im.koala.bcsd.ui.history.HistoryViewModel
 
 @ExperimentalMaterialApi
 @Composable
 fun HomeTabScreen(
     viewModel: MainViewModel,
+    historyViewModel: HistoryViewModel,
     tabStateHolder: HomeTabStateHolder,
     selectItem: (MainScreenBottomTab, Int) -> Unit,
     navController: NavController
@@ -86,7 +88,8 @@ fun HomeTabScreen(
                     navController
                 )
                 MainScreenBottomTab.HISTORY -> HistoryScreen(
-                    modifier
+                    modifier,
+                    historyViewModel
                 )
                 MainScreenBottomTab.CHATROOM -> ChatRoomScreen(
                     modifier

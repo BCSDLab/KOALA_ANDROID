@@ -7,11 +7,13 @@ import androidx.activity.viewModels
 import androidx.compose.material.ExperimentalMaterialApi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
+import im.koala.bcsd.ui.history.HistoryViewModel
 import im.koala.bcsd.ui.theme.KoalaTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
+    private val historyViewModel: HistoryViewModel by viewModels()
 
     @ExperimentalPagerApi
     @ExperimentalMaterialApi
@@ -19,7 +21,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             KoalaTheme {
-                MainScreen()
+                MainScreen(
+                    historyViewModel = historyViewModel
+                )
             }
         }
     }
