@@ -70,6 +70,8 @@ dependencies {
     implementation project.firebaseAnalyticsKtx
     implementation project.firebaseCrashlyticsKtx
     implementation project.firebaseCloudMessage
+    implementation project.firebaseAuth
+    implementation project.gmsAuth
 
     implementation project.androidKtx
     implementation project.androidxAppCompat

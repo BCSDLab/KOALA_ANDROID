@@ -14,7 +14,7 @@ class HistoryRemoteDataSourceImpl @Inject constructor(
     private val authApi: AuthApi
 ) : HistoryRemoteDataSource {
     override suspend fun getHistory(): List<KeywordNotice> {
-        return authApi.getHistory().map {
+        return authApi.getHistory().body.map {
             it.toKeywordNotice()
         }
     }
@@ -42,13 +42,13 @@ class HistoryRemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getScrap(): List<ScrapNotice> {
-        return authApi.getScrap().map {
+        return authApi.getScrap().body.map {
             it.toScrapNotice()
         }
     }
 
     override suspend fun getMemo(): List<Memo> {
-        return authApi.getMemo().map {
+        return authApi.getMemo().body.map {
             Memo(
                 userScrapedId = it.userScrapId,
                 memo = it.memo,

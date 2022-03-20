@@ -180,14 +180,16 @@ ext {
     firebaseCrashlyticsKtx = "com.google.firebase:firebase-crashlytics-ktx:$firebase_crashlytics_ktx_version"
 
     /* naver login api */
-    def naver_login_version = "4.2.6"
-    naverIdLogin = "com.naver.nid:naveridlogin-android-sdk:$naver_login_version"
+    def naver_login_version = "5.0.1"
+    naverIdLogin = "com.navercorp.nid:oauth:$naver_login_version"
 
     /* Google Play Service */
     def google_play_service_version = "20.0.0"
     googlePlayService = "com.google.android.gms:play-services-auth:$google_play_service_version"
 
     firebaseCloudMessage = "com.google.firebase:firebase-messaging-ktx"
+    firebaseAuth = "com.google.firebase:firebase-auth-ktx"
+    gmsAuth = "com.google.android.gms:play-services-auth:20.0.1"
 
     /* viewPager library */
     viewPager = "com.google.accompanist:accompanist-pager:0.22.0-rc"

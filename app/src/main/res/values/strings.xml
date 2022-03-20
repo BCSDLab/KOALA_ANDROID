@@ -131,8 +131,12 @@
     <string name="keyword_search_fail">검색 결과가 없습니다.</string>
     <string name="keyword_search_empty">키워드를 입력해주세요.</string>
     <string name="site_search_empty">알림받을 사이트를 입력해주세요.</string>
+    <string name="token_expired">세션이 만료되었습니다. 재로그인 해주시기 바랍니다.</string>
+    <string name="title_activity_keyword_edit">KeywordEditActivity</string>
 
-    <!-- history -->
+    <string name="edit_keyword">키워드 수정하기</string>
+
+	<!-- history -->
     <string name="history_all_notice">전체알림</string>
     <string name="history_storage">보관함</string>
     <string name="history_all_choice">전체선택</string>

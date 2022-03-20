@@ -6,10 +6,12 @@ import im.koala.data.api.response.history.MemoResponse
 import im.koala.data.api.response.history.ScrapResponse
 import im.koala.data.api.response.keyword.KeywordNoticeResponse
 import im.koala.data.api.response.keywordadd.KeywordAddResponse
+import im.koala.data.api.response.keywordadd.KeywordAddResponseEntity
 import im.koala.data.constant.*
 import im.koala.data.constants.KEYWORD
 import im.koala.data.entity.CommonEntity
 import im.koala.data.entity.KeywordBodyEntity
+import im.koala.domain.model.TokenResponse
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -42,12 +44,12 @@ interface AuthApi {
 
     @GET(KOALA_API_KEYWORD_SEARCH)
     suspend fun getKeywordSearch(
-        @Query("keyword") keyword: String
+        @Path("keyword") keyword: String
     ): Response<ResponseWrapper<List<String>>>
 
     @GET(KOALA_API_KEYWORD_SITE_SEARCH)
     suspend fun getKeywordSiteSearch(
-        @Query("site") site: String
+        @Path("site") site: String
     ): Response<ResponseWrapper<List<String>>>
 
     @GET(KOALA_API_KEYWORD_SITE_RECOMMENDATION)
@@ -61,13 +63,26 @@ interface AuthApi {
         @Body keywordAddResponse: KeywordAddResponse
     ): Response<ResponseWrapper<String>>
 
-    @PATCH(KOALA_API_URL_KEYWORD)
+    @PATCH(KOALA_API_KEYWORD_DELETE)
     suspend fun deleteKeyword(
-        @Query("keyword-name") keyword: String
+        @Path("keyword-name") keyword: String
     ): Response<ResponseWrapper<String>>
 
-    @GET(KOALA_API_HISTORY)
-    suspend fun getHistory(): List<HistoryResponse>
+    @POST(KOALA_API_URL_USER_REFRESH)
+    suspend fun refresh(): Response<TokenResponse>
+
+    @PUT(KOALA_API_KEYWORD_EDIT)
+    suspend fun editKeyword(
+        @Path("keyword-name") keyword: String,
+        @Body keywordAddResponse: KeywordAddResponse
+    ): Response<ResponseWrapper<String>>
+
+    @GET(KOALA_API_URL_KEYWORD_DETAILS)
+    suspend fun getKeywordDetails(
+        @Path("keyword-name") keyword: String,
+    ): Response<KeywordAddResponseEntity>
+	@GET(KOALA_API_HISTORY)
+    suspend fun getHistory(): ResponseWrapper<List<HistoryResponse>>
 
     @GET(KOALA_API_HISTORY)
     suspend fun getHistoryByFilter(
@@ -95,8 +110,8 @@ interface AuthApi {
     ): Response<ResponseWrapper<String>>
 
     @GET(KOALA_API_SCRAP)
-    suspend fun getScrap(): List<ScrapResponse>
+    suspend fun getScrap(): ResponseWrapper<List<ScrapResponse>>
 
     @GET(KOALA_API_MEMO)
-    suspend fun getMemo(): List<MemoResponse>
+    suspend fun getMemo(): ResponseWrapper<List<MemoResponse>>
 }

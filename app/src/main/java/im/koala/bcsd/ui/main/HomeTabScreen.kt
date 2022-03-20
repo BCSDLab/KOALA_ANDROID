@@ -32,7 +32,7 @@ fun HomeTabScreen(
     historyViewModel: HistoryViewModel,
     tabStateHolder: HomeTabStateHolder,
     selectItem: (MainScreenBottomTab, Int) -> Unit,
-    navController: NavController
+    navController: NavController,
 ) {
     val selectedTab by viewModel.selectedTab
     val tabs = MainScreenBottomTab.values()
@@ -85,7 +85,7 @@ fun HomeTabScreen(
                     tabStateHolder.keywordLazyListState,
                     viewModel,
                     selectItem,
-                    navController
+                    navController,
                 )
                 MainScreenBottomTab.HISTORY -> HistoryScreen(
                     modifier,

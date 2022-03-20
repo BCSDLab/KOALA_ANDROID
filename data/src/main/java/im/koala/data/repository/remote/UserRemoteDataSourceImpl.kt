@@ -2,8 +2,8 @@ package im.koala.data.repository.remote
 
 import im.koala.data.api.AuthApi
 import im.koala.data.api.NoAuthApi
-
 import im.koala.data.api.request.signup.SignUpRequest
+import im.koala.data.api.request.user.UserRequest
 import im.koala.data.api.response.toErrorResponse
 import im.koala.data.constant.KOALA_API_ERROR_CODE_DUPLICATED_EMAIL
 import im.koala.data.constant.KOALA_API_ERROR_CODE_DUPLICATED_ID
@@ -104,5 +104,22 @@ class UserRemoteDataSourceImpl @Inject constructor(
                     t.message ?: ""
             SignUpResult.Failed(errorMessage)
         }
+    }
+
+    override suspend fun login(
+        accountId: String,
+        password: String,
+        deviceToken: String
+    ): Response<TokenBodyEntity> {
+        return noAuthApi.login(
+            deviceToken = deviceToken,
+            userRequest = UserRequest(
+                accountId, password
+            )
+        )
+    }
+
+    override suspend fun loginWithoutSignUp(deviceToken: String): Response<TokenBodyEntity> {
+        return noAuthApi.loginNonMember(deviceToken)
     }
 }
