@@ -67,6 +67,19 @@
                     android:scheme="{kakao_oauth_key}" />
             </intent-filter>
         </activity>
+        <service
+            android:name=".util.fcm.KoalaFirebaseNotificationService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+            <meta-data
+                android:name="com.google.firebase.messaging.default_notification_icon"
+                android:resource="@drawable/ic_koala_logo_small" />
+            <meta-data
+                android:name="com.google.firebase.messaging.default_notification_color"
+                android:resource="@color/koala_yellow" />
+        </service>
 
     </application>
 </manifest>
