@@ -135,4 +135,12 @@
     <string name="title_activity_keyword_edit">KeywordEditActivity</string>
 
     <string name="edit_keyword">키워드 수정하기</string>
+    <string name="string_chat_welcome_descripiton_best_keyword">지난달 가장 많이 검색한 키워드</string>
+    <string name="string_chat_welcome_best_keyword">: %1$s</string>
+    <string name="string_chat_welcome_enter_chat">입장하기</string>
+    <string name="string_chat_welcome_caution">입장 전에 아래 내용을 확인해주세요!\n\n· 키워드 채팅방은 지난달 수집된 데이터상에서 가장 많이 등록된 키워드로 집계되어 매월 1일에 자동생성됩니다.\n· 가급적 키워드와 관련한 내용만 채팅해주세요.\n· 관리자에 의해 불이익을 받을 수 있습니다.\n· 코리아텍 학생만 이용가능한 채팅방입니다.</string>
+    <string name="report">신고</string>
+    <string name="string_chat_attach_image">사진 첨부</string>
+    <string name="string_chat_set_typo">글자 스타일</string>
+    <string name="string_chat_send_chat">전송</string>
 </resources>

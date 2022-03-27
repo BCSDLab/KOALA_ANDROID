@@ -1,4 +1,4 @@
-package im.koala.bcsd.ui.chatroom
+package im.koala.bcsd.ui.chatroom.compose
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable

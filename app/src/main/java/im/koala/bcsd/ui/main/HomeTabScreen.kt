@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsPadding
-import im.koala.bcsd.ui.chatroom.ChatRoomScreen
+import im.koala.bcsd.ui.chatroom.compose.ChatRoomScreen
 import im.koala.bcsd.ui.history.HistoryScreen
 import im.koala.bcsd.ui.keyword.KeywordScreen
 import im.koala.bcsd.ui.setting.SettingScreen

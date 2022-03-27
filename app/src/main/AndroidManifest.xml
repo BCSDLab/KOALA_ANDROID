@@ -67,6 +67,10 @@
                     android:scheme="{kakao_oauth_key}" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.chatroom.ChatActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" >
+        </activity>
 
     </application>
 </manifest>
