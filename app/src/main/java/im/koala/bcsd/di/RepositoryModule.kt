@@ -8,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import im.koala.data.api.AuthApi
 import im.koala.data.api.NoAuthApi
+import im.koala.data.repository.ChatRepositoryImpl
 import im.koala.data.repository.KeywordAddRepositoryImpl
 import im.koala.data.repository.KeywordRepositoryImpl
 import im.koala.data.repository.UserRepositoryImpl
@@ -25,6 +26,7 @@ import im.koala.data.repository.remote.KeywordRemoteDataSource
 import im.koala.data.repository.remote.KeywordRemoteDataSourceImpl
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.data.repository.remote.UserRemoteDataSourceImpl
+import im.koala.domain.repository.ChatRepository
 import im.koala.domain.repository.KeywordAddRepository
 import im.koala.domain.repository.KeywordRepository
 import im.koala.domain.repository.UserRepository
@@ -139,5 +141,13 @@ object RepositoryModule {
         return KeywordRepositoryImpl(
             keywordLocalDataSource, keywordRemoteDataSource
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideChatRepository(
+
+    ): ChatRepository {
+        return ChatRepositoryImpl()
     }
 }

@@ -38,4 +38,6 @@ interface UserRepository {
 
     fun setAutoLogin(autoLogin: Boolean)
     fun isAutoLogin(): Boolean
+
+    suspend fun getWebSocketToken(): kotlin.Result<String>
 }

@@ -3,21 +3,27 @@ package im.koala.bcsd.ui.main
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import im.koala.domain.state.Result
+import im.koala.bcsd.ui.BaseViewModel
 import im.koala.domain.model.CommonResponse
 import im.koala.domain.model.KeywordResponse
+import im.koala.domain.state.Result
 import im.koala.domain.usecase.GetKeywordListUseCase
+import im.koala.domain.usecase.chat.GetBestKeywordUseCase
+import im.koala.domain.usecase.chat.GetNumberOfPeopleUseCase
 import im.koala.domain.usecase.keywordadd.DeleteKeywordUseCase
 import im.koala.domain.usecase.keywordadd.EditKeywordUseCase
 import im.koala.domain.usecase.keywordadd.PushKeywordUseCase
+import im.koala.domain.usecase.user.GetWebSocketTokenUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -33,7 +39,10 @@ class MainViewModel @Inject constructor(
     private val deleteKeywordUseCase: DeleteKeywordUseCase,
     private val pushKeywordUseCase: PushKeywordUseCase,
     private val editKeywordUseCase: EditKeywordUseCase,
-) : ViewModel() {
+    private val getBestKeywordUseCase: GetBestKeywordUseCase,
+    private val getNumberOfPeopleUseCase: GetNumberOfPeopleUseCase,
+    private val getWebSocketTokenUseCase: GetWebSocketTokenUseCase
+) : BaseViewModel() {
     private val _selectedTab: MutableState<MainScreenBottomTab> =
         mutableStateOf(MainScreenBottomTab.KEYWORD)
     val selectedTab: State<MainScreenBottomTab> get() = _selectedTab
@@ -43,6 +52,10 @@ class MainViewModel @Inject constructor(
 
     val keywordState: StateFlow<Result>
     val domainKeywordSharedFlow = MutableSharedFlow<Result>()
+
+    var chatRoomUiState by mutableStateOf(ChatRoomUiState.default)
+        private set
+    var chatEnterErrorMessage by mutableStateOf<String?>(null)
 
     fun selectTab(tab: MainScreenBottomTab) {
         _selectedTab.value = tab
@@ -127,7 +140,10 @@ class MainViewModel @Inject constructor(
                     reloadKeywordList()
                     executeGetKeywordList()
                 }
-                is Result.Fail<*> -> Log.d("KeywordAddViewModel", "pushKeyword: ${pushKeywordResponse.data}")
+                is Result.Fail<*> -> Log.d(
+                    "KeywordAddViewModel",
+                    "pushKeyword: ${pushKeywordResponse.data}"
+                )
             }
         }
     }
@@ -160,7 +176,10 @@ class MainViewModel @Inject constructor(
                     reloadKeywordList()
                     executeGetKeywordList()
                 }
-                is Result.Fail<*> -> Log.d("KeywordAddViewModel", "editKeyword: ${editKeywordResponse.data}")
+                is Result.Fail<*> -> Log.d(
+                    "KeywordAddViewModel",
+                    "editKeyword: ${editKeywordResponse.data}"
+                )
             }
         }
     }
@@ -173,8 +192,31 @@ class MainViewModel @Inject constructor(
                     reloadKeywordList()
                     executeGetKeywordList()
                 }
-                is Result.Fail<*> -> Log.d("mainViewModel", "deleteKeyword: ${deleteKeywordResponse.data}")
+                is Result.Fail<*> -> Log.d(
+                    "mainViewModel",
+                    "deleteKeyword: ${deleteKeywordResponse.data}"
+                )
             }
+        }
+    }
+
+    fun getChatRoomState() {
+        chatRoomUiState = chatRoomUiState.copy(
+            numberOfPeople = getNumberOfPeopleUseCase(),
+            bestKeyword = getBestKeywordUseCase()
+        )
+    }
+
+    fun enterChatRoom() {
+        viewModelScope.launch {
+            isLoading = true
+            getWebSocketTokenUseCase()
+                .catch { t ->
+                    chatEnterErrorMessage = t.message
+                }
+                .collectLatest {
+                    //enter chat room
+                }
         }
     }
 }
@@ -183,3 +225,12 @@ data class KeywordUi(
     val keywordList: MutableList<KeywordResponse> = mutableListOf(),
     var errorMessage: String = ""
 )
+
+data class ChatRoomUiState(
+    val numberOfPeople: Int,
+    val bestKeyword: String
+) {
+    companion object {
+        val default = ChatRoomUiState(0, "")
+    }
+}

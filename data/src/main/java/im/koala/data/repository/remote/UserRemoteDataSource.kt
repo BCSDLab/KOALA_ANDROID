@@ -1,5 +1,7 @@
 package im.koala.data.repository.remote
 
+import im.koala.data.api.response.ResponseWrapper
+import im.koala.data.api.response.UserWebSocketResponse
 import im.koala.data.entity.KeywordBodyEntity
 import im.koala.data.entity.TokenBodyEntity
 import im.koala.domain.entity.signup.SignUpResult
@@ -32,4 +34,6 @@ interface UserRemoteDataSource {
     suspend fun loginWithoutSignUp(
         deviceToken: String
     ): Response<TokenBodyEntity>
+
+    suspend fun getWebSocketToken(): Response<ResponseWrapper<UserWebSocketResponse>>
 }

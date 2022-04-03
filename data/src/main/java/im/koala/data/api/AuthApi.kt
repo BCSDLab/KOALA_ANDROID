@@ -1,6 +1,7 @@
 package im.koala.data.api
 
 import im.koala.data.api.response.ResponseWrapper
+import im.koala.data.api.response.UserWebSocketResponse
 import im.koala.data.api.response.keyword.KeywordNoticeResponse
 import im.koala.data.api.response.keywordadd.KeywordAddResponse
 import im.koala.data.api.response.keywordadd.KeywordAddResponseEntity
@@ -17,6 +18,7 @@ import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE_READING_CHECK
 import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_SEARCH
 import im.koala.data.constant.KOALA_API_URL_USER_REFRESH
+import im.koala.data.constant.KOALA_API_USER_SOCKET_TOKEN
 import im.koala.data.constants.KEYWORD
 import im.koala.data.entity.CommonEntity
 import im.koala.data.entity.KeywordBodyEntity
@@ -96,4 +98,8 @@ interface AuthApi {
     suspend fun getKeywordDetails(
         @Path("keyword-name") keyword: String,
     ): Response<KeywordAddResponseEntity>
+
+    @GET(KOALA_API_USER_SOCKET_TOKEN)
+    suspend fun getUserWebSocketToken() : Response<ResponseWrapper<UserWebSocketResponse>>
+
 }

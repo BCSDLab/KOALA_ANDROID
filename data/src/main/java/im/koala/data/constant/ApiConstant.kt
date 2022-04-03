@@ -15,6 +15,7 @@ const val KOALA_API_URL_USER_LOGIN = "$KOALA_API_URL_USER/login"
 const val KOALA_API_URL_USER_NON_MEMBER_LOGIN = "$KOALA_API_URL_USER/non-member"
 const val KOALA_API_URL_USER_REFRESH = "$KOALA_API_URL_USER/refresh"
 const val test = "$KOALA_API_URL_USER/my"
+const val KOALA_API_USER_SOCKET_TOKEN = "$KOALA_API_URL_USER/socket-token"
 
 const val KOALA_API_URL_KEYWORD = "keyword"
 const val KOALA_API_KEYWORD_DELETE = "$KOALA_API_URL_KEYWORD/{keyword-name}"
@@ -33,3 +34,5 @@ const val KOALA_API_URL_KEYWORD_DETAILS = "$KOALA_API_URL_KEYWORD/detail/{keywor
 const val KOALA_API_SIGN_UP_CHECK_ID_OK_MESSAGE = "존재하는 계정입니다"
 const val KOALA_API_SIGN_UP_CHECK_EMAIL_OK_MESSAGE = "사용 가능한 이메일입니다"
 const val KOALA_API_SIGN_UP_CHECK_NICKNAME_OK_MESSAGE = "사용 가능한 닉네임입니다."
+
+// Chat

@@ -4,7 +4,6 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.orhanobut.hawk.Hawk
 import im.koala.data.constants.FCM_TOKEN
-import im.koala.domain.state.Result
 import im.koala.data.repository.local.UserLocalDataSource
 import im.koala.data.repository.remote.UserRemoteDataSource
 import im.koala.domain.entity.signup.SignUpResult
@@ -12,6 +11,7 @@ import im.koala.domain.model.CommonResponse
 import im.koala.domain.model.KeywordResponse
 import im.koala.domain.model.TokenResponse
 import im.koala.domain.repository.UserRepository
+import im.koala.domain.state.Result
 import im.koala.domain.util.toSHA256
 import javax.inject.Inject
 
@@ -158,6 +158,22 @@ class UserRepositoryImpl @Inject constructor(
 
     override fun isAutoLogin(): Boolean {
         return userLocalDataSource.isAutoLogin()
+    }
+
+    override suspend fun getWebSocketToken() : kotlin.Result<String> {
+        return try {
+            val response = userRemoteDataSource.getWebSocketToken()
+
+            if(response.isSuccessful) {
+                kotlin.Result.success(response.body()!!.body.socketToken)
+            } else {
+                kotlin.runCatching {
+                    return kotlin.Result.failure(RuntimeException(response.errorBody()!!.string()))
+                }
+            }
+        } catch (e: Exception) {
+            kotlin.Result.failure(e)
+        }
     }
 
     override fun getFCMToken(success: (String) -> Unit, fail: (String?) -> Unit) {

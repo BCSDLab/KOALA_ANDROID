@@ -1,28 +1,28 @@
 package im.koala.bcsd.ui.main
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.primarySurface
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsPadding
 import im.koala.bcsd.ui.chatroom.compose.ChatRoomScreen
 import im.koala.bcsd.ui.history.HistoryScreen
 import im.koala.bcsd.ui.keyword.KeywordScreen
 import im.koala.bcsd.ui.setting.SettingScreen
-import androidx.compose.animation.Crossfade
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.navigation.NavController
 
 @ExperimentalMaterialApi
 @Composable
@@ -88,9 +88,16 @@ fun HomeTabScreen(
                 MainScreenBottomTab.HISTORY -> HistoryScreen(
                     modifier
                 )
-                MainScreenBottomTab.CHATROOM -> ChatRoomScreen(
-                    modifier
-                )
+                MainScreenBottomTab.CHATROOM -> {
+                    viewModel.getChatRoomState()
+                    ChatRoomScreen(
+                        modifier = modifier,
+                        numberOfPeople = viewModel.chatRoomUiState.numberOfPeople,
+                        bestKeyword = viewModel.chatRoomUiState.bestKeyword
+                    ) {
+                        viewModel.enterChatRoom()
+                    }
+                }
                 MainScreenBottomTab.SETTING -> SettingScreen(
                     modifier
                 )
