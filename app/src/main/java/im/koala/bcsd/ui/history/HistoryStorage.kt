@@ -7,6 +7,8 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -21,6 +23,7 @@ fun StorageScreen(
     historyViewModel: HistoryViewModel
 ) {
     historyViewModel.updateStorage()
+    val isAllChecked = remember { mutableStateOf(false) }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -36,8 +39,11 @@ fun StorageScreen(
                     .height(34.dp)
                     .width(42.dp)
                     .padding(top = 10.dp, bottom = 8.dp, start = 18.dp, end = 8.dp),
-                checked = false,
-                onCheckedChange = { historyViewModel.storageAllCheck(it) }
+                checked = isAllChecked.value,
+                onCheckedChange = {
+                    isAllChecked.value = it
+                    historyViewModel.storageAllCheck(it)
+                }
             )
             Text(
                 text = stringResource(id = R.string.history_all_choice),
