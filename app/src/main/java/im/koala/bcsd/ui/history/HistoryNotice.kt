@@ -17,6 +17,7 @@ fun HistoryNoticeScreen(
     modifier: Modifier = Modifier,
     historyViewModel: HistoryViewModel
 ) {
+    historyViewModel.updateHistory()
     val isPopupMenuExpanded = remember { mutableStateOf(false) }
     val isAllChecked = remember { mutableStateOf(false) }
     val snackBarHostState = remember { SnackbarHostState() }
@@ -39,7 +40,7 @@ fun HistoryNoticeScreen(
                 checked = isAllChecked.value,
                 onCheckedChange = {
                     isAllChecked.value = it
-                    historyViewModel.manageAllCheckState(it)
+                    historyViewModel.historyAllCheck(it)
                 }
             )
             Text(
@@ -58,10 +59,12 @@ fun HistoryNoticeScreen(
                     modifier = modifier,
                     iconPainter = painterResource(R.drawable.ic_inbox_in),
                     text = stringResource(R.string.history_keep),
-                    enabled = historyViewModel.historyUiState.checkedHistoryId.isNotEmpty(),
+                    enabled = historyViewModel.historyUiState.checkedHistoryList.isNotEmpty(),
                     onClick = {
                         historyViewModel.scrapHistory(
-                            historyViewModel.historyUiState.checkedHistoryId
+                            historyViewModel.historyUiState.checkedHistoryList.map {
+                                it.crawlingId
+                            }
                         )
                     },
                 )
@@ -70,10 +73,12 @@ fun HistoryNoticeScreen(
                         .padding(start = 4.dp),
                     iconPainter = painterResource(id = R.drawable.ic_trash),
                     text = stringResource(id = R.string.history_delete),
-                    enabled = historyViewModel.historyUiState.checkedHistoryId.isNotEmpty(),
+                    enabled = historyViewModel.historyUiState.checkedHistoryList.isNotEmpty(),
                     onClick = {
                         historyViewModel.deleteHistory(
-                            historyViewModel.historyUiState.checkedHistoryId
+                            historyViewModel.historyUiState.checkedHistoryList.map {
+                                it.id
+                            }
                         )
                     }
                 )
@@ -90,8 +95,8 @@ fun HistoryNoticeScreen(
                         expanded = isPopupMenuExpanded.value,
                         onDismissRequest = { isPopupMenuExpanded.value = false },
                         modifier = modifier,
-                        onClickReadHistory = { historyViewModel.readCheck() },
-                        onClickUnreadHistory = { historyViewModel.unreadCheck() }
+                        onClickReadHistory = { historyViewModel.historyReadCheck() },
+                        onClickUnreadHistory = { historyViewModel.historyUnreadCheck() }
                     )
                 }
             }
@@ -105,7 +110,7 @@ fun HistoryNoticeScreen(
                     modifier = modifier,
                     history = history,
                     onCheckedChange = {
-                        historyViewModel.setCheckState(listOf(history), it)
+                        historyViewModel.setHistoryCheckState(listOf(history), it)
                     }
                 )
             }

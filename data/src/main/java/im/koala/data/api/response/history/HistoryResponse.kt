@@ -14,5 +14,7 @@ data class HistoryResponse (
     @SerializedName("createdAt")
     val createdAt: String,
     @SerializedName("isRead")
-    val isRead: Boolean
+    val isRead: Boolean,
+    @SerializedName("crawlingId")
+    val crawlingId: Int
 )

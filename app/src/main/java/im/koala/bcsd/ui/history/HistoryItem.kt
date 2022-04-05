@@ -17,13 +17,13 @@ import im.koala.bcsd.ui.button.KoalaCheckBox
 import im.koala.bcsd.ui.theme.GrayBorder
 import im.koala.bcsd.ui.theme.KoalaTheme
 import im.koala.bcsd.util.compose.LocalizedMessage
-import im.koala.domain.entity.keyword.KeywordNotice
+import im.koala.domain.entity.history.HistoryNotice
 import im.koala.domain.entity.keyword.Site
 
 @Composable
 fun HistoryItem(
     modifier: Modifier = Modifier,
-    history: KeywordNotice,
+    history: HistoryNotice,
     onCheckedChange: (checked: Boolean) -> Unit
 ) {
     Column(
@@ -100,14 +100,15 @@ fun previewHistoryItem() {
     KoalaTheme {
         Surface {
             HistoryItem(
-                history = KeywordNotice(
+                history = HistoryNotice(
                     id = 1,
                     site = Site.Dorm,
                     title = "테스트",
                     url = "url",
                     createdAt = "0/00 - 00:00",
                     isRead = false,
-                    isChecked = false
+                    isChecked = false,
+                    crawlingId = 1
                 ),
                 onCheckedChange = {}
             )

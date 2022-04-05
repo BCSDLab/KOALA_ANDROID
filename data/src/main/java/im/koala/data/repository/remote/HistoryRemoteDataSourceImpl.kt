@@ -2,26 +2,26 @@ package im.koala.data.repository.remote
 
 import im.koala.data.api.AuthApi
 import im.koala.data.api.response.ResponseWrapper
-import im.koala.data.mapper.history.toKeywordNotice
+import im.koala.data.mapper.history.toHistoryNotice
 import im.koala.data.mapper.history.toScrapNotice
+import im.koala.domain.entity.history.HistoryNotice
 import im.koala.domain.entity.history.Memo
 import im.koala.domain.entity.history.ScrapNotice
-import im.koala.domain.entity.keyword.KeywordNotice
 import retrofit2.Response
 import javax.inject.Inject
 
 class HistoryRemoteDataSourceImpl @Inject constructor(
     private val authApi: AuthApi
 ) : HistoryRemoteDataSource {
-    override suspend fun getHistory(): List<KeywordNotice> {
+    override suspend fun getHistory(): List<HistoryNotice> {
         return authApi.getHistory().body.map {
-            it.toKeywordNotice()
+            it.toHistoryNotice()
         }
     }
 
-    override suspend fun getHistoryByFilter(isRead: Boolean): List<KeywordNotice> {
-        return authApi.getHistoryByFilter(isRead).map {
-            it.toKeywordNotice()
+    override suspend fun getHistoryByFilter(isRead: Boolean): List<HistoryNotice> {
+        return authApi.getHistoryByFilter(isRead).body.map {
+            it.toHistoryNotice()
         }
     }
 
@@ -56,5 +56,19 @@ class HistoryRemoteDataSourceImpl @Inject constructor(
                 createdAt = it.createdAt
             )
         }
+    }
+
+    override suspend fun postMemo(
+        userScrapId: Int,
+        memo: String
+    ): Response<ResponseWrapper<String>> {
+        return authApi.postMemo(userScrapId, memo)
+    }
+
+    override suspend fun patchMemo(
+        userScrapId: Int,
+        memo: String
+    ): Response<ResponseWrapper<String>> {
+        return authApi.patchMemo(userScrapId, memo)
     }
 }

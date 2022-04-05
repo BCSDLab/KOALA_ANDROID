@@ -87,7 +87,7 @@ interface AuthApi {
     @GET(KOALA_API_HISTORY)
     suspend fun getHistoryByFilter(
         @Query("is-read") isRead: Boolean
-    ): List<HistoryResponse>
+    ): ResponseWrapper<List<HistoryResponse>>
 
     @PATCH(KOALA_API_HISTORY)
     suspend fun deleteHistory(
@@ -114,4 +114,16 @@ interface AuthApi {
 
     @GET(KOALA_API_MEMO)
     suspend fun getMemo(): ResponseWrapper<List<MemoResponse>>
+
+    @POST(KOALA_API_MEMO)
+    suspend fun postMemo(
+        @Query("user_scrap_id") userScrapId: Int,
+        @Query("memo") memo: String
+    ): Response<ResponseWrapper<String>>
+
+    @PATCH(KOALA_API_MEMO)
+    suspend fun patchMemo(
+        @Query("user_scrap_id") userScrapId: Int,
+        @Query("memo") memo: String
+    ): Response<ResponseWrapper<String>>
 }

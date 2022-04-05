@@ -148,4 +148,8 @@
     <string name="history_scrap_message">개의 알림을 이동하였습니다.</string>
     <string name="history_undo_scrap_success_message">보관함 이동을 취소했습니다.</string>
     <string name="history_undo_scrap_fail_message">보관함 이동 취소를 실패했습니다.</string>
+    <string name="history_memo_edit">메모 수정</string>
+    <string name="history_memo_add">메모 추가</string>
+    <string name="history_memo_character_limit">/100자</string>
+    <string name="history_memo_edit_finish">완료</string>
 </resources>

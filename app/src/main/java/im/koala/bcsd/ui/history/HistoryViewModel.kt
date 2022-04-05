@@ -1,14 +1,14 @@
 package im.koala.bcsd.ui.history
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import im.koala.data.api.response.ResponseWrapper
+import im.koala.domain.entity.history.HistoryNotice
 import im.koala.domain.entity.history.ScrapNotice
-import im.koala.domain.entity.keyword.KeywordNotice
 import im.koala.domain.state.Result
 import im.koala.domain.usecase.history.*
 import kotlinx.coroutines.launch
@@ -21,12 +21,15 @@ class HistoryViewModel @Inject constructor(
     private val undoDeleteHistoryUseCase: UndoDeleteHistoryUseCase,
     private val scrapHistoryUseCase: ScrapHistoryUseCase,
     private val deleteScrapUseCase: DeleteScrapUseCase,
-    private val getScrapWithMemoUseCase: GetScrapWithMemoUseCase
+    private val getScrapWithMemoUseCase: GetScrapWithMemoUseCase,
+    private val postMemoUseCase: PostMemoUseCase,
+    private val patchMemoUseCase: PatchMemoUseCase
 ) : ViewModel() {
     var historyUiState by mutableStateOf(HistoryUiState())
+    var storageUiState by mutableStateOf(StorageUiState())
 
     private suspend fun getHistory(isRead: Boolean? = null) {
-        val history: List<KeywordNotice> = if (isRead == null) {
+        val history: List<HistoryNotice> = if (isRead == null) {
             getHistoryUseCase()
         } else {
             getHistoryUseCase(isRead)
@@ -40,10 +43,10 @@ class HistoryViewModel @Inject constructor(
         viewModelScope.launch {
             getHistory(isRead)
         }
-        setCheckedList()
+        setHistoryCheckedList()
     }
 
-    fun setCheckState(items: List<KeywordNotice>, isChecked: Boolean) {
+    fun setHistoryCheckState(items: List<HistoryNotice>, isChecked: Boolean) {
         historyUiState = historyUiState.copy(
             history = historyUiState.history.map {
                 if (items.contains(it)) {
@@ -53,10 +56,10 @@ class HistoryViewModel @Inject constructor(
                 }
             }
         )
-        setCheckedList()
+        setHistoryCheckedList()
     }
 
-    fun readCheck() {
+    fun historyReadCheck() {
         historyUiState = historyUiState.copy(
             history = historyUiState.history.map {
                 if (it.isRead) {
@@ -66,10 +69,10 @@ class HistoryViewModel @Inject constructor(
                 }
             }
         )
-        setCheckedList()
+        setHistoryCheckedList()
     }
 
-    fun unreadCheck() {
+    fun historyUnreadCheck() {
         historyUiState = historyUiState.copy(
             history = historyUiState.history.map {
                 if (it.isRead) {
@@ -79,21 +82,21 @@ class HistoryViewModel @Inject constructor(
                 }
             }
         )
-        setCheckedList()
+        setHistoryCheckedList()
     }
 
-    fun manageAllCheckState(isChecked: Boolean) {
+    fun historyAllCheck(isChecked: Boolean) {
         historyUiState = historyUiState.copy(
             history = historyUiState.history.map {
                 it.copy(isChecked = isChecked)
             }
         )
-        setCheckedList()
+        setHistoryCheckedList()
     }
 
     fun deleteHistory(noticeId: List<Int>) {
         viewModelScope.launch {
-            when(val response = deleteHistoryUseCase(noticeId)) {
+            when (val response = deleteHistoryUseCase(noticeId)) {
                 is Result.Success<*> -> {
                     historyUiState = historyUiState.copy(
                         snackBarState = SnackBarState.ShowSnackBar(
@@ -101,7 +104,9 @@ class HistoryViewModel @Inject constructor(
                             snackBarCommend = SnackBarCommend.DeleteHistory,
                             isSuccess = true
                         ),
-                        deletedHistoryId = historyUiState.checkedHistoryId
+                        deletedHistoryId = historyUiState.checkedHistoryList.map {
+                            it.id
+                        }
                     )
                     updateHistory()
                 }
@@ -116,12 +121,12 @@ class HistoryViewModel @Inject constructor(
                 }
             }
         }
-        setCheckedList()
+        setHistoryCheckedList()
     }
 
     fun undoDeleteHistory(noticeId: List<Int>) {
         viewModelScope.launch {
-            when(val response = undoDeleteHistoryUseCase(noticeId)) {
+            when (val response = undoDeleteHistoryUseCase(noticeId)) {
                 is Result.Success<*> -> {
                     historyUiState = historyUiState.copy(
                         snackBarState = SnackBarState.ShowSnackBar(
@@ -144,7 +149,7 @@ class HistoryViewModel @Inject constructor(
                 }
             }
         }
-        setCheckedList()
+        setHistoryCheckedList()
     }
 
     fun setSnackBarStateNone() {
@@ -153,13 +158,13 @@ class HistoryViewModel @Inject constructor(
         )
     }
 
-    private fun setCheckedList() {
-        val checkedIdList = mutableListOf<Int>()
-        for(history in historyUiState.history) {
-            checkedIdList.add(history.id)
+    private fun setHistoryCheckedList() {
+        val checkedIdList = mutableListOf<HistoryNotice>()
+        for (history in historyUiState.history) {
+            if (history.isChecked) checkedIdList.add(history)
         }
         historyUiState = historyUiState.copy(
-            checkedHistoryId = checkedIdList.toList()
+            checkedHistoryList = checkedIdList.toList()
         )
     }
 
@@ -172,7 +177,7 @@ class HistoryViewModel @Inject constructor(
     fun scrapHistory(crawlingIdList: List<Int>) {
         viewModelScope.launch {
             scrapHistoryUseCase(crawlingIdList).let {
-                if(it.isEmpty()) {
+                if (it.isEmpty()) {
                     historyUiState = historyUiState.copy(
                         snackBarState = SnackBarState.ShowSnackBar(
                             snackBarMessage = it.size.toString(),
@@ -197,7 +202,7 @@ class HistoryViewModel @Inject constructor(
 
     fun undoScrapHistory(crawlingIdList: List<Int>) {
         viewModelScope.launch {
-            when(val response = deleteScrapUseCase(crawlingIdList)) {
+            when (val response = deleteScrapUseCase(crawlingIdList)) {
                 is Result.Success<*> -> {
                     historyUiState = historyUiState.copy(
                         snackBarState = SnackBarState.ShowSnackBar(
@@ -221,22 +226,101 @@ class HistoryViewModel @Inject constructor(
             }
         }
     }
+
     fun emptyScrapedHistoryIdList() {
         historyUiState = historyUiState.copy(
             scrapedHistoryId = listOf()
         )
     }
+
+    fun setStorageCheckState(items: List<ScrapNotice>, isChecked: Boolean) {
+        storageUiState = storageUiState.copy(
+            scrapNotice = storageUiState.scrapNotice.map {
+                if (items.contains(it)) {
+                    it.copy(isChecked = isChecked)
+                } else {
+                    it
+                }
+            }
+        )
+        setStorageCheckedList()
+    }
+
+    private fun setStorageCheckedList() {
+        val checkedIdList = mutableListOf<ScrapNotice>()
+        for (scrapNotice in storageUiState.scrapNotice) {
+            if (scrapNotice.isChecked) checkedIdList.add(scrapNotice)
+        }
+        storageUiState = storageUiState.copy(
+            checkedScrapNotice = checkedIdList.toList()
+        )
+    }
+
+    fun updateStorage() {
+        viewModelScope.launch {
+            storageUiState = storageUiState.copy(
+                scrapNotice = getScrapWithMemoUseCase()
+            )
+        }
+        setStorageCheckedList()
+    }
+
+    fun storageAllCheck(isChecked: Boolean) {
+        storageUiState = storageUiState.copy(
+            scrapNotice = storageUiState.scrapNotice.map {
+                it.copy(
+                    isChecked = isChecked
+                )
+            }
+        )
+        setStorageCheckedList()
+    }
+
+    fun deleteScrapNotice() {
+        viewModelScope.launch {
+            when (val response = deleteScrapUseCase(
+                storageUiState.checkedScrapNotice.map {
+                    it.id
+                }
+            )) {
+                is Result.Success<*> -> {
+                    updateStorage()
+                }
+                is Result.Fail<*> -> {
+                    Log.e("Delete Fail", response.data.toString())
+                }
+            }
+        }
+    }
+
+    fun editMemo(scrapNotice: ScrapNotice, memo: String) {
+        viewModelScope.launch {
+            when (val response = if (scrapNotice.memo == null) {
+                postMemoUseCase(scrapNotice.userScrapedId, memo)
+            } else {
+                patchMemoUseCase(scrapNotice.userScrapedId, memo)
+            }) {
+                is Result.Success<*> -> {
+                    updateStorage()
+                }
+                is Result.Fail<*> -> {
+                    Log.e("Memo Fail", response.data.toString())
+                }
+            }
+        }
+    }
 }
 
 
 data class HistoryUiState(
-    val history: List<KeywordNotice> = listOf(),
-    val checkedHistoryId: List<Int> = listOf(),
+    val history: List<HistoryNotice> = listOf(),
+    val checkedHistoryList: List<HistoryNotice> = listOf(),
     val deletedHistoryId: List<Int> = listOf(),
     val scrapedHistoryId: List<Int> = listOf(),
     val snackBarState: SnackBarState = SnackBarState.NoneSnackBar
 )
 
 data class StorageUiState(
-    val scrapNotice: List<ScrapNotice> = listOf()
+    val scrapNotice: List<ScrapNotice> = listOf(),
+    val checkedScrapNotice: List<ScrapNotice> = listOf()
 )

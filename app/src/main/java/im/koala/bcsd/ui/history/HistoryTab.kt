@@ -4,11 +4,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import im.koala.bcsd.R
+import im.koala.bcsd.ui.theme.GrayBorder
+import im.koala.bcsd.ui.theme.KoalaTheme
 import im.koala.bcsd.ui.theme.Typography
 
 @Composable
@@ -18,6 +23,7 @@ fun HistoryTab(
 ) {
     Row (
         modifier = modifier
+            .padding(start = 16.dp, end = 16.dp)
     ) {
         Column(
             modifier = modifier
@@ -48,6 +54,11 @@ fun HistoryTab(
                     )
                 }
             }
+            Divider(
+                color = GrayBorder,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
             if (allNoticeState.value) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -91,6 +102,11 @@ fun HistoryTab(
                     )
                 }
             }
+            Divider(
+                color = GrayBorder,
+                modifier = modifier
+                    .fillMaxWidth()
+            )
             if(!allNoticeState.value) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -105,5 +121,15 @@ fun HistoryTab(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun HistoryTabPreview() {
+    val testState = remember { mutableStateOf(true) }
+    KoalaTheme(
+    ) {
+        HistoryTab(allNoticeState = testState)
     }
 }

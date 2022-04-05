@@ -2,14 +2,13 @@ package im.koala.domain.entity.history
 
 import im.koala.domain.entity.keyword.Site
 
-data class ScrapNotice(
+data class HistoryNotice(
     val id: Int,
-    val userScrapedId: Int,
     val site: Site,
     val title: String,
     val url: String,
     val createdAt: String,
-    val crawlingAt: String,
+    val isRead: Boolean,
     val isChecked: Boolean,
-    val memo: Memo?
+    val crawlingId: Int
 )

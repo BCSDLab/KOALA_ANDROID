@@ -7,44 +7,30 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.unit.dp
 import im.koala.bcsd.ui.button.KoalaBackgroundButton
-import im.koala.bcsd.ui.theme.*
 
+@ExperimentalMaterialApi
 @Composable
 fun HistoryScreen(
     modifier: Modifier = Modifier,
     historyViewModel: HistoryViewModel
 ) {
     var allNoticeState = remember { mutableStateOf(true) }
-    historyViewModel.updateHistory()
     Column(
         modifier = modifier.fillMaxSize()
     ) {
         HistoryTab(
-            modifier = modifier,
             allNoticeState = allNoticeState
         )
-        DrawHistoryDivider(modifier = modifier)
         if (allNoticeState.value) {
             HistoryNoticeScreen(
-                modifier = modifier,
                 historyViewModel = historyViewModel
             )
         } else {
-            StorageScreen(modifier = modifier)
+            StorageScreen(
+                historyViewModel = historyViewModel
+            )
         }
-    }
-}
-
-@Composable
-fun DrawHistoryDivider(modifier: Modifier = Modifier) {
-    KoalaTheme {
-        Divider(
-            color = GrayBorder,
-            modifier = modifier
-                .padding(start = 16.dp, end = 16.dp)
-        )
     }
 }
 

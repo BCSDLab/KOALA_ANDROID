@@ -1,6 +1,6 @@
 package im.koala.domain.usecase.history
 
-import im.koala.domain.entity.keyword.KeywordNotice
+import im.koala.domain.entity.history.HistoryNotice
 import im.koala.domain.repository.HistoryRepository
 import javax.inject.Inject
 
@@ -9,7 +9,7 @@ class GetHistoryUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         isRead: Boolean? = null
-    ): List<KeywordNotice> {
+    ): List<HistoryNotice> {
         return if (isRead == null){
             historyRepository.getHistory()
         } else {
