@@ -278,11 +278,13 @@ class HistoryViewModel @Inject constructor(
 
     fun deleteScrapNotice() {
         viewModelScope.launch {
-            when (val response = deleteScrapUseCase(
-                storageUiState.checkedScrapNotice.map {
-                    it.id
-                }
-            )) {
+            when (
+                val response = deleteScrapUseCase(
+                    storageUiState.checkedScrapNotice.map {
+                        it.id
+                    }
+                )
+            ) {
                 is Result.Success<*> -> {
                     updateStorage()
                 }
@@ -295,11 +297,13 @@ class HistoryViewModel @Inject constructor(
 
     fun editMemo(scrapNotice: ScrapNotice, memo: String) {
         viewModelScope.launch {
-            when (val response = if (scrapNotice.memo == null) {
-                postMemoUseCase(scrapNotice.userScrapedId, memo)
-            } else {
-                patchMemoUseCase(scrapNotice.userScrapedId, memo)
-            }) {
+            when (
+                val response = if (scrapNotice.memo == null) {
+                    postMemoUseCase(scrapNotice.userScrapedId, memo)
+                } else {
+                    patchMemoUseCase(scrapNotice.userScrapedId, memo)
+                }
+            ) {
                 is Result.Success<*> -> {
                     updateStorage()
                 }
@@ -310,7 +314,6 @@ class HistoryViewModel @Inject constructor(
         }
     }
 }
-
 
 data class HistoryUiState(
     val history: List<HistoryNotice> = listOf(),

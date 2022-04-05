@@ -10,8 +10,8 @@ sealed class SnackBarState {
 }
 
 sealed class SnackBarCommend {
-    object DeleteHistory: SnackBarCommend()
-    object UndoDeleteHistory: SnackBarCommend()
-    object ScrapHistory: SnackBarCommend()
-    object UndoScrapHistory: SnackBarCommend()
+    object DeleteHistory : SnackBarCommend()
+    object UndoDeleteHistory : SnackBarCommend()
+    object ScrapHistory : SnackBarCommend()
+    object UndoScrapHistory : SnackBarCommend()
 }

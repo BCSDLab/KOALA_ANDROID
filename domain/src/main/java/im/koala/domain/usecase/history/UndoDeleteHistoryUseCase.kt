@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class UndoDeleteHistoryUseCase @Inject constructor(
     private val historyRepository: HistoryRepository
-){
+) {
     suspend operator fun invoke(noticeId: List<Int>): Result {
         return historyRepository.undoDeleteHistory(noticeId)
     }

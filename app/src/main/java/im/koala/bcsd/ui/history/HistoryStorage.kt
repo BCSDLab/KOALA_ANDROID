@@ -69,7 +69,7 @@ fun StorageScreen(
                     modifier = modifier,
                     scrapNotice = scrapNotice,
                     onCheckedChange = {
-                        historyViewModel.setStorageCheckState(listOf(scrapNotice),it)
+                        historyViewModel.setStorageCheckState(listOf(scrapNotice), it)
                     },
                     onClickFinishButton = { scrapNotice, memo ->
                         historyViewModel.editMemo(scrapNotice, memo)

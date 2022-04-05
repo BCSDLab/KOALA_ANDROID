@@ -168,13 +168,15 @@ fun StorageItem(
         Row(
             modifier = modifier
                 .align(alignment = Alignment.CenterEnd)
-                .width(swipeAbleState.offset.value.let {
-                    if (isEditingMemo.value) 0.dp
-                    else {
-                        if (it > 176) 176.dp
-                        else it.dp
+                .width(
+                    swipeAbleState.offset.value.let {
+                        if (isEditingMemo.value) 0.dp
+                        else {
+                            if (it > 176) 176.dp
+                            else it.dp
+                        }
                     }
-                })
+                )
                 .fillMaxHeight()
         ) {
             Column(
@@ -304,7 +306,6 @@ fun MemoTextField(
         }
     }
 }
-
 
 @ExperimentalMaterialApi
 @Preview

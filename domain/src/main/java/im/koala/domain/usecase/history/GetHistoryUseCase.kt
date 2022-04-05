@@ -10,7 +10,7 @@ class GetHistoryUseCase @Inject constructor(
     suspend operator fun invoke(
         isRead: Boolean? = null
     ): List<HistoryNotice> {
-        return if (isRead == null){
+        return if (isRead == null) {
             historyRepository.getHistory()
         } else {
             historyRepository.getHistoryByFilter(isRead)

@@ -93,7 +93,6 @@ fun HistoryItem(
     }
 }
 
-
 @Preview
 @Composable
 fun previewHistoryItem() {

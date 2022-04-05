@@ -2,7 +2,7 @@ package im.koala.data.api.response.history
 
 import com.google.gson.annotations.SerializedName
 
-data class HistoryResponse (
+data class HistoryResponse(
     @SerializedName("id")
     val id: Int,
     @SerializedName("site")

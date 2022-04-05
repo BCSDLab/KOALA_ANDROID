@@ -56,12 +56,3 @@ fun HistoryCommandButton(
         )
     }
 }
-
-//@Preview
-//@Composable
-//fun previewHistoryScreen() {
-//    KoalaTheme {
-//        HistoryScreen()
-//    }
-//}
-

@@ -29,7 +29,7 @@ import im.koala.bcsd.ui.keywordadd.KeywordViewModel
 @ExperimentalMaterialApi
 @Composable
 fun MainScreen(
-	historyViewModel: HistoryViewModel,
+    historyViewModel: HistoryViewModel,
     keywordViewModel: KeywordViewModel = hiltViewModel(),
     viewModel: MainViewModel = hiltViewModel()
 ) {
@@ -105,7 +105,12 @@ fun MainScreen(
                     setRecentSearchList = {
                         keywordViewModel.setRecentKeywordSearchList(keywordViewModel.uiState.keyword)
                     },
-                    setKeyword = { keywordViewModel.changeState(commend = "keyword", stringData = keywordSearchingText.value) }
+                    setKeyword = {
+                        keywordViewModel.changeState(
+                            commend = "keyword",
+                            stringData = keywordSearchingText.value
+                        )
+                    }
                 )
             }
 
@@ -127,8 +132,17 @@ fun MainScreen(
                     recentSearchList = keywordViewModel.uiState.recentSearchList,
                     searchList = keywordViewModel.uiState.searchList,
                     getSearchList = { keywordViewModel.getSiteSearchList(siteSearchingText.value) },
-                    setRecentSearchList = { keywordViewModel.setRecentSiteSearchList(keywordViewModel.uiState.site) },
-                    setKeyword = { keywordViewModel.changeState(commend = "site", stringData = siteSearchingText.value) }
+                    setRecentSearchList = {
+                        keywordViewModel.setRecentSiteSearchList(
+                            keywordViewModel.uiState.site
+                        )
+                    },
+                    setKeyword = {
+                        keywordViewModel.changeState(
+                            commend = "site",
+                            stringData = siteSearchingText.value
+                        )
+                    }
                 )
             }
 

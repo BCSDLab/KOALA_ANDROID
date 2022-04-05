@@ -7,13 +7,36 @@ import im.koala.data.api.response.history.ScrapResponse
 import im.koala.data.api.response.keyword.KeywordNoticeResponse
 import im.koala.data.api.response.keywordadd.KeywordAddResponse
 import im.koala.data.api.response.keywordadd.KeywordAddResponseEntity
-import im.koala.data.constant.*
+import im.koala.data.constant.KOALA_API_HISTORY
+import im.koala.data.constant.KOALA_API_HISTORY_DELETE_UNDO
+import im.koala.data.constant.KOALA_API_KEYWORD_DELETE
+import im.koala.data.constant.KOALA_API_KEYWORD_EDIT
+import im.koala.data.constant.KOALA_API_KEYWORD_RECOMMENDATION
+import im.koala.data.constant.KOALA_API_KEYWORD_SEARCH
+import im.koala.data.constant.KOALA_API_KEYWORD_SITE_RECOMMENDATION
+import im.koala.data.constant.KOALA_API_KEYWORD_SITE_SEARCH
+import im.koala.data.constant.KOALA_API_MEMO
+import im.koala.data.constant.KOALA_API_SCRAP
+import im.koala.data.constant.KOALA_API_URL_KEYWORD
+import im.koala.data.constant.KOALA_API_URL_KEYWORD_DETAILS
+import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST
+import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE
+import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_NOTICE_READING_CHECK
+import im.koala.data.constant.KOALA_API_URL_KEYWORD_LIST_SEARCH
+import im.koala.data.constant.KOALA_API_URL_USER_REFRESH
 import im.koala.data.constants.KEYWORD
 import im.koala.data.entity.CommonEntity
 import im.koala.data.entity.KeywordBodyEntity
 import im.koala.domain.model.TokenResponse
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface AuthApi {
     @GET(KEYWORD)
@@ -81,7 +104,7 @@ interface AuthApi {
     suspend fun getKeywordDetails(
         @Path("keyword-name") keyword: String,
     ): Response<KeywordAddResponseEntity>
-	@GET(KOALA_API_HISTORY)
+    @GET(KOALA_API_HISTORY)
     suspend fun getHistory(): ResponseWrapper<List<HistoryResponse>>
 
     @GET(KOALA_API_HISTORY)

@@ -21,7 +21,7 @@ fun HistoryTab(
     modifier: Modifier = Modifier,
     allNoticeState: MutableState<Boolean>
 ) {
-    Row (
+    Row(
         modifier = modifier
             .padding(start = 16.dp, end = 16.dp)
     ) {
@@ -41,13 +41,13 @@ fun HistoryTab(
                     .padding(top = 12.dp)
             ) {
                 if (allNoticeState.value) {
-                    Text (
+                    Text(
                         text = stringResource(id = R.string.history_all_notice),
                         style = Typography.h2,
                         color = MaterialTheme.colors.onPrimary
                     )
                 } else {
-                    Text (
+                    Text(
                         text = stringResource(id = R.string.history_all_notice),
                         style = Typography.button,
                         color = MaterialTheme.colors.onPrimary
@@ -89,13 +89,13 @@ fun HistoryTab(
                     .padding(top = 12.dp)
             ) {
                 if (allNoticeState.value) {
-                    Text (
+                    Text(
                         text = stringResource(id = R.string.history_storage),
                         style = Typography.button,
                         color = MaterialTheme.colors.onPrimary
                     )
                 } else {
-                    Text (
+                    Text(
                         text = stringResource(id = R.string.history_storage),
                         style = Typography.h2,
                         color = MaterialTheme.colors.onPrimary
@@ -107,7 +107,7 @@ fun HistoryTab(
                 modifier = modifier
                     .fillMaxWidth()
             )
-            if(!allNoticeState.value) {
+            if (!allNoticeState.value) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     modifier = modifier.fillMaxWidth()
@@ -128,8 +128,7 @@ fun HistoryTab(
 @Composable
 fun HistoryTabPreview() {
     val testState = remember { mutableStateOf(true) }
-    KoalaTheme(
-    ) {
+    KoalaTheme {
         HistoryTab(allNoticeState = testState)
     }
 }

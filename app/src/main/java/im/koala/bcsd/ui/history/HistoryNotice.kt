@@ -118,9 +118,10 @@ fun HistoryNoticeScreen(
     }
     when (val snackBarState = historyViewModel.historyUiState.snackBarState) {
         is SnackBarState.ShowSnackBar -> {
-            val snackBarActionString = stringResource(id =R.string.history_undo)
+            val snackBarActionString = stringResource(id = R.string.history_undo)
             val scrapSnackBarMessage = stringResource(id = R.string.history_scrap_message)
-            val undoScrapSuccessMessage = stringResource(id = R.string.history_undo_scrap_success_message)
+            val undoScrapSuccessMessage =
+                stringResource(id = R.string.history_undo_scrap_success_message)
             val undoScrapFailMessage = stringResource(id = R.string.history_undo_scrap_fail_message)
             LaunchedEffect(historyViewModel.historyUiState.snackBarState) {
                 snackBarHostState.showSnackbar(
@@ -133,7 +134,7 @@ fun HistoryNoticeScreen(
                             else undoScrapFailMessage
                         }
                         else -> snackBarState.snackBarMessage
-                                                                                         },
+                    },
                     actionLabel = if ((snackBarState.snackBarCommend == SnackBarCommend.DeleteHistory || snackBarState.snackBarCommend == SnackBarCommend.ScrapHistory) && snackBarState.isSuccess) {
                         snackBarActionString
                     } else {
@@ -145,9 +146,14 @@ fun HistoryNoticeScreen(
                         SnackbarResult.ActionPerformed -> {
                             historyViewModel.setSnackBarStateNone()
                             when (snackBarState.snackBarCommend) {
-                                is SnackBarCommend.DeleteHistory -> if (snackBarState.isSuccess) historyViewModel.undoDeleteHistory(historyViewModel.historyUiState.deletedHistoryId)
-                                is SnackBarCommend.ScrapHistory -> if (snackBarState.isSuccess) historyViewModel.undoScrapHistory(historyViewModel.historyUiState.scrapedHistoryId)
-                                else -> { }
+                                is SnackBarCommend.DeleteHistory -> if (snackBarState.isSuccess) historyViewModel.undoDeleteHistory(
+                                    historyViewModel.historyUiState.deletedHistoryId
+                                )
+                                is SnackBarCommend.ScrapHistory -> if (snackBarState.isSuccess) historyViewModel.undoScrapHistory(
+                                    historyViewModel.historyUiState.scrapedHistoryId
+                                )
+                                else -> {
+                                }
                             }
                         }
                         SnackbarResult.Dismissed -> {

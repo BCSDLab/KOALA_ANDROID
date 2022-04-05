@@ -12,7 +12,7 @@ fun HistoryResponse.toHistoryNotice(): HistoryNotice {
         site = this.site.toSite(),
         title = this.title,
         url = this.url,
-        createdAt = this.createdAt.substring(5,7)+"/"+this.createdAt.substring(8,10)+" - "+this.createdAt.substring(11,16),
+        createdAt = this.createdAt.substring(5, 7) + "/" + this.createdAt.substring(8, 10) + " - " + this.createdAt.substring(11, 16),
         isRead = this.isRead,
         crawlingId = this.crawlingId,
         isChecked = false
